@@ -87,7 +87,7 @@ class VideoMessageRenderer : MessageRendererFactory {
     }
 
     override fun render(container: ViewContainer<*, *>, context: MessageContext, config: ChatSessionConfig) {
-        // 视频消息默认使用图片渲染器（显示缩略图），未来可扩展
+        // 视频消息使用图片渲染器（内置播放按钮覆盖层）
         renderDefaultImageBubble(container, context, config)
     }
 }
@@ -96,7 +96,7 @@ class VideoMessageRenderer : MessageRendererFactory {
  * 内置文件消息渲染器
  *
  * 处理 MessageType.FILE 类型消息的默认渲染。
- * 渲染为文件图标 + 文件名 + 文件大小。
+ * 渲染为文件卡片样式（文件图标 + 文件名 + 文件大小）。
  */
 class FileMessageRenderer : MessageRendererFactory {
     override fun canRender(message: ChatMessage): Boolean {
@@ -104,8 +104,8 @@ class FileMessageRenderer : MessageRendererFactory {
     }
 
     override fun render(container: ViewContainer<*, *>, context: MessageContext, config: ChatSessionConfig) {
-        // 文件消息默认使用文本气泡渲染器（显示文件名），未来可扩展为卡片样式
-        renderDefaultBubble(container, context, config)
+        // 文件消息使用卡片样式渲染
+        renderDefaultFileBubble(container, context, config)
     }
 }
 

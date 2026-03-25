@@ -1,0 +1,63 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "chat_demo_001",
+    "has_more": false,
+    "page": 3,
+    "messages": [
+      {
+        "id": "msg_hist3_001",
+        "type": "SYSTEM",
+        "content": "小助手 加入了聊天",
+        "is_self": false,
+        "sender_name": "",
+        "sender_id": "",
+        "sender_avatar": "",
+        "timestamp": 1711261800000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist3_002",
+        "type": "TEXT",
+        "content": "这是第 3 页的历史消息 [1/3]：最早的一批消息",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711261860000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist3_003",
+        "type": "TEXT",
+        "content": "历史对话内容 [2/3]：KuiklyChat 组件库开发中",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711261920000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist3_004",
+        "type": "IMAGE",
+        "content": "https://picsum.photos/500/300",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711261980000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "IMAGE",
+            "url": "https://picsum.photos/500/300",
+            "width": 500,
+            "height": 300
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "chat_demo_001",
+    "has_more": true,
+    "page": 2,
+    "messages": [
+      {
+        "id": "msg_hist2_001",
+        "type": "TEXT",
+        "content": "这是第 2 页的历史消息 [1/4]",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711263660000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist2_002",
+        "type": "TEXT",
+        "content": "历史对话内容 [2/4]：Kuikly 的 Compose DSL 写起来很方便",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711263720000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist2_003",
+        "type": "TEXT",
+        "content": "历史对话内容 [3/4]：FlexBox 布局也很强大",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711263780000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist2_004",
+        "type": "TEXT",
+        "content": "历史对话内容 [4/4]：期待更多功能更新！",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711263840000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

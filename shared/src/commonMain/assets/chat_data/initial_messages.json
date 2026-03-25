@@ -1,0 +1,215 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "chat_demo_001",
+    "has_more": true,
+    "messages": [
+      {
+        "id": "msg_init_001",
+        "type": "SYSTEM",
+        "content": "以下是新的聊天",
+        "is_self": false,
+        "sender_name": "",
+        "sender_id": "",
+        "sender_avatar": "",
+        "timestamp": 1711267199000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_init_002",
+        "type": "TEXT",
+        "content": "你好！欢迎使用 KuiklyChat 🎉",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "👍", "count": 3, "is_own_reaction": true },
+          { "type": "❤️", "count": 1, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "msg_init_003",
+        "type": "TEXT",
+        "content": "这是一个基于 KuiklyUI 框架构建的聊天组件示例，现已支持消息反应、引用回复、日期分隔、输入指示器等功能",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267230000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_init_004",
+        "type": "TEXT",
+        "content": "确实功能很丰富！引用回复也支持了",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711267260000,
+        "status": "SENT",
+        "quoted_message": {
+          "id": "msg_init_003",
+          "type": "TEXT",
+          "content": "这是一个基于 KuiklyUI 框架构建的聊天组件示例，现已支持消息反应、引用回复、日期分隔、输入指示器等功能",
+          "is_self": false,
+          "sender_name": "小助手",
+          "sender_id": "assistant_001",
+          "timestamp": 1711267230000,
+          "status": "SENT"
+        }
+      },
+      {
+        "id": "msg_init_005",
+        "type": "TEXT",
+        "content": "大家觉得还需要什么功能？可以在这里讨论",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267500000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "🔥", "count": 2, "is_own_reaction": true }
+        ],
+        "thread_count": 3
+      },
+      {
+        "id": "msg_init_006",
+        "type": "TEXT",
+        "content": "现在还支持图片消息了！来看看",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267510000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_init_007",
+        "type": "IMAGE",
+        "content": "https://picsum.photos/600/400",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267520000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "IMAGE",
+            "url": "https://picsum.photos/600/400",
+            "width": 600,
+            "height": 400
+          }
+        ]
+      },
+      {
+        "id": "msg_init_008",
+        "type": "TEXT",
+        "content": "Kuikly 跨端框架真的很强大！支持 Android、iOS、鸿蒙、H5 四端运行。",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711267560000,
+        "status": "SENT",
+        "is_edited": true
+      },
+      {
+        "id": "msg_init_009",
+        "type": "IMAGE",
+        "content": "https://picsum.photos/400/600",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711267570000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "😍", "count": 2, "is_own_reaction": false },
+          { "type": "👏", "count": 1, "is_own_reaction": true }
+        ],
+        "attachments": [
+          {
+            "type": "IMAGE",
+            "url": "https://picsum.photos/400/600",
+            "width": 400,
+            "height": 600
+          }
+        ]
+      },
+      {
+        "id": "msg_init_010",
+        "type": "VIDEO",
+        "content": "https://example.com/video.mp4",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267680000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "VIDEO",
+            "url": "https://example.com/video.mp4",
+            "thumbnail_url": "https://picsum.photos/640/360",
+            "width": 640,
+            "height": 360,
+            "duration": 15.5
+          }
+        ]
+      },
+      {
+        "id": "msg_init_011",
+        "type": "FILE",
+        "content": "KuiklyChat 开发文档.pdf",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711267740000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "FILE",
+            "url": "https://example.com/document.pdf",
+            "title": "KuiklyChat 开发文档.pdf",
+            "mime_type": "application/pdf",
+            "file_size": 2456789
+          }
+        ]
+      },
+      {
+        "id": "msg_init_012",
+        "type": "TEXT",
+        "content": "重要提醒：长按消息可以弹出操作菜单，支持复制、回复、引用、编辑、删除、置顶等操作！",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711267800000,
+        "status": "SENT",
+        "is_pinned": true
+      },
+      {
+        "id": "msg_init_013",
+        "type": "TEXT",
+        "content": "太实用了！这些功能组合起来体验很好 👍",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711267830000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "💯", "count": 1, "is_own_reaction": false }
+        ]
+      }
+    ]
+  }
+}

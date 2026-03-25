@@ -247,7 +247,23 @@ class ChatThemeOptions {
      * 否则根据 themeMode 返回对应的预定义颜色。
      */
     fun resolvedColors(): ChatThemeColors {
-        return resolveThemeColors(themeMode)
+        val base = resolveThemeColors(themeMode)
+        // 如果用户手动设置了某些颜色，用用户值覆盖预定义值
+        return base.copy(
+            primaryColor = primaryColor,
+            primaryGradientEndColor = primaryGradientEndColor,
+            backgroundColor = backgroundColor,
+            otherBubbleColor = otherBubbleColor,
+            otherTextColor = otherTextColor,
+            selfTextColor = selfTextColor,
+            composerBackgroundColor = composerBackgroundColor,
+            composerBorderColor = composerBorderColor,
+            composerInputBackgroundColor = composerInputBackgroundColor,
+            composerInputBorderColor = composerInputBorderColor,
+            composerInputTextColor = composerInputTextColor,
+            composerPlaceholderColor = composerPlaceholderColor,
+            composerSendButtonTextColor = composerSendButtonTextColor
+        )
     }
 
     /**
@@ -778,9 +794,59 @@ class ChatSessionConfig {
      */
     fun getComposerState(): MessageComposerState {
         return MessageComposerState(
-            inputValue = _composerInputText
+            inputValue = _composerInputText,
+            replyingToMessage = _replyingToMessage
         )
     }
+
+    // ========== P0: 引用回复状态管理 ==========
+
+    /**
+     * 当前正在回复的消息（非 null 时 ComposerHeader 自动显示"正在回复 xxx"提示条）。
+     * 设置此值后，发送的下一条消息会自动携带 quotedMessage。
+     */
+    var _replyingToMessage: ChatMessage? = null
+
+    /**
+     * 设置回复消息（业务方调用）
+     */
+    fun replyToMessage(message: ChatMessage?) {
+        _replyingToMessage = message
+    }
+
+    /**
+     * 取消回复
+     */
+    fun cancelReply() {
+        _replyingToMessage = null
+    }
+
+    // ========== P0: 操作菜单内置状态管理 ==========
+
+    /**
+     * 是否启用内置操作菜单（默认 true）。
+     * 启用后，长按消息自动弹出内置操作菜单，无需业务方维护菜单状态。
+     * 设置为 false 可禁用内置菜单，由业务方自行管理。
+     */
+    var enableBuiltInMessageOptions: Boolean = true
+
+    /**
+     * 内部：操作菜单是否显示（由 ChatSession 自动维护）
+     */
+    internal var _showMessageOptions: Boolean = false
+
+    /**
+     * 内部：操作菜单目标消息
+     */
+    internal var _optionsTargetMessage: ChatMessage? = null
+
+    /**
+     * 内部：操作菜单目标位置
+     */
+    internal var _optionsTargetX: Float = 0f
+    internal var _optionsTargetY: Float = 0f
+    internal var _optionsTargetW: Float = 0f
+    internal var _optionsTargetH: Float = 0f
 
     // ========== 事件回调 ==========
 

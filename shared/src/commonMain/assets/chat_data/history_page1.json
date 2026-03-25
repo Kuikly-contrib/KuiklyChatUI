@@ -1,0 +1,55 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "chat_demo_001",
+    "has_more": true,
+    "page": 1,
+    "messages": [
+      {
+        "id": "msg_hist1_001",
+        "type": "TEXT",
+        "content": "这是第 1 页的历史消息 [1/4]",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711265460000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist1_002",
+        "type": "TEXT",
+        "content": "历史对话内容 [2/4]：Kuikly 框架支持 Android、iOS、鸿蒙三端运行",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711265520000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist1_003",
+        "type": "TEXT",
+        "content": "历史对话内容 [3/4]：没错，而且还支持热重载开发",
+        "is_self": false,
+        "sender_name": "小助手",
+        "sender_id": "assistant_001",
+        "sender_avatar": "",
+        "timestamp": 1711265580000,
+        "status": "SENT"
+      },
+      {
+        "id": "msg_hist1_004",
+        "type": "TEXT",
+        "content": "历史对话内容 [4/4]：开发效率真的很高！",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_001",
+        "sender_avatar": "",
+        "timestamp": 1711265640000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

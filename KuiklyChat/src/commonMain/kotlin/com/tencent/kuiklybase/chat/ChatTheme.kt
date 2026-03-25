@@ -81,7 +81,29 @@ data class ChatThemeColors(
     /** 置顶标记颜色 */
     val pinnedIndicatorColor: Long = 0xFF4F8FFF,
     /** 已编辑标记文字颜色 */
-    val editedLabelColor: Long = 0xFF999999
+    val editedLabelColor: Long = 0xFF999999,
+    /** 错误/危险颜色（重发按钮、发送失败提示） */
+    val errorColor: Long = 0xFFFF4444,
+    /** 加载提示文字颜色 */
+    val loadingTextColor: Long = 0xFF999999,
+    /** 辅助提示文字颜色（如"上拉加载更多"、"已到顶"） */
+    val hintTextColor: Long = 0xFFBBBBBB,
+
+    // ---- MessageComposer 颜色 ----
+    /** 输入栏背景色 */
+    val composerBackgroundColor: Long = 0xFFF8F8F8,
+    /** 输入栏顶部边框色 */
+    val composerBorderColor: Long = 0xFFE0E0E0,
+    /** 输入框背景色 */
+    val composerInputBackgroundColor: Long = 0xFFFFFFFF,
+    /** 输入框边框色 */
+    val composerInputBorderColor: Long = 0xFFE0E0E0,
+    /** 输入框文字颜色 */
+    val composerInputTextColor: Long = 0xFF333333,
+    /** 输入框占位文字颜色 */
+    val composerPlaceholderColor: Long = 0xFFBBBBBB,
+    /** 发送按钮文字颜色 */
+    val composerSendButtonTextColor: Long = 0xFFFFFFFF
 )
 
 /**
@@ -124,7 +146,17 @@ val DarkThemeColors = ChatThemeColors(
     unreadBadgeTextColor = 0xFFFFFFFF,
     onlineIndicatorColor = 0xFF66BB6A,
     pinnedIndicatorColor = 0xFF5B9FFF,
-    editedLabelColor = 0xFF808080
+    editedLabelColor = 0xFF808080,
+    errorColor = 0xFFFF6B6B,
+    loadingTextColor = 0xFF808080,
+    hintTextColor = 0xFF606060,
+    composerBackgroundColor = 0xFF2D2D44,
+    composerBorderColor = 0xFF3D3D5C,
+    composerInputBackgroundColor = 0xFF1A1A2E,
+    composerInputBorderColor = 0xFF3D3D5C,
+    composerInputTextColor = 0xFFE0E0E0,
+    composerPlaceholderColor = 0xFF606060,
+    composerSendButtonTextColor = 0xFFFFFFFF
 )
 
 /**

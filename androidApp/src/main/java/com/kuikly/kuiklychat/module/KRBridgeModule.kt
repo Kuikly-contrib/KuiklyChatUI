@@ -11,6 +11,8 @@ import com.kuikly.kuiklychat.KRApplication
 import com.kuikly.kuiklychat.KuiklyRenderActivity
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -68,6 +70,10 @@ class KRBridgeModule : KuiklyRenderBaseModule() {
 
             "dateFormatter" -> {
                 dateFormatter(params)
+            }
+
+            "readAssetFile" -> {
+                readAssetFile(params, callback)
             }
 
             else -> callback?.invoke(
@@ -163,6 +169,33 @@ class KRBridgeModule : KuiklyRenderBaseModule() {
         val data = Date(paramJSONObject.optLong("timeStamp"))
         val format = SimpleDateFormat(paramJSONObject.optString("format"))
         return format.format(data)
+    }
+
+    /**
+     * 读取 assets 目录下的文件内容并通过 callback 返回。
+     * 在子线程中执行 IO 操作，避免阻塞主线程。
+     */
+    private fun readAssetFile(params: String?, callback: KuiklyRenderCallback?) {
+        if (params == null || callback == null) return
+        Thread {
+            try {
+                val paramJSONObject = JSONObject(params)
+                val assetPath = paramJSONObject.optString("assetPath")
+                val inputStream = context?.assets?.open(assetPath)
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                val stringBuilder = StringBuilder()
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    stringBuilder.append(line)
+                }
+                reader.close()
+                val content = stringBuilder.toString()
+                callback.invoke(mapOf("result" to content))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                callback.invoke(mapOf("error" to (e.message ?: "读取失败")))
+            }
+        }.start()
     }
 
     companion object {

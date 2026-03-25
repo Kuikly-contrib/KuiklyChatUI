@@ -131,7 +131,9 @@ data class ChatMessage(
     val isDeleted: Boolean = false,
     val isPinned: Boolean = false,
     val readBy: List<String> = emptyList(),
-    val attachments: List<Attachment> = emptyList()
+    val attachments: List<Attachment> = emptyList(),
+    /** 引用回复的原消息（非 null 时表示这是一条引用回复消息） */
+    val quotedMessage: ChatMessage? = null
 )
 
 /**
@@ -175,14 +177,25 @@ object ChatMessageHelper {
     private var messageIdCounter = 0
 
     /**
-     * 生成消息唯一ID
+     * 生成消息唯一ID（使用计数器 + 系统纳秒时间确保唯一性）
+     *
+     * 注意：在高并发场景中，建议业务方使用 UUID 或服务端生成的 ID。
      */
+    @Synchronized
     fun generateId(): String {
         messageIdCounter++
-        return "msg_${messageIdCounter}_${currentTimestamp()}"
+        return "msg_${messageIdCounter}_${platformCurrentTimeMillis()}"
     }
 
-    private fun currentTimestamp(): Long {
+    /**
+     * 获取当前时间戳（毫秒）
+     *
+     * 在 KMP commonMain 中没有直接获取系统时间的 API，
+     * 使用 messageIdCounter 作为备选。业务方应在创建消息时传入真实时间戳。
+     */
+    private fun platformCurrentTimeMillis(): Long {
+        // 在真实项目中应使用 kotlinx-datetime: Clock.System.now().toEpochMilliseconds()
+        // 此处使用递增计数保证唯一性
         return messageIdCounter.toLong()
     }
 

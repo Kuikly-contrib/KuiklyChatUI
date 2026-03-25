@@ -289,6 +289,21 @@ internal class BridgeModule : Module() {
         return syncCallNativeMethod(CLOSE_KEYBOARD, data, callbackFn)
     }
 
+    /**
+     * 异步读取 assets 目录下的文件内容。
+     *
+     * 文件路径相对于 `src/commonMain/assets/` 目录。
+     * 回调返回 JSONObject，其中 "result" 字段为文件内容（字符串）。
+     *
+     * @param assetPath 相对于 assets 目录的文件路径，如 "chat_data/initial_messages.json"
+     * @param callback 读取完成后的回调
+     */
+    fun readAssetFile(assetPath: String, callback: CallbackFn?) {
+        val params = JSONObject()
+        params.put("assetPath", assetPath)
+        callNativeMethod(READ_ASSET_FILE, params, callback)
+    }
+
     fun humanVerification(params: JSONObject, callbackFn: CallbackFn? = null): String {
         return syncCallNativeMethod(HUMAN_VERIFICATION, params, callbackFn)
     }
@@ -352,6 +367,7 @@ internal class BridgeModule : Module() {
         const val URL_DECODE = "urlDecode"
         const val SHOW_PHOTO_BROWSER = "showPhotoBrowser"
         const val HUMAN_VERIFICATION = "humanVerification"
+        const val READ_ASSET_FILE = "readAssetFile"
     }
 
 }

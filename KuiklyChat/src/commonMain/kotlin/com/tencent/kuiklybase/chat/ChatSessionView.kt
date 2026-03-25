@@ -3,6 +3,7 @@ package com.tencent.kuiklybase.chat
 import com.tencent.kuikly.core.base.*
 import com.tencent.kuikly.core.directives.scrollToPosition
 import com.tencent.kuikly.core.directives.vforLazy
+import com.tencent.kuikly.core.directives.vif
 import com.tencent.kuikly.core.layout.FlexAlign
 import com.tencent.kuikly.core.layout.FlexDirection
 import com.tencent.kuikly.core.layout.FlexJustifyContent
@@ -22,6 +23,9 @@ fun ViewContainer<*, *>.ChatSession(
     val listOptions = cfg.messageListOptions
     val slots = cfg.slots
     val theme = cfg.theme
+
+    // 持有主题颜色引用
+    val themeColors = cfg.theme.resolvedColors()
 
     // 持有 List 引用
     var listViewRef: ViewRef<ListView<*, *>>? = null
@@ -115,6 +119,38 @@ fun ViewContainer<*, *>.ChatSession(
     }
 
     cfg.scrollToBottomAction = scrollToBottom
+
+    // P0: 内置操作菜单——自动包装长按回调
+    if (cfg.enableBuiltInMessageOptions) {
+        val userLongPressWithPosition = cfg.onMessageLongPressWithPosition
+        val userLongPress = cfg.onMessageLongPress
+        cfg.onMessageLongPressWithPosition = { message, x, y, w, h ->
+            if (message.type != MessageType.SYSTEM) {
+                cfg._optionsTargetMessage = message
+                cfg._optionsTargetX = x
+                cfg._optionsTargetY = y
+                cfg._optionsTargetW = w
+                cfg._optionsTargetH = h
+                cfg._showMessageOptions = true
+            }
+            // 也调用用户设置的原始回调
+            userLongPressWithPosition?.invoke(message, x, y, w, h)
+        }
+        // 同时包装无位置的长按（作为兜底）
+        if (cfg.onMessageLongPress == null) {
+            cfg.onMessageLongPress = { message ->
+                if (message.type != MessageType.SYSTEM) {
+                    cfg._optionsTargetMessage = message
+                    cfg._optionsTargetX = 0f
+                    cfg._optionsTargetY = 100f
+                    cfg._optionsTargetW = 200f
+                    cfg._optionsTargetH = 50f
+                    cfg._showMessageOptions = true
+                }
+                userLongPress?.invoke(message)
+            }
+        }
+    }
 
     // scrollToMessage：滚动到指定消息 ID 的位置
     cfg.scrollToMessageAction = { messageId, animate ->
@@ -247,7 +283,7 @@ fun ViewContainer<*, *>.ChatSession(
                                         attr {
                                             text("加载中...")
                                             fontSize(12f)
-                                            color(Color(0xFF999999))
+                                            color(Color(themeColors.loadingTextColor))
                                         }
                                     }
                                 }
@@ -263,7 +299,7 @@ fun ViewContainer<*, *>.ChatSession(
                                     attr {
                                         text("上拉加载更多")
                                         fontSize(12f)
-                                        color(Color(0xFFBBBBBB))
+                                        color(Color(themeColors.hintTextColor))
                                     }
                                 }
                             }
@@ -278,7 +314,7 @@ fun ViewContainer<*, *>.ChatSession(
                                     attr {
                                         text("—— 已经到顶了 ——")
                                         fontSize(12f)
-                                        color(Color(0xFFBBBBBB))
+                                        color(Color(themeColors.hintTextColor))
                                     }
                                 }
                             }
@@ -302,6 +338,8 @@ fun ViewContainer<*, *>.ChatSession(
                                     ChatDateSeparator {
                                         attr {
                                             dateText = formattedDate
+                                            bgColor = themeColors.dateSeparatorBgColor
+                                            textColor = themeColors.dateSeparatorTextColor
                                         }
                                     }
                                 }
@@ -328,11 +366,13 @@ fun ViewContainer<*, *>.ChatSession(
                                     if (factory != null) {
                                         factory.render(this@itemRoot, msgContext, cfg)
                                     } else {
-                                        ChatSystemMessage {
-                                            attr {
-                                                this.message = message.content
-                                            }
+                                    ChatSystemMessage {
+                                        attr {
+                                            this.message = message.content
+                                            bgColor = themeColors.systemMessageBgColor
+                                            textColor = themeColors.systemMessageTextColor
                                         }
+                                    }
                                     }
                                 }
                             }
@@ -364,7 +404,7 @@ fun ViewContainer<*, *>.ChatSession(
                                                 MessageType.TEXT -> renderDefaultBubble(this@itemRoot, msgContext, cfg)
                                                 MessageType.IMAGE -> renderDefaultImageBubble(this@itemRoot, msgContext, cfg)
                                                 MessageType.VIDEO -> renderDefaultImageBubble(this@itemRoot, msgContext, cfg)
-                                                MessageType.FILE -> renderDefaultBubble(this@itemRoot, msgContext, cfg)
+                                                MessageType.FILE -> renderDefaultFileBubble(this@itemRoot, msgContext, cfg)
                                                 MessageType.CUSTOM -> {
                                                     ChatSystemMessage {
                                                         attr {
@@ -405,6 +445,8 @@ fun ViewContainer<*, *>.ChatSession(
                     ChatTypingIndicator {
                         attr {
                             this.typingText = typingText
+                            dotColor = themeColors.typingIndicatorDotColor
+                            textColor = themeColors.typingIndicatorTextColor
                         }
                     }
                 }
@@ -413,10 +455,153 @@ fun ViewContainer<*, *>.ChatSession(
 
         // ========== MessageComposer 输入框（参考 Stream Chat Compose 的 MessageComposer） ==========
         if (cfg.showMessageComposer) {
+            // P0: 默认 composerHeader — 引用回复提示条
+            if (slots.composerHeader == null && cfg._replyingToMessage != null) {
+                slots.composerHeader = { container, state ->
+                    val replyMsg = cfg._replyingToMessage
+                    if (replyMsg != null) {
+                        container.apply {
+                            View {
+                                attr {
+                                    flexDirectionRow()
+                                    alignItems(FlexAlign.CENTER)
+                                    padding(8f, 12f, 8f, 12f)
+                                    backgroundColor(Color(themeColors.quoteReplyBgColor))
+                                    borderBottom(Border(0.5f, BorderStyle.SOLID, Color(themeColors.dividerColor)))
+                                }
+                                // 引用竖线
+                                View {
+                                    attr {
+                                        width(3f)
+                                        height(32f)
+                                        borderRadius(1.5f)
+                                        backgroundColor(Color(themeColors.quoteReplyBarColor))
+                                        marginRight(8f)
+                                    }
+                                }
+                                // 回复信息
+                                View {
+                                    attr {
+                                        flex(1f)
+                                        flexDirection(FlexDirection.COLUMN)
+                                    }
+                                    Text {
+                                        attr {
+                                            text("回复 ${replyMsg.senderName}")
+                                            fontSize(12f)
+                                            fontWeightMedium()
+                                            color(Color(themeColors.quoteReplyBarColor))
+                                        }
+                                    }
+                                    Text {
+                                        attr {
+                                            val preview = if (replyMsg.content.length > 40) {
+                                                replyMsg.content.take(40) + "..."
+                                            } else {
+                                                replyMsg.content
+                                            }
+                                            text(preview)
+                                            fontSize(12f)
+                                            color(Color(themeColors.quoteReplyTextColor))
+                                            marginTop(2f)
+                                            lines(1)
+                                        }
+                                    }
+                                }
+                                // 关闭按钮
+                                View {
+                                    attr {
+                                        size(28f, 28f)
+                                        allCenter()
+                                        marginLeft(8f)
+                                    }
+                                    Text {
+                                        attr {
+                                            text("✕")
+                                            fontSize(16f)
+                                            color(Color(themeColors.readReceiptColor))
+                                        }
+                                    }
+                                    event {
+                                        click {
+                                            cfg.cancelReply()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             ChatMessageComposer(
                 cfg = cfg,
                 safeAreaBottom = cfg.composerSafeAreaBottom
             )
+        }
+
+        // ========== P0: 内置操作菜单（自动管理菜单状态） ==========
+        if (cfg.enableBuiltInMessageOptions) {
+            vif({ cfg._showMessageOptions }) {
+                View {
+                    attr {
+                        positionAbsolute()
+                        top(0f)
+                        left(0f)
+                        right(0f)
+                        bottom(0f)
+                    }
+                    ChatMessageOptions {
+                        attr {
+                            message = cfg._optionsTargetMessage
+                            actions = cfg.messageActions
+                            targetX = cfg._optionsTargetX
+                            targetY = cfg._optionsTargetY
+                            targetWidth = cfg._optionsTargetW
+                            targetHeight = cfg._optionsTargetH
+                            screenWidth = getPager().pageData.pageViewWidth
+                            screenHeight = getPager().pageData.pageViewHeight
+                            // 传递主题色
+                            menuBgColor = themeColors.menuBackgroundColor
+                            textColor = themeColors.menuTextColor
+                            destructiveColor = themeColors.menuDestructiveColor
+                            dividerColor = themeColors.dividerColor
+                            // 气泡样式信息
+                            bubblePrimaryColor = theme.primaryColor
+                            bubblePrimaryGradientEndColor = theme.primaryGradientEndColor
+                            bubbleOtherBubbleColor = theme.otherBubbleColor
+                            bubbleOtherTextColor = theme.otherTextColor
+                            bubbleSelfTextColor = theme.selfTextColor
+                            bubblePaddingH = theme.bubblePaddingH
+                            bubblePaddingV = theme.bubblePaddingV
+                            bubbleFontSize = theme.messageFontSize
+                            bubbleLineHeight = theme.messageLineHeight
+                        }
+                        event {
+                            onActionClick = { action ->
+                                cfg._optionsTargetMessage?.let { msg ->
+                                    // 处理内置操作
+                                    when (action.key) {
+                                        "reply", "quote" -> {
+                                            cfg.replyToMessage(msg)
+                                        }
+                                    }
+                                    cfg.onMessageAction?.invoke(msg, action)
+                                }
+                            }
+                            onReactionSelect = { emoji ->
+                                cfg._optionsTargetMessage?.let { msg ->
+                                    cfg.onReactionClick?.invoke(msg, emoji)
+                                }
+                            }
+                            onDismiss = {
+                                cfg._showMessageOptions = false
+                                cfg._optionsTargetMessage = null
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -435,6 +620,7 @@ internal fun renderDefaultBubble(
 ) {
     val message = msgContext.message
     val theme = cfg.theme
+    val themeColors = theme.resolvedColors()
     val listOptions = cfg.messageListOptions
 
     // 分组渲染：只有分组中最后一条消息显示头像（参考 Stream Chat 的 messagePositionHandler）
@@ -486,6 +672,24 @@ internal fun renderDefaultBubble(
             isEdited = message.isEdited
             isDeleted = message.isDeleted
             isPinned = message.isPinned
+            // P0: 主题色属性（从 resolvedColors 传入，消除硬编码）
+            senderNameColor = themeColors.senderNameColor
+            avatarPlaceholderColor = themeColors.avatarPlaceholderColor
+            readReceiptColor = themeColors.readReceiptColor
+            editedLabelColor = themeColors.editedLabelColor
+            pinnedIndicatorColor = themeColors.pinnedIndicatorColor
+            errorColor = themeColors.errorColor
+            // P0: 引用回复属性
+            val quoted = message.quotedMessage
+            if (quoted != null) {
+                quotedMessageContent = quoted.content
+                quotedMessageSender = quoted.senderName
+                quoteReplyBgColor = themeColors.quoteReplyBgColor
+                quoteReplyBarColor = themeColors.quoteReplyBarColor
+                quoteReplyTextColor = themeColors.quoteReplyTextColor
+            }
+            // P1: 线程回复
+            threadCount = message.threadCount
         }
         event {
             onClick = {
@@ -502,6 +706,18 @@ internal fun renderDefaultBubble(
             onReactionClick = { type ->
                 cfg.onReactionClick?.invoke(message, type)
             }
+            // P0: 头像点击
+            onAvatarClick = {
+                cfg.onAvatarClick?.invoke(message)
+            }
+            // P0: 重发按钮点击
+            onResendClick = {
+                cfg.onResend?.invoke(message)
+            }
+            // P1: 线程回复点击
+            onThreadClick = {
+                cfg.onThreadClick?.invoke(message)
+            }
         }
     }
 }
@@ -516,6 +732,7 @@ internal fun renderDefaultImageBubble(
 ) {
     val message = msgContext.message
     val theme = cfg.theme
+    val themeColors = theme.resolvedColors()
     val listOptions = cfg.messageListOptions
 
     // 分组渲染逻辑（与文本气泡一致）
@@ -535,9 +752,12 @@ internal fun renderDefaultImageBubble(
         theme.rowPaddingV
     }
 
-    // 计算图片显示尺寸
-    val rawWidth = message.extra["width"]?.toFloatOrNull() ?: 0f
-    val rawHeight = message.extra["height"]?.toFloatOrNull() ?: 0f
+    // 计算图片显示尺寸（优先从 Attachment 读取，兼容 extra Map）
+    val attachment = message.attachments.firstOrNull()
+    val rawWidth = attachment?.width?.toFloat()
+        ?: message.extra["width"]?.toFloatOrNull() ?: 0f
+    val rawHeight = attachment?.height?.toFloat()
+        ?: message.extra["height"]?.toFloatOrNull() ?: 0f
     val maxW = theme.imageMaxWidth
     val maxH = theme.imageMaxHeight
     val (displayWidth, displayHeight) = if (rawWidth > 0 && rawHeight > 0) {
@@ -546,6 +766,9 @@ internal fun renderDefaultImageBubble(
     } else {
         maxW to maxH
     }
+
+    // 是否为视频消息（需要播放按钮覆盖层）
+    val isVideo = message.type == MessageType.VIDEO
 
     container.apply {
         var imgBubbleRef: ViewRef<DivView>? = null
@@ -567,15 +790,14 @@ internal fun renderDefaultImageBubble(
                         flexDirection(FlexDirection.COLUMN)
                         flex(1f)
                     }
-                    // 发送者名称（显示在第一组消息上方，与气泡左边缘对齐）
+                    // 发送者名称
                     if (showNameForThis) {
                         Text {
                             attr {
                                 text(message.senderName)
                                 fontSize(12f)
-                                color(Color(0xFF999999))
+                                color(Color(themeColors.senderNameColor))
                                 marginBottom(4f)
-                                // 名字左侧缩进：头像宽度 + 头像与气泡间距，与气泡左边缘对齐
                                 if (listOptions.showAvatar) {
                                     marginLeft(theme.avatarSize + theme.avatarBubbleGap)
                                 }
@@ -592,7 +814,7 @@ internal fun renderDefaultImageBubble(
                                 attr {
                                     size(theme.avatarSize, theme.avatarSize)
                                     borderRadius(theme.avatarRadius)
-                                    backgroundColor(Color(0xFFE8E8E8))
+                                    backgroundColor(Color(themeColors.avatarPlaceholderColor))
                                     marginTop(2f)
                                 }
                                 Image {
@@ -603,9 +825,12 @@ internal fun renderDefaultImageBubble(
                                         resizeCover()
                                     }
                                 }
+                                // P0: 头像点击
+                                event {
+                                    click { cfg.onAvatarClick?.invoke(message) }
+                                }
                             }
                         } else if (listOptions.showAvatar) {
-                            // 分组内非最后一条：头像占位
                             View {
                                 attr {
                                     size(theme.avatarSize, theme.avatarSize)
@@ -618,20 +843,56 @@ internal fun renderDefaultImageBubble(
                                 marginLeft(if (listOptions.showAvatar) theme.avatarBubbleGap else 0f)
                                 flexDirection(FlexDirection.COLUMN)
                             }
-                            // 图片
+                            // 图片 + 视频播放按钮
                             View {
                                 ref { imgBubbleRef = it }
                                 attr {
                                     size(displayWidth, displayHeight)
                                     borderRadius(theme.imageRadius)
-                                    backgroundColor(Color(0xFFE8E8E8))
+                                    backgroundColor(Color(themeColors.avatarPlaceholderColor))
                                 }
                                 Image {
                                     attr {
                                         size(displayWidth, displayHeight)
                                         borderRadius(theme.imageRadius)
-                                        src(message.content)
+                                        // 视频消息优先使用缩略图
+                                        val imgSrc = if (isVideo) {
+                                            attachment?.thumbnailUrl?.ifEmpty { message.content } ?: message.content
+                                        } else {
+                                            message.content
+                                        }
+                                        src(imgSrc)
                                         resizeCover()
+                                    }
+                                }
+                                // P1: 视频播放按钮覆盖层
+                                if (isVideo) {
+                                    View {
+                                        attr {
+                                            positionAbsolute()
+                                            top(0f)
+                                            left(0f)
+                                            size(displayWidth, displayHeight)
+                                            allCenter()
+                                        }
+                                        // 半透明黑色圆形背景
+                                        View {
+                                            attr {
+                                                size(48f, 48f)
+                                                borderRadius(24f)
+                                                backgroundColor(Color(0x80000000))
+                                                allCenter()
+                                            }
+                                            // 播放三角形（使用 unicode 字符）
+                                            Text {
+                                                attr {
+                                                    text("▶")
+                                                    fontSize(20f)
+                                                    color(Color.WHITE)
+                                                    marginLeft(3f) // 视觉居中微调
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                                 event {
@@ -661,12 +922,33 @@ internal fun renderDefaultImageBubble(
                                     attr {
                                         text("📌 已置顶")
                                         fontSize(10f)
-                                        color(Color(0xFF4F8FFF))
+                                        color(Color(themeColors.pinnedIndicatorColor))
                                         marginTop(2f)
                                     }
                                 }
                             }
-                            // 反应栏（图片下方）
+                            // P1: 线程回复入口
+                            if (message.threadCount > 0) {
+                                View {
+                                    attr {
+                                        flexDirectionRow()
+                                        alignItems(FlexAlign.CENTER)
+                                        marginTop(4f)
+                                    }
+                                    Text {
+                                        attr {
+                                            text("💬 ${message.threadCount} 条回复")
+                                            fontSize(12f)
+                                            color(Color(theme.primaryColor))
+                                            fontWeightMedium()
+                                        }
+                                    }
+                                    event {
+                                        click { cfg.onThreadClick?.invoke(message) }
+                                    }
+                                }
+                            }
+                            // 反应栏
                             if (message.reactions.isNotEmpty()) {
                                 ChatReactionBar {
                                     attr {
@@ -683,14 +965,14 @@ internal fun renderDefaultImageBubble(
                     }
                 }
             } else {
-                // 自己的消息：图片 + 头像在右
-                // 重发按钮
+                // 自己的消息：重发 + 图片 + 头像在右
+                // P0: 重发按钮（自动根据 status 显示）
                 if (message.status == MessageStatus.FAILED) {
                     View {
                         attr {
                             size(24f, 24f)
                             borderRadius(12f)
-                            backgroundColor(Color(0xFFFF4444))
+                            backgroundColor(Color(themeColors.errorColor))
                             allCenter()
                             marginRight(6f)
                             alignSelf(FlexAlign.CENTER)
@@ -702,6 +984,9 @@ internal fun renderDefaultImageBubble(
                                 fontWeightBold()
                                 color(Color.WHITE)
                             }
+                        }
+                        event {
+                            click { cfg.onResend?.invoke(message) }
                         }
                     }
                 }
@@ -716,14 +1001,47 @@ internal fun renderDefaultImageBubble(
                         attr {
                             size(displayWidth, displayHeight)
                             borderRadius(theme.imageRadius)
-                            backgroundColor(Color(0xFFE8E8E8))
+                            backgroundColor(Color(themeColors.avatarPlaceholderColor))
                         }
                         Image {
                             attr {
                                 size(displayWidth, displayHeight)
                                 borderRadius(theme.imageRadius)
-                                src(message.content)
+                                val imgSrc = if (isVideo) {
+                                    attachment?.thumbnailUrl?.ifEmpty { message.content } ?: message.content
+                                } else {
+                                    message.content
+                                }
+                                src(imgSrc)
                                 resizeCover()
+                            }
+                        }
+                        // P1: 视频播放按钮覆盖层
+                        if (isVideo) {
+                            View {
+                                attr {
+                                    positionAbsolute()
+                                    top(0f)
+                                    left(0f)
+                                    size(displayWidth, displayHeight)
+                                    allCenter()
+                                }
+                                View {
+                                    attr {
+                                        size(48f, 48f)
+                                        borderRadius(24f)
+                                        backgroundColor(Color(0x80000000))
+                                        allCenter()
+                                    }
+                                    Text {
+                                        attr {
+                                            text("▶")
+                                            fontSize(20f)
+                                            color(Color.WHITE)
+                                            marginLeft(3f)
+                                        }
+                                    }
+                                }
                             }
                         }
                         event {
@@ -753,12 +1071,33 @@ internal fun renderDefaultImageBubble(
                             attr {
                                 text("📌 已置顶")
                                 fontSize(10f)
-                                color(Color(0xFF4F8FFF))
+                                color(Color(themeColors.pinnedIndicatorColor))
                                 marginTop(2f)
                             }
                         }
                     }
-                    // 反应栏（图片下方）
+                    // P1: 线程回复入口
+                    if (message.threadCount > 0) {
+                        View {
+                            attr {
+                                flexDirectionRow()
+                                alignItems(FlexAlign.CENTER)
+                                marginTop(4f)
+                            }
+                            Text {
+                                attr {
+                                    text("💬 ${message.threadCount} 条回复")
+                                    fontSize(12f)
+                                    color(Color(theme.primaryColor))
+                                    fontWeightMedium()
+                                }
+                            }
+                            event {
+                                click { cfg.onThreadClick?.invoke(message) }
+                            }
+                        }
+                    }
+                    // 反应栏
                     if (message.reactions.isNotEmpty()) {
                         ChatReactionBar {
                             attr {
@@ -778,7 +1117,7 @@ internal fun renderDefaultImageBubble(
                         attr {
                             size(theme.avatarSize, theme.avatarSize)
                             borderRadius(theme.avatarRadius)
-                            backgroundColor(Color(0xFFE8E8E8))
+                            backgroundColor(Color(themeColors.avatarPlaceholderColor))
                             marginLeft(theme.avatarBubbleGap)
                             marginTop(2f)
                         }
@@ -790,9 +1129,12 @@ internal fun renderDefaultImageBubble(
                                 resizeCover()
                             }
                         }
+                        // P0: 头像点击
+                        event {
+                            click { cfg.onAvatarClick?.invoke(message) }
+                        }
                     }
                 } else if (listOptions.showAvatar) {
-                    // 分组内非最后一条：头像占位
                     View {
                         attr {
                             marginLeft(theme.avatarBubbleGap)
@@ -802,5 +1144,276 @@ internal fun renderDefaultImageBubble(
                 }
             }
         }
+    }
+}
+
+/**
+ * P1: 默认文件消息渲染（卡片样式：文件图标 + 文件名 + 文件大小）
+ */
+internal fun renderDefaultFileBubble(
+    container: ViewContainer<*, *>,
+    msgContext: MessageContext,
+    cfg: ChatSessionConfig
+) {
+    val message = msgContext.message
+    val theme = cfg.theme
+    val themeColors = theme.resolvedColors()
+    val listOptions = cfg.messageListOptions
+    val attachment = message.attachments.firstOrNull()
+
+    val showAvatarForThis = if (listOptions.enableMessageGrouping) {
+        listOptions.showAvatar && msgContext.isLastInGroup
+    } else {
+        listOptions.showAvatar
+    }
+    val showNameForThis = if (listOptions.enableMessageGrouping) {
+        !message.isSelf && listOptions.showSenderName && msgContext.isFirstInGroup
+    } else {
+        !message.isSelf && listOptions.showSenderName
+    }
+    val verticalPadding = if (listOptions.enableMessageGrouping && !msgContext.isFirstInGroup) {
+        1f
+    } else {
+        theme.rowPaddingV
+    }
+
+    // 文件名和大小
+    val fileName = attachment?.title?.ifEmpty { message.content } ?: message.content
+    val fileSize = attachment?.fileSize ?: message.extra["fileSize"]?.toLongOrNull() ?: 0L
+    val fileSizeText = formatFileSize(fileSize)
+
+    container.apply {
+        View {
+            attr {
+                flexDirectionRow()
+                padding(verticalPadding, theme.rowPaddingH, verticalPadding, theme.rowPaddingH)
+                if (message.isSelf) {
+                    justifyContent(FlexJustifyContent.FLEX_END)
+                } else {
+                    justifyContent(FlexJustifyContent.FLEX_START)
+                }
+            }
+
+            if (!message.isSelf) {
+                View {
+                    attr {
+                        flexDirection(FlexDirection.COLUMN)
+                        flex(1f)
+                    }
+                    if (showNameForThis) {
+                        Text {
+                            attr {
+                                text(message.senderName)
+                                fontSize(12f)
+                                color(Color(themeColors.senderNameColor))
+                                marginBottom(4f)
+                                if (listOptions.showAvatar) {
+                                    marginLeft(theme.avatarSize + theme.avatarBubbleGap)
+                                }
+                            }
+                        }
+                    }
+                    View {
+                        attr { flexDirectionRow() }
+                        if (showAvatarForThis) {
+                            View {
+                                attr {
+                                    size(theme.avatarSize, theme.avatarSize)
+                                    borderRadius(theme.avatarRadius)
+                                    backgroundColor(Color(themeColors.avatarPlaceholderColor))
+                                    marginTop(2f)
+                                }
+                                Image {
+                                    attr {
+                                        size(theme.avatarSize, theme.avatarSize)
+                                        borderRadius(theme.avatarRadius)
+                                        src(message.senderAvatar.ifEmpty { ChatBubbleView.DEFAULT_AVATAR })
+                                        resizeCover()
+                                    }
+                                }
+                                event { click { cfg.onAvatarClick?.invoke(message) } }
+                            }
+                        } else if (listOptions.showAvatar) {
+                            View { attr { size(theme.avatarSize, theme.avatarSize) } }
+                        }
+                        // 文件卡片
+                        View {
+                            attr {
+                                marginLeft(if (listOptions.showAvatar) theme.avatarBubbleGap else 0f)
+                                backgroundColor(Color(theme.otherBubbleColor))
+                                borderRadius(12f)
+                                padding(12f, 14f, 12f, 14f)
+                                flexDirectionRow()
+                                alignItems(FlexAlign.CENTER)
+                                width(theme.bubbleMaxWidthRatio * 375f) // 固定宽度卡片
+                                boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                            }
+                            // 文件图标
+                            View {
+                                attr {
+                                    size(40f, 40f)
+                                    borderRadius(8f)
+                                    backgroundColor(Color(themeColors.primaryColor))
+                                    allCenter()
+                                    marginRight(12f)
+                                }
+                                Text {
+                                    attr {
+                                        text("📄")
+                                        fontSize(20f)
+                                    }
+                                }
+                            }
+                            // 文件名 + 大小
+                            View {
+                                attr {
+                                    flex(1f)
+                                    flexDirection(FlexDirection.COLUMN)
+                                }
+                                Text {
+                                    attr {
+                                        text(fileName)
+                                        fontSize(14f)
+                                        color(Color(theme.otherTextColor))
+                                        lines(2)
+                                    }
+                                }
+                                if (fileSizeText.isNotEmpty()) {
+                                    Text {
+                                        attr {
+                                            text(fileSizeText)
+                                            fontSize(11f)
+                                            color(Color(themeColors.readReceiptColor))
+                                            marginTop(2f)
+                                        }
+                                    }
+                                }
+                            }
+                            event {
+                                click { cfg.onMessageClick?.invoke(message) }
+                                longPress { cfg.onMessageLongPress?.invoke(message) }
+                            }
+                        }
+                    }
+                }
+            } else {
+                // 自己发送的文件
+                if (message.status == MessageStatus.FAILED) {
+                    View {
+                        attr {
+                            size(24f, 24f)
+                            borderRadius(12f)
+                            backgroundColor(Color(themeColors.errorColor))
+                            allCenter()
+                            marginRight(6f)
+                            alignSelf(FlexAlign.CENTER)
+                        }
+                        Text {
+                            attr {
+                                text("!")
+                                fontSize(14f)
+                                fontWeightBold()
+                                color(Color.WHITE)
+                            }
+                        }
+                        event { click { cfg.onResend?.invoke(message) } }
+                    }
+                }
+                View {
+                    attr {
+                        backgroundColor(Color(theme.otherBubbleColor))
+                        borderRadius(12f)
+                        padding(12f, 14f, 12f, 14f)
+                        flexDirectionRow()
+                        alignItems(FlexAlign.CENTER)
+                        width(theme.bubbleMaxWidthRatio * 375f)
+                        boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                    }
+                    View {
+                        attr {
+                            size(40f, 40f)
+                            borderRadius(8f)
+                            backgroundColor(Color(themeColors.primaryColor))
+                            allCenter()
+                            marginRight(12f)
+                        }
+                        Text {
+                            attr {
+                                text("📄")
+                                fontSize(20f)
+                            }
+                        }
+                    }
+                    View {
+                        attr {
+                            flex(1f)
+                            flexDirection(FlexDirection.COLUMN)
+                        }
+                        Text {
+                            attr {
+                                text(fileName)
+                                fontSize(14f)
+                                color(Color(theme.otherTextColor))
+                                lines(2)
+                            }
+                        }
+                        if (fileSizeText.isNotEmpty()) {
+                            Text {
+                                attr {
+                                    text(fileSizeText)
+                                    fontSize(11f)
+                                    color(Color(themeColors.readReceiptColor))
+                                    marginTop(2f)
+                                }
+                            }
+                        }
+                    }
+                    event {
+                        click { cfg.onMessageClick?.invoke(message) }
+                        longPress { cfg.onMessageLongPress?.invoke(message) }
+                    }
+                }
+                if (showAvatarForThis) {
+                    View {
+                        attr {
+                            size(theme.avatarSize, theme.avatarSize)
+                            borderRadius(theme.avatarRadius)
+                            backgroundColor(Color(themeColors.avatarPlaceholderColor))
+                            marginLeft(theme.avatarBubbleGap)
+                            marginTop(2f)
+                        }
+                        Image {
+                            attr {
+                                size(theme.avatarSize, theme.avatarSize)
+                                borderRadius(theme.avatarRadius)
+                                src(cfg.selfAvatarUrl.ifEmpty { ChatBubbleView.SELF_AVATAR })
+                                resizeCover()
+                            }
+                        }
+                        event { click { cfg.onAvatarClick?.invoke(message) } }
+                    }
+                } else if (listOptions.showAvatar) {
+                    View {
+                        attr {
+                            marginLeft(theme.avatarBubbleGap)
+                            size(theme.avatarSize, theme.avatarSize)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 格式化文件大小为可读字符串
+ */
+private fun formatFileSize(bytes: Long): String {
+    if (bytes <= 0) return ""
+    return when {
+        bytes < 1024 -> "${bytes} B"
+        bytes < 1024 * 1024 -> "${"%.1f".format(bytes / 1024f)} KB"
+        bytes < 1024 * 1024 * 1024 -> "${"%.1f".format(bytes / (1024f * 1024f))} MB"
+        else -> "${"%.2f".format(bytes / (1024f * 1024f * 1024f))} GB"
     }
 }
