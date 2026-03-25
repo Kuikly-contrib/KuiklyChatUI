@@ -10,18 +10,9 @@ import com.tencent.kuikly.core.reactive.collection.ObservableList
 import com.tencent.kuikly.core.reactive.handler.*
 import com.tencent.kuikly.core.views.*
 
-// ============================
-// ChatSession DSL 扩展函数
-// ============================
 
 /**
  * ChatSession - 聊天对话列表组件
- *
- * 架构参考 Stream Chat Compose SDK 的组件层次：
- * - Screen 组件级别：ChatSession ≈ MessagesScreen（组合 Header + MessageList）
- * - 输入栏外置：与 Stream Chat 的原子化设计一致（MessageComposer 独立）
- * - Slot 自定义：参考 Stream Chat 的 itemContent / emptyContent / loadingContent / helperContent
- * - 上下文感知：参考 Stream Chat 的 MessageItemState（前后消息、分组信息）
  */
 fun ViewContainer<*, *>.ChatSession(
     messageList: () -> ObservableList<ChatMessage>,
@@ -36,12 +27,18 @@ fun ViewContainer<*, *>.ChatSession(
     var listViewRef: ViewRef<ListView<*, *>>? = null
     // 消息列表区域的 ref，用于获取列表可视区域在页面中的位置
     var messageAreaRef: ViewRef<DivView>? = null
-    // 普通变量（非响应式），通过 scrollEnd 事件维护，不会触发视图重建
+    // 普通变量（非响应式），通过 scroll/scrollEnd 事件维护，不会触发视图重建
     var atBottom = true
     // 当前列表滚动偏移量（通过 scroll 事件实时更新）
     var currentScrollOffsetY = 0f
     // 记录上次已知的消息数量，用于检测新消息
     var lastKnownSize = messageList().size
+
+    // ========== 加载历史消息相关状态 ==========
+    // 记录插入历史消息前的消息数量，用于位置补偿
+    var sizeBeforeLoadEarlier = 0
+    // 是否需要进行位置补偿（头部插入历史消息后防跳动）
+    var needPositionCompensation = false
 
     // ========== 滚动控制 ==========
 
@@ -59,22 +56,62 @@ fun ViewContainer<*, *>.ChatSession(
     }
 
     /**
-     * 自动滚动策略（参考 Stream Chat MessageList 的滚动行为）：
-     * - 自己的消息 → 必须滚动到底部
-     * - 他人的消息 → 仅当当前在底部时才滚动（10px 容差）
+     * 滚动策略
      */
     val checkAutoScroll: () -> Unit = {
         val list = messageList()
         val currentSize = list.size
-        if (currentSize > lastKnownSize) {
+        if (currentSize > lastKnownSize && !needPositionCompensation) {
             val lastMessage = list.lastOrNull()
             if (lastMessage != null && lastMessage.isSelf) {
-                scrollToBottom(true)
+                scrollToBottom(false)
             } else if (atBottom) {
-                scrollToBottom(true)
+                scrollToBottom(false)
             }
         }
         lastKnownSize = currentSize
+    }
+
+    /**
+     * 检测是否需要触发加载历史消息（滚动接近顶部时触发）。
+     * 参考 Stream Chat 的 onMessagesPageStartReached。
+     */
+    val checkLoadEarlier: (offsetY: Float) -> Unit = { offsetY ->
+        if (listOptions.onLoadEarlier != null
+            && !listOptions.isLoadingEarlier
+            && listOptions.hasMoreEarlier
+            && offsetY <= listOptions.loadEarlierThreshold
+        ) {
+            // 记录当前消息数量，用于后续位置补偿
+            sizeBeforeLoadEarlier = messageList().size
+            needPositionCompensation = true
+            listOptions.onLoadEarlier?.invoke()
+        }
+    }
+
+    /**
+     * 位置补偿：历史消息插入到列表头部后，将滚动位置补偿到之前可见的消息。
+     * 正序方案的核心难点：在顶部插入 N 条消息后，scrollToPosition(N) 让之前的第 0 条
+     * 消息保持在原来的屏幕位置，避免列表跳动。
+     */
+    val checkPositionCompensation: () -> Unit = {
+        if (needPositionCompensation) {
+            val list = messageList()
+            val currentSize = list.size
+            val insertedCount = currentSize - sizeBeforeLoadEarlier
+            if (insertedCount > 0) {
+                // 布局完成后补偿位置：跳到插入数量的位置，让之前的第一条可见消息不动
+                getPager().addTaskWhenPagerUpdateLayoutFinish {
+                    listViewRef?.view?.scrollToPosition(
+                        index = insertedCount,
+                        offset = 0f,
+                        animate = false
+                    )
+                }
+            }
+            needPositionCompensation = false
+            lastKnownSize = currentSize
+        }
     }
 
     cfg.scrollToBottomAction = scrollToBottom
@@ -160,15 +197,26 @@ fun ViewContainer<*, *>.ChatSession(
                     scroll { params ->
                         currentScrollOffsetY = params.offsetY
                         cfg._currentScrollOffsetY = params.offsetY
+                        // 在滚动过程中也实时更新 atBottom 状态，避免在用户手指还在滑动时
+                        // 收到新消息导致 atBottom 判断不准确
+                        atBottom = params.offsetY + params.viewHeight + 10 >= params.contentHeight
+                        // 检测是否滚动接近顶部，触发加载历史消息
+                        checkLoadEarlier(params.offsetY)
                     }
                     scrollEnd { params ->
                         currentScrollOffsetY = params.offsetY
                         cfg._currentScrollOffsetY = params.offsetY
                         atBottom = params.offsetY + params.viewHeight + 10 >= params.contentHeight
+                        // scrollEnd 时也检查一下（用户轻扫到顶部惯性停下时）
+                        checkLoadEarlier(params.offsetY)
                     }
                 }
 
                 vforLazy(messageList) { message, index, count ->
+                    // 在首项渲染时检查是否需要位置补偿（历史消息插入后防跳动）
+                    if (index == 0) {
+                        checkPositionCompensation()
+                    }
                     // 在最后一项渲染时检测是否需要自动滚动到底部
                     if (listOptions.autoScrollToBottom && index == count - 1) {
                         checkAutoScroll()
@@ -183,6 +231,60 @@ fun ViewContainer<*, *>.ChatSession(
 
                     // vforLazy 闭包内只能有一个根子节点，用外层 View 包裹日期分隔符和消息
                     View {
+                    // ========== 加载历史消息指示器（仅在列表第一项上方显示） ==========
+                    if (index == 0 && listOptions.onLoadEarlier != null) {
+                        if (listOptions.isLoadingEarlier) {
+                            // 加载中：显示加载指示器
+                            if (slots.loadingMoreContent != null) {
+                                slots.loadingMoreContent!!.invoke(this@View)
+                            } else {
+                                View {
+                                    attr {
+                                        allCenter()
+                                        padding(12f, 0f, 8f, 0f)
+                                    }
+                                    Text {
+                                        attr {
+                                            text("加载中...")
+                                            fontSize(12f)
+                                            color(Color(0xFF999999))
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (listOptions.hasMoreEarlier) {
+                            // 有更多历史消息：显示提示
+                            View {
+                                attr {
+                                    allCenter()
+                                    padding(12f, 0f, 8f, 0f)
+                                }
+                                Text {
+                                    attr {
+                                        text("上拉加载更多")
+                                        fontSize(12f)
+                                        color(Color(0xFFBBBBBB))
+                                    }
+                                }
+                            }
+                        } else {
+                            // 已加载全部历史：显示提示
+                            View {
+                                attr {
+                                    allCenter()
+                                    padding(12f, 0f, 8f, 0f)
+                                }
+                                Text {
+                                    attr {
+                                        text("—— 已经到顶了 ——")
+                                        fontSize(12f)
+                                        color(Color(0xFFBBBBBB))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     // ========== 日期分隔符 ==========
                     if (listOptions.showTimeGroup && message.timestamp > 0L) {
                         val prevMsg = if (index > 0) messageList()[index - 1] else null
@@ -307,6 +409,14 @@ fun ViewContainer<*, *>.ChatSession(
                     }
                 }
             }
+        }
+
+        // ========== MessageComposer 输入框（参考 Stream Chat Compose 的 MessageComposer） ==========
+        if (cfg.showMessageComposer) {
+            ChatMessageComposer(
+                cfg = cfg,
+                safeAreaBottom = cfg.composerSafeAreaBottom
+            )
         }
     }
 }

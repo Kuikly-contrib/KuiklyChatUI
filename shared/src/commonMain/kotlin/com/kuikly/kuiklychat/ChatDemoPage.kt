@@ -2,13 +2,11 @@ package com.kuikly.kuiklychat
 
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.*
-import com.tencent.kuikly.core.layout.FlexAlign
 import com.tencent.kuikly.core.layout.FlexDirection
 import com.tencent.kuikly.core.module.RouterModule
 import com.tencent.kuikly.core.reactive.handler.*
 import com.tencent.kuikly.core.timer.setTimeout
 import com.tencent.kuikly.core.views.*
-import com.tencent.kuikly.core.views.layout.Row
 import com.tencent.kuikly.core.directives.vif
 import com.kuikly.kuiklychat.base.BasePager
 import com.tencent.kuiklybase.chat.*
@@ -33,14 +31,12 @@ internal class ChatDemoPage : BasePager() {
 
     var messageList by observableList<ChatMessage>()
 
-    // 输入框
-    private var currentInputText: String = ""
-    private lateinit var inputViewRef: ViewRef<InputView>
-
     // 持有 ChatSession 配置引用
     private var chatSessionConfig: ChatSessionConfig? = null
 
-
+    // 加载历史消息 Demo 相关
+    private var historyPageIndex = 0  // 已加载的历史页数
+    private val maxHistoryPages = 3   // 最多加载 3 页历史
 
     // 消息操作菜单状态
     private var showMessageOptions by observable(false)
@@ -67,12 +63,20 @@ internal class ChatDemoPage : BasePager() {
                 }
 
                 // ============================
-                // ChatSession - 消息列表容器
+                // ChatSession - 消息列表容器（含内置 MessageComposer）
                 // ============================
                 ChatSession({ ctx.messageList }) {
                     title = chatTitle
                     showBackButton = true
                     selfAvatarUrl = USER_AVATAR
+
+                    // ---- 启用内置 MessageComposer（参考 Stream Chat 的 MessageComposer） ----
+                    showMessageComposer = true
+                    composerPlaceholder = "输入消息..."
+                    composerSafeAreaBottom = ctx.pagerData.safeAreaInsets.bottom
+                    onSendMessage = { text ->
+                        ctx.sendMessage(text)
+                    }
 
                     // ---- 主题配置（新 DSL 方式，参考 Stream Chat 的 ChatTheme） ----
                     theme {
@@ -91,6 +95,12 @@ internal class ChatDemoPage : BasePager() {
                         // 启用消息分组（连续同一发送者的消息合并头像、缩小间距）
                         enableMessageGrouping = true
                         messageGroupingInterval = 2 * 60 * 1000L
+
+                        // ---- 加载历史消息配置 ----
+                        hasMoreEarlier = true
+                        onLoadEarlier = {
+                            ctx.loadEarlierMessages()
+                        }
                     }
 
                     // ---- 事件回调 ----
@@ -133,95 +143,6 @@ internal class ChatDemoPage : BasePager() {
                     ctx.chatSessionConfig = this
                 }
 
-
-                View {
-                    attr {
-                        backgroundColor(Color(0xFFF8F8F8))
-                        border(Border(0.5f, BorderStyle.SOLID, Color(0xFFE0E0E0)))
-                    }
-                    Row {
-                        attr {
-                            padding(8f, 12f, 8f, 12f)
-                            alignItems(FlexAlign.CENTER)
-                        }
-
-                        // 输入框
-                        View {
-                            attr {
-                                flex(1f)
-                                height(36f)
-                                backgroundColor(Color.WHITE)
-                                borderRadius(18f)
-                                border(Border(0.5f, BorderStyle.SOLID, Color(0xFFE0E0E0)))
-                                flexDirectionRow()
-                                alignItemsCenter()
-                            }
-                            Input {
-                                ref { ctx.inputViewRef = it }
-                                attr {
-                                    flex(1f)
-                                    height(36f)
-                                    fontSize(15f)
-                                    color(Color(0xFF333333))
-                                    placeholder("输入消息...")
-                                    placeholderColor(Color(0xFFBBBBBB))
-                                    marginLeft(14f)
-                                    marginRight(14f)
-                                    returnKeyTypeSend()
-                                }
-                                event {
-                                    textDidChange { params ->
-                                        ctx.currentInputText = params.text
-                                    }
-                                    inputReturn { params ->
-                                        if (params.text.isNotBlank()) {
-                                            ctx.currentInputText = params.text
-                                        }
-                                        ctx.sendMessage()
-                                    }
-                                }
-                            }
-                        }
-
-                        // 发送按钮
-                        View {
-                            attr {
-                                minWidth(60f)
-                                height(36f)
-                                marginLeft(4f)
-                                borderRadius(18f)
-                                backgroundLinearGradient(
-                                    Direction.TO_RIGHT,
-                                    ColorStop(Color(0xFF6C5CE7), 0f),
-                                    ColorStop(Color(0xFFA29BFE), 1f)
-                                )
-                                allCenter()
-                                padding(0f, 12f, 0f, 12f)
-                            }
-                            Text {
-                                attr {
-                                    text("发送")
-                                    fontSize(14f)
-                                    fontWeightMedium()
-                                    color(Color.WHITE)
-                                }
-                            }
-                            event {
-                                click {
-                                    ctx.sendMessage()
-                                }
-                            }
-                        }
-                    }
-
-                    // 底部安全区域占位
-                    View {
-                        attr {
-                            height(ctx.pagerData.safeAreaInsets.bottom)
-                            backgroundColor(Color(0xFFF8F8F8))
-                        }
-                    }
-                }
 
                 // ============================
                 // 消息操作菜单浮层（positionAbsolute 覆盖整个页面）
@@ -292,22 +213,95 @@ internal class ChatDemoPage : BasePager() {
     }
 
 
-    private fun sendMessage() {
-        val text = currentInputText.trim()
-        if (text.isNotEmpty()) {
+    /**
+     * 模拟加载更早的历史消息。
+     * 真实场景中应替换为网络请求。
+     */
+    private fun loadEarlierMessages() {
+        val cfg = chatSessionConfig ?: return
+        // 防止重复加载
+        if (cfg.isLoadingEarlier) return
+
+        cfg.isLoadingEarlier = true
+        historyPageIndex++
+
+        // 模拟网络延迟 800ms
+        setTimeout(800) {
+            val earliestTimestamp = messageList.firstOrNull()?.timestamp ?: 1711267200000L
+            val historyMessages = createHistoryMessages(earliestTimestamp, historyPageIndex)
+
+            // 插入到列表头部（组件会自动进行位置补偿防跳动）
+            messageList.addAll(0, historyMessages)
+
+            // 更新加载状态
+            cfg.isLoadingEarlier = false
+            if (historyPageIndex >= maxHistoryPages) {
+                cfg.hasMoreEarlier = false
+            }
+        }
+    }
+
+    /**
+     * 生成模拟历史消息（每页 5 条）
+     */
+    private fun createHistoryMessages(beforeTimestamp: Long, page: Int): List<ChatMessage> {
+        val messages = mutableListOf<ChatMessage>()
+        val baseTime = beforeTimestamp - page * 30 * 60_000L // 每页往前推 30 分钟
+
+        messages.add(
+            ChatMessageHelper.createTextMessage(
+                content = "这是第 $page 页的历史消息 [1/4]",
+                isSelf = false,
+                senderName = "小助手",
+                senderId = "assistant_001",
+                timestamp = baseTime + 60_000L
+            )
+        )
+        messages.add(
+            ChatMessageHelper.createTextMessage(
+                content = "历史对话内容 [2/4]：Kuikly 框架支持 Android、iOS、鸿蒙三端运行",
+                isSelf = true,
+                senderName = "我",
+                senderId = "user_001",
+                timestamp = baseTime + 2 * 60_000L
+            )
+        )
+        messages.add(
+            ChatMessageHelper.createTextMessage(
+                content = "历史对话内容 [3/4]：没错，而且还支持热重载开发 🔥",
+                isSelf = false,
+                senderName = "小助手",
+                senderId = "assistant_001",
+                timestamp = baseTime + 3 * 60_000L
+            )
+        )
+        messages.add(
+            ChatMessageHelper.createTextMessage(
+                content = "历史对话内容 [4/4]：开发效率真的很高！",
+                isSelf = true,
+                senderName = "我",
+                senderId = "user_001",
+                timestamp = baseTime + 4 * 60_000L
+            )
+        )
+
+        return messages
+    }
+
+    private fun sendMessage(text: String) {
+        val trimmedText = text.trim()
+        if (trimmedText.isNotEmpty()) {
             val userMessage = ChatMessageHelper.createTextMessage(
-                content = text,
+                content = trimmedText,
                 isSelf = true,
                 senderName = "我",
                 status = MessageStatus.SENT
             )
             messageList.add(userMessage)
-            currentInputText = ""
-            inputViewRef.view?.setText("")
 
             // 模拟自动回复（延迟 1 秒）
             setTimeout(1000) {
-                val reply = createAutoReply(text)
+                val reply = createAutoReply(trimmedText)
                 messageList.add(reply)
             }
         }

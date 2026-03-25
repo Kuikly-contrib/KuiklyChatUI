@@ -87,6 +87,84 @@ typealias ReactionBarSlot = (container: ViewContainer<*, *>, reactions: List<Rea
 typealias MessageOptionsSlot = (container: ViewContainer<*, *>, message: ChatMessage, actions: List<MessageAction>, onActionClick: (MessageAction) -> Unit, onDismiss: () -> Unit) -> Unit
 
 // ============================
+// MessageComposer Slot 类型定义（参考 Stream Chat Compose MessageComposer 的 Slot API）
+// ============================
+
+/**
+ * 输入框整体替换 Slot
+ *
+ * 完全替换默认的 MessageComposer，由使用方自行实现整个输入框区域。
+ * 参考 Stream Chat 的 stateless MessageComposer。
+ * - container: 父容器
+ * - state: 当前输入框状态
+ * - onSendMessage: 发送消息回调（传入文本内容）
+ */
+typealias MessageComposerSlot = (container: ViewContainer<*, *>, state: MessageComposerState, onSendMessage: (String) -> Unit) -> Unit
+
+/**
+ * 输入框左侧集成按钮区域 Slot（参考 Stream Chat MessageComposer 的 integrations Slot）
+ *
+ * 默认为空，可以放置附件选择、语音输入等按钮。
+ * - container: 父容器（Row 内部，水平排列）
+ * - state: 当前输入框状态
+ */
+typealias ComposerIntegrationsSlot = (container: ViewContainer<*, *>, state: MessageComposerState) -> Unit
+
+/**
+ * 输入框核心输入区域 Slot（参考 Stream Chat MessageComposer 的 input Slot）
+ *
+ * 替换默认的 Input 组件。可以自定义输入框样式、多行输入、富文本等。
+ * - container: 父容器
+ * - state: 当前输入框状态
+ * - onValueChange: 文本变化回调
+ */
+typealias ComposerInputSlot = (container: ViewContainer<*, *>, state: MessageComposerState, onValueChange: (String) -> Unit) -> Unit
+
+/**
+ * 输入框右侧内容 Slot（参考 Stream Chat MessageComposer 的 trailingContent Slot）
+ *
+ * 默认为发送按钮。可替换为语音/发送切换等复合组件。
+ * - container: 父容器（Row 内部，水平排列）
+ * - state: 当前输入框状态
+ * - onSendMessage: 发送回调
+ */
+typealias ComposerTrailingSlot = (container: ViewContainer<*, *>, state: MessageComposerState, onSendMessage: (String) -> Unit) -> Unit
+
+/**
+ * 输入框顶部内容 Slot（参考 Stream Chat MessageComposer 的 headerContent Slot）
+ *
+ * 在输入框上方显示额外内容，例如「正在回复 xxx」、「正在编辑」提示条。
+ * - container: 父容器
+ * - state: 当前输入框状态
+ */
+typealias ComposerHeaderSlot = (container: ViewContainer<*, *>, state: MessageComposerState) -> Unit
+
+/**
+ * 输入框底部内容 Slot（参考 Stream Chat MessageComposer 的 footerContent Slot）
+ *
+ * 在输入框下方（安全区域上方）显示额外内容，例如工具栏、表情面板入口等。
+ * - container: 父容器
+ * - state: 当前输入框状态
+ */
+typealias ComposerFooterSlot = (container: ViewContainer<*, *>, state: MessageComposerState) -> Unit
+
+/**
+ * 消息输入框状态（参考 Stream Chat 的 MessageComposerState）
+ *
+ * 封装输入框当前的所有状态，传递给各 Slot 使用。
+ */
+data class MessageComposerState(
+    /** 当前输入框中的文本 */
+    val inputValue: String = "",
+    /** 是否正在编辑某条消息（非 null 时表示编辑模式） */
+    val editingMessage: ChatMessage? = null,
+    /** 正在回复的消息（非 null 时表示回复模式） */
+    val replyingToMessage: ChatMessage? = null,
+    /** 附件列表（预留，当前未使用） */
+    val attachments: List<String> = emptyList()
+)
+
+// ============================
 // 配置分组（参考 Stream Chat 的 ChatTheme + Options 分层设计）
 // ============================
 
@@ -146,6 +224,22 @@ class ChatThemeOptions {
     var imageMaxHeight: Float = 200f
     /** 图片消息的圆角（默认 12f） */
     var imageRadius: Float = 12f
+
+    // ---- MessageComposer 主题（参考 Stream Chat ChatTheme 中 composer 相关配置） ----
+    /** 输入栏背景色 */
+    var composerBackgroundColor: Long = 0xFFF8F8F8
+    /** 输入栏顶部边框色 */
+    var composerBorderColor: Long = 0xFFE0E0E0
+    /** 输入框背景色 */
+    var composerInputBackgroundColor: Long = 0xFFFFFFFF
+    /** 输入框边框色 */
+    var composerInputBorderColor: Long = 0xFFE0E0E0
+    /** 输入框文字颜色 */
+    var composerInputTextColor: Long = 0xFF333333
+    /** 输入框占位文字颜色 */
+    var composerPlaceholderColor: Long = 0xFFBBBBBB
+    /** 发送按钮文字颜色 */
+    var composerSendButtonTextColor: Long = 0xFFFFFFFF
 
     /**
      * 获取当前主题的颜色方案。
@@ -213,13 +307,21 @@ class MessageListOptions {
      * 参考 Stream Chat MessageList 的 onMessagesPageStartReached。
      * 设置后列表顶部会在加载时显示加载指示器。
      *
-     * @return 返回 true 表示还有更多历史消息，false 表示已加载完毕
+     * 业务方在回调中负责：
+     * 1. 设置 isLoadingEarlier = true
+     * 2. 异步加载历史消息并插入到 messageList 头部（使用 addAll(0, historyMessages)）
+     * 3. 加载完成后设置 isLoadingEarlier = false
+     * 4. 如果没有更多历史消息，设置 hasMoreEarlier = false
+     *
+     * 组件会自动处理插入后的位置补偿（防止列表跳动）。
      */
-    var onLoadEarlier: (suspend () -> Boolean)? = null
-    /** 是否正在加载历史消息（由组件内部或业务方维护） */
+    var onLoadEarlier: (() -> Unit)? = null
+    /** 是否正在加载历史消息（由业务方维护，加载中时不会重复触发 onLoadEarlier） */
     var isLoadingEarlier: Boolean = false
-    /** 是否还有更多历史消息可加载 */
+    /** 是否还有更多历史消息可加载（设为 false 后不再触发 onLoadEarlier） */
     var hasMoreEarlier: Boolean = true
+    /** 触发加载历史消息的滚动距离阈值（距顶部多少像素时触发，默认 100f） */
+    var loadEarlierThreshold: Float = 100f
 
     // ---- 消息分组策略 ----
     /** 是否启用连续消息分组（同一发送者的连续消息合并头像、缩小间距） */
@@ -341,6 +443,46 @@ class ChatSlotOptions {
      * 自定义消息操作菜单渲染。
      */
     var messageOptions: MessageOptionsSlot? = null
+
+    // ---- MessageComposer Slots（参考 Stream Chat MessageComposer 的 Slot API） ----
+
+    /**
+     * 完全替换默认 MessageComposer。
+     * 设置后，所有其他 composer* Slot 失效，由使用方自行实现整个输入框。
+     * 参考 Stream Chat 的 stateless MessageComposer 模式。
+     */
+    var messageComposer: MessageComposerSlot? = null
+
+    /**
+     * 输入框左侧集成按钮区域（附件选择、语音等）。
+     * 参考 Stream Chat MessageComposer 的 integrations Slot。
+     * 默认为空（不显示左侧按钮）。
+     */
+    var composerIntegrations: ComposerIntegrationsSlot? = null
+
+    /**
+     * 核心输入区域。替换默认的 Input 组件。
+     * 参考 Stream Chat MessageComposer 的 input Slot。
+     */
+    var composerInput: ComposerInputSlot? = null
+
+    /**
+     * 输入框右侧内容（默认为发送按钮）。
+     * 参考 Stream Chat MessageComposer 的 trailingContent Slot。
+     */
+    var composerTrailing: ComposerTrailingSlot? = null
+
+    /**
+     * 输入框顶部内容（如"正在回复..."、"正在编辑..."提示条）。
+     * 参考 Stream Chat MessageComposer 的 headerContent Slot。
+     */
+    var composerHeader: ComposerHeaderSlot? = null
+
+    /**
+     * 输入框底部内容（如工具栏、表情面板入口）。
+     * 参考 Stream Chat MessageComposer 的 footerContent Slot。
+     */
+    var composerFooter: ComposerFooterSlot? = null
 }
 
 // ============================
@@ -495,6 +637,18 @@ class ChatSessionConfig {
     var timeFormatter: TimeFormatter?
         get() = messageListOptions.timeFormatter
         set(value) { messageListOptions.timeFormatter = value }
+    /** @see MessageListOptions.onLoadEarlier */
+    var onLoadEarlier: (() -> Unit)?
+        get() = messageListOptions.onLoadEarlier
+        set(value) { messageListOptions.onLoadEarlier = value }
+    /** @see MessageListOptions.isLoadingEarlier */
+    var isLoadingEarlier: Boolean
+        get() = messageListOptions.isLoadingEarlier
+        set(value) { messageListOptions.isLoadingEarlier = value }
+    /** @see MessageListOptions.hasMoreEarlier */
+    var hasMoreEarlier: Boolean
+        get() = messageListOptions.hasMoreEarlier
+        set(value) { messageListOptions.hasMoreEarlier = value }
 
     // ========== 旧 Slot 兼容属性（代理到 slots 分组） ==========
 
@@ -560,6 +714,72 @@ class ChatSessionConfig {
      */
     internal fun correctBubbleY(rawY: Float): Float {
         return rawY - _currentScrollOffsetY
+    }
+
+    // ========== MessageComposer 配置（参考 Stream Chat MessageComposer） ==========
+
+    /**
+     * 是否显示内置的 MessageComposer 输入框。
+     * 设置为 true 时，ChatSession 底部会自动显示输入框。
+     * 设置为 false 时，不显示输入框（使用方可自行在 ChatSession 外部放置输入框）。
+     */
+    var showMessageComposer: Boolean = false
+
+    /**
+     * 底部安全区域高度（用于 MessageComposer 底部留白）。
+     * 使用方需要在 Pager/ComposeView 中传入 pagerData.safeAreaInsets.bottom 的值。
+     * 例如：composerSafeAreaBottom = pagerData.safeAreaInsets.bottom
+     */
+    var composerSafeAreaBottom: Float = 0f
+
+    /**
+     * 输入框提示文字（参考 Stream Chat MessageComposer 的 label）。
+     */
+    var composerPlaceholder: String = "输入消息..."
+
+    /**
+     * 发送按钮文字。
+     */
+    var composerSendButtonText: String = "发送"
+
+    /**
+     * 发送消息回调。当用户点击发送按钮或按回车时触发。
+     * 使用方在此回调中处理消息发送逻辑（添加到 messageList 等）。
+     * 参考 Stream Chat MessageComposer 的 onSendMessage。
+     */
+    var onSendMessage: ((text: String) -> Unit)? = null
+
+    /**
+     * 输入文本变化回调。
+     * 参考 Stream Chat MessageComposer 的 onValueChange。
+     */
+    var onInputValueChange: ((text: String) -> Unit)? = null
+
+    /**
+     * 附件按钮点击回调。
+     * 参考 Stream Chat MessageComposer 的 onAttachmentsClick。
+     */
+    var onAttachmentsClick: (() -> Unit)? = null
+
+    /**
+     * 输入框内部状态引用（内部使用）。
+     * ChatSession 内部维护，使用方可通过 composerState 获取当前输入状态。
+     */
+    internal var _composerInputText: String = ""
+
+    /**
+     * 清空输入框的方法引用（内部使用）。
+     * ChatSession 内部设置。
+     */
+    internal var _clearComposerInput: (() -> Unit)? = null
+
+    /**
+     * 获取当前 MessageComposer 的状态
+     */
+    fun getComposerState(): MessageComposerState {
+        return MessageComposerState(
+            inputValue = _composerInputText
+        )
     }
 
     // ========== 事件回调 ==========
