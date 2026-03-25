@@ -9,6 +9,7 @@ import com.tencent.kuikly.core.reactive.handler.*
 import com.tencent.kuikly.core.timer.setTimeout
 import com.tencent.kuikly.core.views.*
 import com.tencent.kuikly.core.views.layout.Row
+import com.tencent.kuikly.core.directives.vif
 import com.kuikly.kuiklychat.base.BasePager
 import com.tencent.kuiklybase.chat.*
 
@@ -16,11 +17,16 @@ import com.tencent.kuiklybase.chat.*
  * 聊天组件 Demo 页面
  *
  * 展示 ChatSession 组件的完整功能：
- * - theme {} DSL 配置主题
+ * - theme {} DSL 配置主题（浅色/深色双主题切换）
  * - 消息分组（连续同一发送者合并头像）
- * - 图片消息
- * - 文本消息
- * - 系统消息
+ * - 图片消息 / 文本消息 / 系统消息
+ * - 消息反应（Reactions）
+ * - 消息编辑/删除标记
+ * - 消息置顶标记
+ * - 日期分隔符
+ * - 正在输入指示器
+ * - 长按消息操作菜单
+ * - 消息渲染工厂（MessageRendererFactory）
  */
 @Page("chat", supportInLocal = true)
 internal class ChatDemoPage : BasePager() {
@@ -33,6 +39,17 @@ internal class ChatDemoPage : BasePager() {
 
     // 持有 ChatSession 配置引用
     private var chatSessionConfig: ChatSessionConfig? = null
+
+
+
+    // 消息操作菜单状态
+    private var showMessageOptions by observable(false)
+    private var optionsTargetMessage: ChatMessage? = null
+    // 被长按消息在页面坐标系中的位置
+    private var targetMsgX: Float = 0f
+    private var targetMsgY: Float = 0f
+    private var targetMsgW: Float = 0f
+    private var targetMsgH: Float = 0f
 
     override fun created() {
         super.created()
@@ -84,10 +101,32 @@ internal class ChatDemoPage : BasePager() {
                         // 处理消息点击
                     }
                     onMessageLongPress = { message ->
-                        // 处理消息长按
+                        // 长按消息弹出操作菜单（兜底，无坐标信息时使用屏幕中央）
+                        if (message.type != MessageType.SYSTEM) {
+                            ctx.optionsTargetMessage = message
+                            ctx.targetMsgX = 0f
+                            ctx.targetMsgY = ctx.pagerData.pageViewHeight * 0.3f
+                            ctx.targetMsgW = ctx.pagerData.pageViewWidth
+                            ctx.targetMsgH = 50f
+                            ctx.showMessageOptions = true
+                        }
+                    }
+                    onMessageLongPressWithPosition = { message, x, y, w, h ->
+                        // 长按消息弹出操作菜单（带位置信息）
+                        if (message.type != MessageType.SYSTEM) {
+                            ctx.optionsTargetMessage = message
+                            ctx.targetMsgX = x
+                            ctx.targetMsgY = y
+                            ctx.targetMsgW = w
+                            ctx.targetMsgH = h
+                            ctx.showMessageOptions = true
+                        }
                     }
                     onResend = { message ->
                         // 业务处理重发逻辑
+                    }
+                    onReactionClick = { message, reactionType ->
+                        // 处理反应点击（Demo：切换反应）
                     }
 
                     // 保存配置引用
@@ -183,6 +222,71 @@ internal class ChatDemoPage : BasePager() {
                         }
                     }
                 }
+
+                // ============================
+                // 消息操作菜单浮层（positionAbsolute 覆盖整个页面）
+                // ============================
+                vif({ ctx.showMessageOptions }) {
+                    View {
+                        attr {
+                            positionAbsolute()
+                            top(0f)
+                            left(0f)
+                            width(ctx.pagerData.pageViewWidth)
+                            height(ctx.pagerData.pageViewHeight)
+                        }
+                        ChatMessageOptions {
+                            attr {
+                                message = ctx.optionsTargetMessage
+                                actions = defaultMessageActions()
+                                // 传递被长按消息的位置信息
+                                targetX = ctx.targetMsgX
+                                targetY = ctx.targetMsgY
+                                targetWidth = ctx.targetMsgW
+                                targetHeight = ctx.targetMsgH
+                                screenWidth = ctx.pagerData.pageViewWidth
+                                screenHeight = ctx.pagerData.pageViewHeight
+                                // 传递气泡样式信息（用于镂空效果）
+                                bubblePrimaryColor = 0xFF6C5CE7
+                                bubblePrimaryGradientEndColor = 0xFFA29BFE
+                                bubbleOtherBubbleColor = 0xFFF5F0FF
+                                bubbleOtherTextColor = 0xFF2D3436
+                                bubbleSelfTextColor = 0xFFFFFFFF
+                            }
+                            event {
+                                onActionClick = { action ->
+                                    ctx.optionsTargetMessage?.let { msg ->
+                                        ctx.chatSessionConfig?.onMessageAction?.invoke(msg, action)
+                                    }
+                                }
+                                onReactionSelect = { emoji ->
+                                    // Demo: 简单添加反应到目标消息
+                                    ctx.optionsTargetMessage?.let { msg ->
+                                        val idx = ctx.messageList.indexOfFirst { it.id == msg.id }
+                                        if (idx >= 0) {
+                                            val existingReactions = msg.reactions.toMutableList()
+                                            val existIdx = existingReactions.indexOfFirst { it.type == emoji }
+                                            if (existIdx >= 0) {
+                                                val existing = existingReactions[existIdx]
+                                                existingReactions[existIdx] = existing.copy(
+                                                    count = existing.count + 1,
+                                                    isOwnReaction = true
+                                                )
+                                            } else {
+                                                existingReactions.add(ReactionItem(emoji, 1, true))
+                                            }
+                                            ctx.messageList[idx] = msg.copy(reactions = existingReactions)
+                                        }
+                                    }
+                                }
+                                onDismiss = {
+                                    ctx.showMessageOptions = false
+                                    ctx.optionsTargetMessage = null
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -211,62 +315,116 @@ internal class ChatDemoPage : BasePager() {
 
     private fun createInitialMessages(): List<ChatMessage> {
         val baseTime = 1711267200000L
+
+        // 先创建一些消息用于后续引用
+        val welcomeMsg = ChatMessageHelper.createTextMessage(
+            content = "你好！欢迎使用 KuiklyChat 🎉",
+            isSelf = false,
+            senderName = "小助手",
+            senderId = "assistant_001",
+            timestamp = baseTime,
+            reactions = listOf(
+                ReactionItem("👍", 3, true),
+                ReactionItem("❤️", 1, false)
+            )
+        )
+
+        val featureMsg = ChatMessageHelper.createTextMessage(
+            content = "这是一个基于 KuiklyUI 框架构建的聊天组件示例，现已支持消息反应、引用回复、日期分隔、输入指示器等功能",
+            isSelf = false,
+            senderName = "小助手",
+            senderId = "assistant_001",
+            timestamp = baseTime + 30_000L
+        )
+
         return listOf(
-            ChatMessageHelper.createSystemMessage("以下是新的聊天"),
+            // ---- 系统消息 + 日期分隔触发（baseTime 很早，自然会显示日期分隔符） ----
+            ChatMessageHelper.createSystemMessage("以下是新的聊天", timestamp = baseTime - 1000L),
+
+            // ---- 带反应的欢迎消息 ----
+            welcomeMsg,
+
+            // ---- 连续消息分组 Demo：同一发送者连续消息合并头像 ----
+            featureMsg,
+
+            // ---- 普通文本消息 ----
             ChatMessageHelper.createTextMessage(
-                content = "你好！欢迎使用 KuiklyChat",
-                isSelf = false,
-                senderName = "小助手",
-                timestamp = baseTime
-            ),
-            ChatMessageHelper.createTextMessage(
-                content = "这是一个基于 KuiklyUI 框架构建的聊天组件示例",
-                isSelf = false,
-                senderName = "小助手",
-                timestamp = baseTime + 30_000L
-            ),
-            ChatMessageHelper.createTextMessage(
-                content = "你好！这个聊天界面看起来不错 👍",
+                content = "你好！这个聊天界面看起来不错，功能非常丰富 👍",
                 isSelf = true,
                 senderName = "我",
+                senderId = "user_001",
                 timestamp = baseTime + 60_000L
             ),
+
+            // ---- 时间间隔 > 3分钟，触发日期分隔符 ----
             ChatMessageHelper.createTextMessage(
                 content = "支持背景图、自定义气泡颜色、时间分组、消息重发等功能哦～",
                 isSelf = false,
                 senderName = "小助手",
-                timestamp = baseTime + 5 * 60_000L
+                senderId = "assistant_001",
+                timestamp = baseTime + 5 * 60_000L,
+                reactions = listOf(ReactionItem("🔥", 2, true))
             ),
-            // 连续消息分组 Demo：同一发送者的连续消息会合并头像
+
+            // ---- 连续消息分组 + 图片消息 ----
             ChatMessageHelper.createTextMessage(
                 content = "现在还支持图片消息了！来看看 👇",
                 isSelf = false,
                 senderName = "小助手",
+                senderId = "assistant_001",
                 timestamp = baseTime + 5 * 60_000L + 10_000L
             ),
-            // 图片消息 Demo
             ChatMessageHelper.createImageMessage(
                 imageUrl = "https://picsum.photos/600/400",
                 isSelf = false,
                 senderName = "小助手",
+                senderId = "assistant_001",
                 width = 600,
                 height = 400,
                 timestamp = baseTime + 5 * 60_000L + 20_000L
             ),
+
+            // ---- 已编辑消息 Demo ----
             ChatMessageHelper.createTextMessage(
-                content = "Kuikly 跨端框架真的很强大！",
+                content = "Kuikly 跨端框架真的很强大！支持 Android、iOS、鸿蒙、H5 四端运行。",
                 isSelf = true,
                 senderName = "我",
+                senderId = "user_001",
                 timestamp = baseTime + 6 * 60_000L
-            ),
-            // 自己发的图片
+            ).copy(isEdited = true),
+
+            // ---- 自己发的带反应的图片 ----
             ChatMessageHelper.createImageMessage(
                 imageUrl = "https://picsum.photos/400/600",
                 isSelf = true,
                 senderName = "我",
+                senderId = "user_001",
                 width = 400,
                 height = 600,
-                timestamp = baseTime + 6 * 60_000L + 10_000L
+                timestamp = baseTime + 6 * 60_000L + 10_000L,
+                reactions = listOf(
+                    ReactionItem("😍", 2, false),
+                    ReactionItem("👏", 1, true)
+                )
+            ),
+
+            // ---- 置顶消息 Demo ----
+            ChatMessageHelper.createTextMessage(
+                content = "📌 重要提醒：长按消息可以弹出操作菜单，支持复制、回复、引用、编辑、删除、置顶等操作！",
+                isSelf = false,
+                senderName = "小助手",
+                senderId = "assistant_001",
+                timestamp = baseTime + 10 * 60_000L
+            ).copy(isPinned = true),
+
+            // ---- 反应 Demo ----
+            ChatMessageHelper.createTextMessage(
+                content = "太实用了！这些功能组合起来体验很好 ✨",
+                isSelf = true,
+                senderName = "我",
+                senderId = "user_001",
+                timestamp = baseTime + 10 * 60_000L + 30_000L,
+                reactions = listOf(ReactionItem("💯", 1, false))
             )
         )
     }

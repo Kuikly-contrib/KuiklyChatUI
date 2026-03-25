@@ -1,14 +1,13 @@
 package com.tencent.kuiklybase.chat
 
-import com.tencent.kuikly.core.base.ViewContainer
-import com.tencent.kuikly.core.reactive.collection.ObservableList
-
 /**
  * 聊天消息类型
  */
 enum class MessageType {
     TEXT,       // 文本消息
     IMAGE,      // 图片消息
+    VIDEO,      // 视频消息
+    FILE,       // 文件消息
     SYSTEM,     // 系统消息（如时间提示、系统通知等）
     CUSTOM      // 自定义消息（由业务方通过 Slot 渲染）
 }
@@ -24,6 +23,76 @@ enum class MessageStatus {
 }
 
 /**
+ * 附件类型枚举
+ */
+enum class AttachmentType {
+    IMAGE,          // 图片附件
+    VIDEO,          // 视频附件
+    FILE,           // 文件附件
+    GIPHY,          // GIF 动图
+    LINK_PREVIEW    // 链接预览
+}
+
+/**
+ * 附件数据模型（对标 Stream Chat 的 Attachment）
+ *
+ * @param type 附件类型
+ * @param url 附件资源 URL
+ * @param title 附件标题（文件名等）
+ * @param mimeType MIME 类型（如 "image/jpeg"、"video/mp4"）
+ * @param fileSize 文件大小（字节）
+ * @param width 宽度（图片/视频/GIF）
+ * @param height 高度（图片/视频/GIF）
+ * @param duration 时长（视频/音频，秒）
+ * @param thumbnailUrl 缩略图 URL（视频/文件预览图）
+ * @param extra 扩展数据
+ */
+data class Attachment(
+    val type: AttachmentType,
+    val url: String,
+    val title: String = "",
+    val mimeType: String = "",
+    val fileSize: Long = 0L,
+    val width: Int = 0,
+    val height: Int = 0,
+    val duration: Float = 0f,
+    val thumbnailUrl: String = "",
+    val extra: Map<String, String> = emptyMap()
+)
+
+/**
+ * 消息反应项（对标 Stream Chat 的 ReactionItem）
+ *
+ * @param type 反应类型标识（如 "like"、"love"、"😂"）
+ * @param count 该反应的总数
+ * @param isOwnReaction 当前用户是否已添加此反应
+ */
+data class ReactionItem(
+    val type: String,
+    val count: Int = 1,
+    val isOwnReaction: Boolean = false
+)
+
+/**
+ * 消息操作定义（对标 Stream Chat 的 MessageAction）
+ *
+ * 用于配置长按消息弹出的操作菜单项。
+ *
+ * @param key 操作标识（如 "copy"、"reply"、"quote"、"edit"、"delete"、"pin"、"reaction"）
+ * @param label 操作显示文本
+ * @param icon 操作图标（base64 或 URL）
+ * @param isDestructive 是否为危险操作（红色显示，如删除）
+ * @param isVisible 动态可见性判断函数
+ */
+data class MessageAction(
+    val key: String,
+    val label: String,
+    val icon: String = "",
+    val isDestructive: Boolean = false,
+    val isVisible: (ChatMessage) -> Boolean = { true }
+)
+
+/**
  * 聊天消息数据模型
  *
  * @param id 消息唯一ID
@@ -35,6 +104,14 @@ enum class MessageStatus {
  * @param senderAvatar 发送者头像URL
  * @param timestamp 消息时间戳（毫秒）
  * @param extra 扩展数据（用于自定义消息携带额外信息，如图片尺寸、链接等）
+ * @param senderId 发送者唯一 ID（区分同名用户）
+ * @param reactions 消息反应列表（点赞、表情等）
+ * @param threadCount 线程回复数量
+ * @param isEdited 消息是否已被编辑
+ * @param isDeleted 消息是否已被删除（软删除）
+ * @param isPinned 消息是否被置顶
+ * @param readBy 已读用户 ID 列表
+ * @param attachments 附件列表（未来替代 content+extra 方案）
  */
 data class ChatMessage(
     val id: String,
@@ -45,7 +122,16 @@ data class ChatMessage(
     val senderName: String = "",
     val senderAvatar: String = "",
     val timestamp: Long = 0L,
-    val extra: Map<String, String> = emptyMap()
+    val extra: Map<String, String> = emptyMap(),
+    // ---- 新增字段（均有默认值，向后兼容） ----
+    val senderId: String = "",
+    val reactions: List<ReactionItem> = emptyList(),
+    val threadCount: Int = 0,
+    val isEdited: Boolean = false,
+    val isDeleted: Boolean = false,
+    val isPinned: Boolean = false,
+    val readBy: List<String> = emptyList(),
+    val attachments: List<Attachment> = emptyList()
 )
 
 /**
@@ -79,420 +165,6 @@ data class MessageContext(
 const val DEFAULT_TIME_GROUP_INTERVAL = 5 * 60 * 1000L
 
 // ============================
-// Slot 类型定义（参考 Stream Chat Compose 的 Slot API 设计）
-// ============================
-
-/**
- * 消息气泡渲染 Slot（带上下文）
- *
- * 用于自定义单条消息的渲染方式。提供 MessageContext 以支持上下文感知渲染。
- * - container: 父容器，在其中添加自定义组件
- * - context: 消息上下文（含前后消息、分组信息）
- * - config: 当前聊天会话配置（可获取主题色等）
- */
-typealias MessageBubbleSlot = (container: ViewContainer<*, *>, context: MessageContext, config: ChatSessionConfig) -> Unit
-
-/**
- * 旧版气泡 Slot（兼容，不含上下文）
- */
-typealias SimpleBubbleSlot = (container: ViewContainer<*, *>, message: ChatMessage, config: ChatSessionConfig) -> Unit
-
-/**
- * 导航栏渲染 Slot
- *
- * 用于完全替换默认导航栏。
- * - container: 父容器
- * - config: 当前聊天会话配置
- */
-typealias NavigationBarSlot = (container: ViewContainer<*, *>, config: ChatSessionConfig) -> Unit
-
-/**
- * 通用渲染 Slot（用于导航栏右侧按钮、空消息占位等轻量定制场景）
- * - container: 父容器
- */
-typealias ViewSlot = (container: ViewContainer<*, *>) -> Unit
-
-/**
- * 时间标签格式化器
- *
- * 接收消息时间戳（毫秒），返回格式化后的时间字符串。
- * 默认实现会根据时间距离返回 "HH:mm"、"昨天 HH:mm"、"MM-dd HH:mm" 等。
- */
-typealias TimeFormatter = (timestamp: Long) -> String
-
-// ============================
-// 配置分组（参考 Stream Chat 的 ChatTheme + Options 分层设计）
-// ============================
-
-/**
- * 主题配置（参考 Stream Chat 的 ChatTheme / StreamColors / StreamShapes / StreamDimens）
- *
- * 集中管理所有视觉相关配置，与行为配置分离。
- * 对应 Stream Chat 的 colors + shapes + dimens + typography 概念。
- */
-class ChatThemeOptions {
-    // ---- Colors（对应 StreamColors） ----
-    /** 主色（用于自己的气泡、导航栏等） */
-    var primaryColor: Long = 0xFF4F8FFF
-    /** 渐变结束色 */
-    var primaryGradientEndColor: Long = 0xFF6C5CE7
-    /** 页面背景色（当没有设置背景图时生效） */
-    var backgroundColor: Long = 0xFFF0F2F5
-    /** 对方消息气泡背景色（默认白色） */
-    var otherBubbleColor: Long = 0xFFFFFFFF
-    /** 对方消息文字颜色 */
-    var otherTextColor: Long = 0xFF333333
-    /** 自己消息文字颜色 */
-    var selfTextColor: Long = 0xFFFFFFFF
-
-    // ---- Shapes（对应 StreamShapes） ----
-    /** 头像圆角半径（20f = 圆形，8f = 微信风格圆角方形，0f = 方形） */
-    var avatarRadius: Float = 8f
-
-    // ---- Dimens（对应 StreamDimens） ----
-    /** 气泡最大宽度占屏幕宽度的比例（默认 0.65） */
-    var bubbleMaxWidthRatio: Float = 0.65f
-    /** 气泡内水平 padding（单侧，默认 12f） */
-    var bubblePaddingH: Float = 12f
-    /** 气泡内垂直 padding（单侧，默认 10f） */
-    var bubblePaddingV: Float = 10f
-    /** 消息文字大小（默认 15f） */
-    var messageFontSize: Float = 15f
-    /** 消息行高（默认 22f） */
-    var messageLineHeight: Float = 22f
-    /** 头像尺寸（宽高相同，默认 40f） */
-    var avatarSize: Float = 40f
-    /** 消息行垂直 padding（默认 6f） */
-    var rowPaddingV: Float = 6f
-    /** 消息行水平 padding（默认 12f） */
-    var rowPaddingH: Float = 12f
-    /** 头像与气泡的间距（默认 8f） */
-    var avatarBubbleGap: Float = 8f
-    /** 聊天区域背景图 URL（设置后 backgroundColor 对消息列表区域不生效） */
-    var backgroundImage: String = ""
-    /** 图片消息的最大宽度（默认 200f） */
-    var imageMaxWidth: Float = 200f
-    /** 图片消息的最大高度（默认 200f） */
-    var imageMaxHeight: Float = 200f
-    /** 图片消息的圆角（默认 12f） */
-    var imageRadius: Float = 12f
-}
-
-/**
- * 消息列表行为配置（参考 Stream Chat MessageList 的行为参数）
- *
- * 集中管理列表行为：滚动、加载、分页等。
- * 对应 Stream Chat MessageList 的 onMessagesPageStartReached / loadingMoreContent 等概念。
- */
-class MessageListOptions {
-    /** 新消息时是否自动滚动到底部（自己的消息必须滚动，他人消息仅在底部时滚动） */
-    var autoScrollToBottom: Boolean = true
-    /** 是否显示头像（设为 false 适用于简洁的 1v1 聊天） */
-    var showAvatar: Boolean = true
-    /** 是否显示发送者昵称 */
-    var showSenderName: Boolean = true
-
-    // ---- 时间分组配置 ----
-    /** 是否启用时间分组显示（两条消息间隔超过阈值自动插入时间标签） */
-    var showTimeGroup: Boolean = true
-    /** 时间分组间隔阈值（毫秒），默认 5 分钟 */
-    var timeGroupInterval: Long = DEFAULT_TIME_GROUP_INTERVAL
-    /** 自定义时间格式化器（默认使用内置的 "HH:mm" / "昨天 HH:mm" 格式） */
-    var timeFormatter: TimeFormatter? = null
-
-    // ---- 加载历史（参考 Stream Chat 的 onMessagesPageStartReached） ----
-    /**
-     * 滚动到顶部时触发加载更多历史消息的回调。
-     * 参考 Stream Chat MessageList 的 onMessagesPageStartReached。
-     * 设置后列表顶部会在加载时显示加载指示器。
-     *
-     * @return 返回 true 表示还有更多历史消息，false 表示已加载完毕
-     */
-    var onLoadEarlier: (suspend () -> Boolean)? = null
-    /** 是否正在加载历史消息（由组件内部或业务方维护） */
-    var isLoadingEarlier: Boolean = false
-    /** 是否还有更多历史消息可加载 */
-    var hasMoreEarlier: Boolean = true
-
-    // ---- 消息分组策略 ----
-    /** 是否启用连续消息分组（同一发送者的连续消息合并头像、缩小间距） */
-    var enableMessageGrouping: Boolean = true
-    /** 连续消息分组的最大时间间隔（毫秒），超过则断开分组。默认 2 分钟 */
-    var messageGroupingInterval: Long = 2 * 60 * 1000L
-}
-
-/**
- * Slot 配置（参考 Stream Chat 的 Slot API / Content 自定义层级）
- *
- * 集中管理所有可替换渲染插槽。
- * 对应 Stream Chat 的 itemContent / emptyContent / loadingContent / helperContent 等概念。
- */
-class ChatSlotOptions {
-    // ---- 消息类型独立 Slot（参考 Stream Chat 的 attachmentFactories） ----
-
-    /**
-     * 自定义文本消息气泡渲染（带上下文）。
-     *
-     * 参考 Stream Chat 的 itemContent Slot：提供 MessageContext 以支持上下文感知渲染
-     * （连续消息合并头像、缩小间距等）。
-     */
-    var textBubble: MessageBubbleSlot? = null
-
-    /**
-     * 自定义图片消息渲染（带上下文）。
-     *
-     * 默认渲染：带圆角的图片 + 加载占位。
-     * 设置后替换默认图片消息渲染。
-     */
-    var imageBubble: MessageBubbleSlot? = null
-
-    /**
-     * 自定义消息类型渲染（MessageType.CUSTOM）。
-     *
-     * 用于渲染语音消息、文件消息、卡片消息等自定义类型。
-     * 必须设置此 Slot 才能渲染 CUSTOM 类型消息。
-     */
-    var customBubble: MessageBubbleSlot? = null
-
-    /**
-     * 统一消息气泡渲染（设置后覆盖 textBubble/imageBubble，所有非系统消息都使用此 Slot）。
-     *
-     * 参考 Stream Chat MessageList 的 itemContent：完全自定义消息项渲染。
-     * 优先级高于 textBubble/imageBubble/customBubble。
-     */
-    var messageBubble: MessageBubbleSlot? = null
-
-    /**
-     * 自定义系统消息渲染。
-     */
-    var systemMessage: SimpleBubbleSlot? = null
-
-    // ---- 列表状态 Slot（参考 Stream Chat MessageList 的对应 Slot） ----
-
-    /**
-     * 消息列表为空时的占位渲染。
-     *
-     * 参考 Stream Chat MessageList 的 emptyContent。
-     */
-    var emptyContent: ViewSlot? = null
-
-    /**
-     * 列表加载中（首次加载）时的渲染。
-     *
-     * 参考 Stream Chat MessageList 的 loadingContent。
-     */
-    var loadingContent: ViewSlot? = null
-
-    /**
-     * 加载更多历史消息时的顶部加载指示器。
-     *
-     * 参考 Stream Chat MessageList 的 loadingMoreContent。
-     */
-    var loadingMoreContent: ViewSlot? = null
-
-    /**
-     * 列表辅助内容（如"滚动到底部"悬浮按钮、"N条新消息"提示）。
-     *
-     * 参考 Stream Chat MessageList 的 helperContent。
-     */
-    var helperContent: ViewSlot? = null
-
-    // ---- 导航栏 Slot ----
-
-    /**
-     * 自定义导航栏渲染。设置此 Slot 后将完全替换默认导航栏。
-     */
-    var navigationBar: NavigationBarSlot? = null
-
-    /**
-     * 导航栏右侧操作区域 Slot（如"更多"按钮、搜索按钮等）。
-     */
-    var navigationBarTrailing: ViewSlot? = null
-}
-
-// ============================
-// 聊天会话配置（兼容旧 API + 新 Options 分组）
-// ============================
-
-/**
- * ChatSession 的配置参数
- *
- * 架构参考 Stream Chat Compose SDK：
- * - ChatTheme → [theme] 主题配置
- * - MessageList 行为参数 → [messageList] 列表行为配置
- * - Slot APIs → [slots] 渲染插槽配置
- *
- * 同时保持向后兼容，所有旧属性仍可直接在 Config 上访问（代理到对应 Options）。
- */
-class ChatSessionConfig {
-    // ========== Options 分组 ==========
-
-    /** 主题配置（颜色、尺寸、形状） */
-    val theme = ChatThemeOptions()
-    /** 消息列表行为配置（滚动、加载、分组） */
-    val messageListOptions = MessageListOptions()
-    /** 渲染插槽配置 */
-    val slots = ChatSlotOptions()
-
-    // ========== 便捷 DSL 配置方法 ==========
-
-    /** DSL 方式配置主题 */
-    fun theme(block: ChatThemeOptions.() -> Unit) { theme.apply(block) }
-    /** DSL 方式配置消息列表行为 */
-    fun messageListOptions(block: MessageListOptions.() -> Unit) { messageListOptions.apply(block) }
-    /** DSL 方式配置渲染插槽 */
-    fun slots(block: ChatSlotOptions.() -> Unit) { slots.apply(block) }
-
-    // ========== 导航栏配置 ==========
-    var title: String = "聊天"
-    var showNavigationBar: Boolean = true
-    var showBackButton: Boolean = true
-
-    // ========== 头像配置 ==========
-    var selfAvatarUrl: String = ""
-
-    // ========== 向后兼容属性（代理到 Options 分组） ==========
-
-    /** @see ChatThemeOptions.primaryColor */
-    var primaryColor: Long
-        get() = theme.primaryColor
-        set(value) { theme.primaryColor = value }
-    /** @see ChatThemeOptions.primaryGradientEndColor */
-    var primaryGradientEndColor: Long
-        get() = theme.primaryGradientEndColor
-        set(value) { theme.primaryGradientEndColor = value }
-    /** @see ChatThemeOptions.backgroundColor */
-    var backgroundColor: Long
-        get() = theme.backgroundColor
-        set(value) { theme.backgroundColor = value }
-    /** @see ChatThemeOptions.otherBubbleColor */
-    var otherBubbleColor: Long
-        get() = theme.otherBubbleColor
-        set(value) { theme.otherBubbleColor = value }
-    /** @see ChatThemeOptions.otherTextColor */
-    var otherTextColor: Long
-        get() = theme.otherTextColor
-        set(value) { theme.otherTextColor = value }
-    /** @see ChatThemeOptions.selfTextColor */
-    var selfTextColor: Long
-        get() = theme.selfTextColor
-        set(value) { theme.selfTextColor = value }
-    /** @see ChatThemeOptions.backgroundImage */
-    var backgroundImage: String
-        get() = theme.backgroundImage
-        set(value) { theme.backgroundImage = value }
-    /** @see ChatThemeOptions.bubbleMaxWidthRatio */
-    var bubbleMaxWidthRatio: Float
-        get() = theme.bubbleMaxWidthRatio
-        set(value) { theme.bubbleMaxWidthRatio = value }
-    /** @see ChatThemeOptions.bubblePaddingH */
-    var bubblePaddingH: Float
-        get() = theme.bubblePaddingH
-        set(value) { theme.bubblePaddingH = value }
-    /** @see ChatThemeOptions.bubblePaddingV */
-    var bubblePaddingV: Float
-        get() = theme.bubblePaddingV
-        set(value) { theme.bubblePaddingV = value }
-    /** @see ChatThemeOptions.messageFontSize */
-    var messageFontSize: Float
-        get() = theme.messageFontSize
-        set(value) { theme.messageFontSize = value }
-    /** @see ChatThemeOptions.messageLineHeight */
-    var messageLineHeight: Float
-        get() = theme.messageLineHeight
-        set(value) { theme.messageLineHeight = value }
-    /** @see ChatThemeOptions.avatarSize */
-    var avatarSize: Float
-        get() = theme.avatarSize
-        set(value) { theme.avatarSize = value }
-    /** @see ChatThemeOptions.rowPaddingV */
-    var rowPaddingV: Float
-        get() = theme.rowPaddingV
-        set(value) { theme.rowPaddingV = value }
-    /** @see ChatThemeOptions.rowPaddingH */
-    var rowPaddingH: Float
-        get() = theme.rowPaddingH
-        set(value) { theme.rowPaddingH = value }
-    /** @see ChatThemeOptions.avatarBubbleGap */
-    var avatarBubbleGap: Float
-        get() = theme.avatarBubbleGap
-        set(value) { theme.avatarBubbleGap = value }
-    /** @see ChatThemeOptions.avatarRadius */
-    var avatarRadius: Float
-        get() = theme.avatarRadius
-        set(value) { theme.avatarRadius = value }
-    /** @see MessageListOptions.autoScrollToBottom */
-    var autoScrollToBottom: Boolean
-        get() = messageListOptions.autoScrollToBottom
-        set(value) { messageListOptions.autoScrollToBottom = value }
-    /** @see MessageListOptions.showAvatar */
-    var showAvatar: Boolean
-        get() = messageListOptions.showAvatar
-        set(value) { messageListOptions.showAvatar = value }
-    /** @see MessageListOptions.showSenderName */
-    var showSenderName: Boolean
-        get() = messageListOptions.showSenderName
-        set(value) { messageListOptions.showSenderName = value }
-    /** @see MessageListOptions.showTimeGroup */
-    var showTimeGroup: Boolean
-        get() = messageListOptions.showTimeGroup
-        set(value) { messageListOptions.showTimeGroup = value }
-    /** @see MessageListOptions.timeGroupInterval */
-    var timeGroupInterval: Long
-        get() = messageListOptions.timeGroupInterval
-        set(value) { messageListOptions.timeGroupInterval = value }
-    /** @see MessageListOptions.timeFormatter */
-    var timeFormatter: TimeFormatter?
-        get() = messageListOptions.timeFormatter
-        set(value) { messageListOptions.timeFormatter = value }
-
-    // ========== 旧 Slot 兼容属性（代理到 slots 分组） ==========
-
-    /** @see ChatSlotOptions.messageBubble */
-    var messageBubble: MessageBubbleSlot?
-        get() = slots.messageBubble
-        set(value) { slots.messageBubble = value }
-    /** @see ChatSlotOptions.systemMessage */
-    var systemMessage: SimpleBubbleSlot?
-        get() = slots.systemMessage
-        set(value) { slots.systemMessage = value }
-    /** @see ChatSlotOptions.navigationBar */
-    var navigationBar: NavigationBarSlot?
-        get() = slots.navigationBar
-        set(value) { slots.navigationBar = value }
-    /** @see ChatSlotOptions.navigationBarTrailing */
-    var navigationBarTrailing: ViewSlot?
-        get() = slots.navigationBarTrailing
-        set(value) { slots.navigationBarTrailing = value }
-    /** @see ChatSlotOptions.emptyContent */
-    var emptyView: ViewSlot?
-        get() = slots.emptyContent
-        set(value) { slots.emptyContent = value }
-
-    // ========== 内部方法引用 ==========
-
-    /**
-     * 滚动到底部的方法引用。ChatSession 内部会在初始化时设置此函数。
-     */
-    var scrollToBottomAction: ((animate: Boolean) -> Unit)? = null
-
-    /**
-     * 滚动到指定消息。ChatSession 内部会在初始化时设置此函数。
-     */
-    var scrollToMessageAction: ((messageId: String, animate: Boolean) -> Unit)? = null
-
-    // ========== 事件回调 ==========
-
-    var onBackClick: (() -> Unit)? = null
-    var onMessageClick: ((ChatMessage) -> Unit)? = null
-    var onMessageLongPress: ((ChatMessage) -> Unit)? = null
-    /** 失败消息重发回调 */
-    var onResend: ((ChatMessage) -> Unit)? = null
-    /** 点击用户头像回调（参考 Stream Chat 的 onUserAvatarClick） */
-    var onAvatarClick: ((ChatMessage) -> Unit)? = null
-}
-
-// ============================
 // 工具类
 // ============================
 
@@ -522,8 +194,10 @@ object ChatMessageHelper {
         isSelf: Boolean,
         senderName: String = "",
         senderAvatar: String = "",
+        senderId: String = "",
         status: MessageStatus = MessageStatus.SENT,
-        timestamp: Long = 0L
+        timestamp: Long = 0L,
+        reactions: List<ReactionItem> = emptyList()
     ): ChatMessage {
         return ChatMessage(
             id = generateId(),
@@ -533,7 +207,9 @@ object ChatMessageHelper {
             status = status,
             senderName = senderName,
             senderAvatar = senderAvatar,
-            timestamp = timestamp
+            senderId = senderId,
+            timestamp = timestamp,
+            reactions = reactions
         )
     }
 
@@ -545,9 +221,11 @@ object ChatMessageHelper {
         isSelf: Boolean,
         senderName: String = "",
         senderAvatar: String = "",
+        senderId: String = "",
         width: Int = 0,
         height: Int = 0,
-        timestamp: Long = 0L
+        timestamp: Long = 0L,
+        reactions: List<ReactionItem> = emptyList()
     ): ChatMessage {
         return ChatMessage(
             id = generateId(),
@@ -556,8 +234,94 @@ object ChatMessageHelper {
             type = MessageType.IMAGE,
             senderName = senderName,
             senderAvatar = senderAvatar,
+            senderId = senderId,
             timestamp = timestamp,
-            extra = mapOf("width" to width.toString(), "height" to height.toString())
+            extra = mapOf("width" to width.toString(), "height" to height.toString()),
+            reactions = reactions
+        )
+    }
+
+    /**
+     * 创建视频消息
+     */
+    fun createVideoMessage(
+        videoUrl: String,
+        isSelf: Boolean,
+        senderName: String = "",
+        senderAvatar: String = "",
+        senderId: String = "",
+        thumbnailUrl: String = "",
+        width: Int = 0,
+        height: Int = 0,
+        duration: Float = 0f,
+        timestamp: Long = 0L
+    ): ChatMessage {
+        return ChatMessage(
+            id = generateId(),
+            content = videoUrl,
+            isSelf = isSelf,
+            type = MessageType.VIDEO,
+            senderName = senderName,
+            senderAvatar = senderAvatar,
+            senderId = senderId,
+            timestamp = timestamp,
+            extra = mapOf(
+                "width" to width.toString(),
+                "height" to height.toString(),
+                "duration" to duration.toString(),
+                "thumbnailUrl" to thumbnailUrl
+            ),
+            attachments = listOf(
+                Attachment(
+                    type = AttachmentType.VIDEO,
+                    url = videoUrl,
+                    thumbnailUrl = thumbnailUrl,
+                    width = width,
+                    height = height,
+                    duration = duration
+                )
+            )
+        )
+    }
+
+    /**
+     * 创建文件消息
+     */
+    fun createFileMessage(
+        fileUrl: String,
+        fileName: String,
+        isSelf: Boolean,
+        senderName: String = "",
+        senderAvatar: String = "",
+        senderId: String = "",
+        mimeType: String = "",
+        fileSize: Long = 0L,
+        timestamp: Long = 0L
+    ): ChatMessage {
+        return ChatMessage(
+            id = generateId(),
+            content = fileName,
+            isSelf = isSelf,
+            type = MessageType.FILE,
+            senderName = senderName,
+            senderAvatar = senderAvatar,
+            senderId = senderId,
+            timestamp = timestamp,
+            extra = mapOf(
+                "fileUrl" to fileUrl,
+                "fileName" to fileName,
+                "mimeType" to mimeType,
+                "fileSize" to fileSize.toString()
+            ),
+            attachments = listOf(
+                Attachment(
+                    type = AttachmentType.FILE,
+                    url = fileUrl,
+                    title = fileName,
+                    mimeType = mimeType,
+                    fileSize = fileSize
+                )
+            )
         )
     }
 
@@ -582,6 +346,7 @@ object ChatMessageHelper {
         isSelf: Boolean,
         senderName: String = "",
         senderAvatar: String = "",
+        senderId: String = "",
         extra: Map<String, String> = emptyMap(),
         timestamp: Long = 0L
     ): ChatMessage {
@@ -592,6 +357,7 @@ object ChatMessageHelper {
             type = MessageType.CUSTOM,
             senderName = senderName,
             senderAvatar = senderAvatar,
+            senderId = senderId,
             timestamp = timestamp,
             extra = extra
         )
@@ -619,7 +385,7 @@ object ChatMessageHelper {
         // 判断是否与上一条消息属于同一分组
         val sameGroupAsPrev = prev != null
                 && prev.isSelf == message.isSelf
-                && prev.senderName == message.senderName
+                && (if (message.senderId.isNotEmpty() && prev.senderId.isNotEmpty()) prev.senderId == message.senderId else prev.senderName == message.senderName)
                 && prev.type != MessageType.SYSTEM
                 && message.type != MessageType.SYSTEM
                 && (message.timestamp - prev.timestamp < groupingInterval || message.timestamp == 0L || prev.timestamp == 0L)
@@ -627,7 +393,7 @@ object ChatMessageHelper {
         // 判断是否与下一条消息属于同一分组
         val sameGroupAsNext = next != null
                 && next.isSelf == message.isSelf
-                && next.senderName == message.senderName
+                && (if (message.senderId.isNotEmpty() && next.senderId.isNotEmpty()) next.senderId == message.senderId else next.senderName == message.senderName)
                 && next.type != MessageType.SYSTEM
                 && message.type != MessageType.SYSTEM
                 && (next.timestamp - message.timestamp < groupingInterval || message.timestamp == 0L || next.timestamp == 0L)

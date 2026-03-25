@@ -34,8 +34,12 @@ fun ViewContainer<*, *>.ChatSession(
 
     // 持有 List 引用
     var listViewRef: ViewRef<ListView<*, *>>? = null
+    // 消息列表区域的 ref，用于获取列表可视区域在页面中的位置
+    var messageAreaRef: ViewRef<DivView>? = null
     // 普通变量（非响应式），通过 scrollEnd 事件维护，不会触发视图重建
     var atBottom = true
+    // 当前列表滚动偏移量（通过 scroll 事件实时更新）
+    var currentScrollOffsetY = 0f
     // 记录上次已知的消息数量，用于检测新消息
     var lastKnownSize = messageList().size
 
@@ -125,6 +129,7 @@ fun ViewContainer<*, *>.ChatSession(
 
         // ========== 消息列表区域（含背景图） ==========
         View messageArea@{
+            ref { messageAreaRef = it }
             attr {
                 flex(1f)
             }
@@ -152,7 +157,13 @@ fun ViewContainer<*, *>.ChatSession(
                 }
 
                 event {
+                    scroll { params ->
+                        currentScrollOffsetY = params.offsetY
+                        cfg._currentScrollOffsetY = params.offsetY
+                    }
                     scrollEnd { params ->
+                        currentScrollOffsetY = params.offsetY
+                        cfg._currentScrollOffsetY = params.offsetY
                         atBottom = params.offsetY + params.viewHeight + 10 >= params.contentHeight
                     }
                 }
@@ -170,6 +181,32 @@ fun ViewContainer<*, *>.ChatSession(
                         groupingInterval = listOptions.messageGroupingInterval
                     )
 
+                    // vforLazy 闭包内只能有一个根子节点，用外层 View 包裹日期分隔符和消息
+                    View {
+                    // ========== 日期分隔符 ==========
+                    if (listOptions.showTimeGroup && message.timestamp > 0L) {
+                        val prevMsg = if (index > 0) messageList()[index - 1] else null
+                        val prevTimestamp = prevMsg?.timestamp ?: 0L
+                        val needSeparator = index == 0 || shouldShowDateSeparator(
+                            prevTimestamp, message.timestamp, listOptions.timeGroupInterval
+                        )
+                        if (needSeparator) {
+                            val formattedDate = listOptions.timeFormatter?.invoke(message.timestamp)
+                                ?: defaultTimeFormat(message.timestamp)
+                            if (formattedDate.isNotEmpty()) {
+                                if (slots.dateSeparator != null) {
+                                    slots.dateSeparator!!.invoke(this@View, message.timestamp, formattedDate)
+                                } else {
+                                    ChatDateSeparator {
+                                        attr {
+                                            dateText = formattedDate
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     View itemRoot@{
                         // 根据分组信息调整间距（连续同一发送者消息缩小间距）
                         if (listOptions.enableMessageGrouping && !msgContext.isFirstInGroup && message.type != MessageType.SYSTEM) {
@@ -184,65 +221,69 @@ fun ViewContainer<*, *>.ChatSession(
                                 if (slots.systemMessage != null) {
                                     slots.systemMessage!!.invoke(this@itemRoot, message, cfg)
                                 } else {
-                                    ChatSystemMessage {
-                                        attr {
-                                            this.message = message.content
+                                    // 尝试工厂渲染
+                                    val factory = cfg.messageRenderers.firstOrNull { it.canRender(message) }
+                                    if (factory != null) {
+                                        factory.render(this@itemRoot, msgContext, cfg)
+                                    } else {
+                                        ChatSystemMessage {
+                                            attr {
+                                                this.message = message.content
+                                            }
                                         }
                                     }
                                 }
                             }
-                            MessageType.TEXT -> {
-                                // ---- 文本消息（参考 Stream Chat 按类型分发） ----
+                            else -> {
+                                // ---- 非系统消息：Slot > 类型独立 Slot > Factory > 默认渲染 ----
                                 when {
+                                    // 1. 统一 Slot 优先级最高
                                     slots.messageBubble != null -> {
-                                        // 统一 Slot 优先级最高
                                         slots.messageBubble!!.invoke(this@itemRoot, msgContext, cfg)
                                     }
-                                    slots.textBubble != null -> {
-                                        // 文本类型独立 Slot
+                                    // 2. 类型独立 Slot
+                                    message.type == MessageType.TEXT && slots.textBubble != null -> {
                                         slots.textBubble!!.invoke(this@itemRoot, msgContext, cfg)
                                     }
-                                    else -> {
-                                        // 默认文本气泡渲染
-                                        renderDefaultBubble(this@itemRoot, msgContext, cfg)
-                                    }
-                                }
-                            }
-                            MessageType.IMAGE -> {
-                                // ---- 图片消息（参考 Stream Chat 的 attachmentFactories） ----
-                                when {
-                                    slots.messageBubble != null -> {
-                                        slots.messageBubble!!.invoke(this@itemRoot, msgContext, cfg)
-                                    }
-                                    slots.imageBubble != null -> {
+                                    message.type == MessageType.IMAGE && slots.imageBubble != null -> {
                                         slots.imageBubble!!.invoke(this@itemRoot, msgContext, cfg)
                                     }
-                                    else -> {
-                                        // 默认图片消息渲染
-                                        renderDefaultImageBubble(this@itemRoot, msgContext, cfg)
-                                    }
-                                }
-                            }
-                            MessageType.CUSTOM -> {
-                                // ---- 自定义消息 ----
-                                when {
-                                    slots.messageBubble != null -> {
-                                        slots.messageBubble!!.invoke(this@itemRoot, msgContext, cfg)
-                                    }
-                                    slots.customBubble != null -> {
+                                    message.type == MessageType.CUSTOM && slots.customBubble != null -> {
                                         slots.customBubble!!.invoke(this@itemRoot, msgContext, cfg)
                                     }
                                     else -> {
-                                        // CUSTOM 类型无默认渲染，显示占位提示
-                                        ChatSystemMessage {
-                                            attr {
-                                                this.message = "[不支持的消息类型]"
+                                        // 3. 工厂链式匹配
+                                        val factory = cfg.messageRenderers.firstOrNull { it.canRender(message) }
+                                        if (factory != null) {
+                                            factory.render(this@itemRoot, msgContext, cfg)
+                                        } else {
+                                            // 4. 默认渲染（兜底）
+                                            when (message.type) {
+                                                MessageType.TEXT -> renderDefaultBubble(this@itemRoot, msgContext, cfg)
+                                                MessageType.IMAGE -> renderDefaultImageBubble(this@itemRoot, msgContext, cfg)
+                                                MessageType.VIDEO -> renderDefaultImageBubble(this@itemRoot, msgContext, cfg)
+                                                MessageType.FILE -> renderDefaultBubble(this@itemRoot, msgContext, cfg)
+                                                MessageType.CUSTOM -> {
+                                                    ChatSystemMessage {
+                                                        attr {
+                                                            this.message = "[不支持的消息类型]"
+                                                        }
+                                                    }
+                                                }
+                                                else -> {
+                                                    ChatSystemMessage {
+                                                        attr {
+                                                            this.message = "[不支持的消息类型]"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                    }
                     }
                 }
             }
@@ -251,6 +292,20 @@ fun ViewContainer<*, *>.ChatSession(
             // 悬浮在列表上层的辅助内容（如"滚动到底部"按钮）
             if (slots.helperContent != null) {
                 slots.helperContent!!.invoke(this@messageArea)
+            }
+
+            // ========== 正在输入指示器 ==========
+            if (listOptions.typingUsers.isNotEmpty()) {
+                val typingText = formatTypingText(listOptions.typingUsers)
+                if (slots.typingIndicator != null) {
+                    slots.typingIndicator!!.invoke(this@messageArea, listOptions.typingUsers)
+                } else {
+                    ChatTypingIndicator {
+                        attr {
+                            this.typingText = typingText
+                        }
+                    }
+                }
             }
         }
     }
@@ -316,6 +371,11 @@ internal fun renderDefaultBubble(
             rowPaddingV = verticalPadding
             rowPaddingH = theme.rowPaddingH
             avatarBubbleGap = theme.avatarBubbleGap
+            // 新增属性
+            reactions = message.reactions
+            isEdited = message.isEdited
+            isDeleted = message.isDeleted
+            isPinned = message.isPinned
         }
         event {
             onClick = {
@@ -323,6 +383,14 @@ internal fun renderDefaultBubble(
             }
             onLongPress = {
                 cfg.onMessageLongPress?.invoke(message)
+            }
+            onLongPressWithPosition = { x, y, w, h ->
+                val correctedY = cfg.correctBubbleY(y)
+                cfg.onMessageLongPressWithPosition?.invoke(message, x, correctedY, w, h)
+                    ?: cfg.onMessageLongPress?.invoke(message)
+            }
+            onReactionClick = { type ->
+                cfg.onReactionClick?.invoke(message, type)
             }
         }
     }
@@ -370,6 +438,7 @@ internal fun renderDefaultImageBubble(
     }
 
     container.apply {
+        var imgBubbleRef: ViewRef<DivView>? = null
         View {
             attr {
                 flexDirectionRow()
@@ -382,38 +451,13 @@ internal fun renderDefaultImageBubble(
             }
 
             if (!message.isSelf) {
-                // 对方消息：头像在左
-                if (showAvatarForThis) {
-                    View {
-                        attr {
-                            size(theme.avatarSize, theme.avatarSize)
-                            borderRadius(theme.avatarRadius)
-                            backgroundColor(Color(0xFFE8E8E8))
-                            marginTop(2f)
-                        }
-                        Image {
-                            attr {
-                                size(theme.avatarSize, theme.avatarSize)
-                                borderRadius(theme.avatarRadius)
-                                src(message.senderAvatar.ifEmpty { ChatBubbleView.DEFAULT_AVATAR })
-                                resizeCover()
-                            }
-                        }
-                    }
-                } else if (listOptions.showAvatar) {
-                    // 分组内非最后一条：头像占位
-                    View {
-                        attr {
-                            size(theme.avatarSize, theme.avatarSize)
-                        }
-                    }
-                }
-                // 图片内容区
+                // 对方消息：名字在第一组消息的上方，与气泡左边缘对齐
                 View {
                     attr {
-                        marginLeft(if (listOptions.showAvatar) theme.avatarBubbleGap else 0f)
+                        flexDirection(FlexDirection.COLUMN)
+                        flex(1f)
                     }
-                    // 发送者名称
+                    // 发送者名称（显示在第一组消息上方，与气泡左边缘对齐）
                     if (showNameForThis) {
                         Text {
                             attr {
@@ -421,30 +465,84 @@ internal fun renderDefaultImageBubble(
                                 fontSize(12f)
                                 color(Color(0xFF999999))
                                 marginBottom(4f)
+                                // 名字左侧缩进：头像宽度 + 头像与气泡间距，与气泡左边缘对齐
+                                if (listOptions.showAvatar) {
+                                    marginLeft(theme.avatarSize + theme.avatarBubbleGap)
+                                }
                             }
                         }
                     }
-                    // 图片
+                    // 头像 + 图片行
                     View {
                         attr {
-                            size(displayWidth, displayHeight)
-                            borderRadius(theme.imageRadius)
-                            backgroundColor(Color(0xFFE8E8E8))
+                            flexDirectionRow()
                         }
-                        Image {
+                        if (showAvatarForThis) {
+                            View {
+                                attr {
+                                    size(theme.avatarSize, theme.avatarSize)
+                                    borderRadius(theme.avatarRadius)
+                                    backgroundColor(Color(0xFFE8E8E8))
+                                    marginTop(2f)
+                                }
+                                Image {
+                                    attr {
+                                        size(theme.avatarSize, theme.avatarSize)
+                                        borderRadius(theme.avatarRadius)
+                                        src(message.senderAvatar.ifEmpty { ChatBubbleView.DEFAULT_AVATAR })
+                                        resizeCover()
+                                    }
+                                }
+                            }
+                        } else if (listOptions.showAvatar) {
+                            // 分组内非最后一条：头像占位
+                            View {
+                                attr {
+                                    size(theme.avatarSize, theme.avatarSize)
+                                }
+                            }
+                        }
+                        // 图片内容区
+                        View {
                             attr {
-                                size(displayWidth, displayHeight)
-                                borderRadius(theme.imageRadius)
-                                src(message.content)
-                                resizeCover()
+                                marginLeft(if (listOptions.showAvatar) theme.avatarBubbleGap else 0f)
                             }
-                        }
-                        event {
-                            click {
-                                cfg.onMessageClick?.invoke(message)
-                            }
-                            longPress {
-                                cfg.onMessageLongPress?.invoke(message)
+                            // 图片
+                            View {
+                                ref { imgBubbleRef = it }
+                                attr {
+                                    size(displayWidth, displayHeight)
+                                    borderRadius(theme.imageRadius)
+                                    backgroundColor(Color(0xFFE8E8E8))
+                                }
+                                Image {
+                                    attr {
+                                        size(displayWidth, displayHeight)
+                                        borderRadius(theme.imageRadius)
+                                        src(message.content)
+                                        resizeCover()
+                                    }
+                                }
+                                event {
+                                    click {
+                                        cfg.onMessageClick?.invoke(message)
+                                    }
+                                    longPress {
+                                        if (cfg.onMessageLongPressWithPosition != null) {
+                                            imgBubbleRef?.view?.let { view ->
+                                                val frame = view.frame
+                                                val frameInRoot = view.convertFrame(frame, toView = null)
+                                                val correctedY = cfg.correctBubbleY(frameInRoot.y)
+                                                cfg.onMessageLongPressWithPosition?.invoke(
+                                                    message, frameInRoot.x, correctedY,
+                                                    frameInRoot.width, frameInRoot.height
+                                                )
+                                            } ?: cfg.onMessageLongPress?.invoke(message)
+                                        } else {
+                                            cfg.onMessageLongPress?.invoke(message)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -474,6 +572,7 @@ internal fun renderDefaultImageBubble(
                 }
                 // 图片
                 View {
+                    ref { imgBubbleRef = it }
                     attr {
                         size(displayWidth, displayHeight)
                         borderRadius(theme.imageRadius)
@@ -492,7 +591,19 @@ internal fun renderDefaultImageBubble(
                             cfg.onMessageClick?.invoke(message)
                         }
                         longPress {
-                            cfg.onMessageLongPress?.invoke(message)
+                            if (cfg.onMessageLongPressWithPosition != null) {
+                                imgBubbleRef?.view?.let { view ->
+                                    val frame = view.frame
+                                    val frameInRoot = view.convertFrame(frame, toView = null)
+                                    val correctedY = cfg.correctBubbleY(frameInRoot.y)
+                                    cfg.onMessageLongPressWithPosition?.invoke(
+                                        message, frameInRoot.x, correctedY,
+                                        frameInRoot.width, frameInRoot.height
+                                    )
+                                } ?: cfg.onMessageLongPress?.invoke(message)
+                            } else {
+                                cfg.onMessageLongPress?.invoke(message)
+                            }
                         }
                     }
                 }

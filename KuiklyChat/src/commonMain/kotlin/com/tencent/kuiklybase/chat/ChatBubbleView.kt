@@ -75,6 +75,9 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
             // 是否需要换行：文字预估宽度超过可显示宽度
             val needsWrap = estimatedTextWidth > textMaxWidth
 
+            // 气泡 View 的引用，用于获取气泡在页面坐标系中的精确位置
+            var bubbleViewRef: ViewRef<DivView>? = null
+
             View {
                 attr {
                     flexDirectionRow()
@@ -87,44 +90,12 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                 }
 
                 if (!ctx.attr.isSelf) {
-                    // ===== 对方消息：头像在左 =====
-                    if (ctx.attr.showAvatar) {
-                        // 头像（带背景色，防止透明头像与背景融为一体）
-                        View {
-                            attr {
-                                size(ctx.attr.avatarSize, ctx.attr.avatarSize)
-                                borderRadius(ctx.attr.avatarRadius)
-                                backgroundColor(Color(0xFFE8E8E8))
-                                marginTop(2f)
-                            }
-                            Image {
-                                attr {
-                                    size(ctx.attr.avatarSize, ctx.attr.avatarSize)
-                                    borderRadius(ctx.attr.avatarRadius)
-                                    src(ctx.attr.avatarUrl.ifEmpty { DEFAULT_AVATAR })
-                                    resizeCover()
-                                }
-                            }
-                        }
-                    } else if (ctx.attr.showAvatarPlaceholder) {
-                        // 分组内非最后一条：头像占位
-                        View {
-                            attr {
-                                size(ctx.attr.avatarSize, ctx.attr.avatarSize)
-                            }
-                        }
-                    }
-                    // 消息内容区
+                    // ===== 对方消息：名字在第一组消息的上方 =====
                     Column {
                         attr {
-                            marginLeft(if (ctx.attr.showAvatar || ctx.attr.showAvatarPlaceholder) ctx.attr.avatarBubbleGap else 0f)
-                            if (needsWrap) {
-                                // 长文本：用固定宽度，让 Text 在此宽度内自动换行
-                                width(bubbleMaxWidth)
-                            }
-                            // 短文本：不设宽度，Column 自适应内容，气泡包裹文字
+                            flex(1f)
                         }
-                        // 发送者名称
+                        // 发送者名称（显示在第一组消息上方，与气泡左边缘对齐）
                         if (ctx.attr.senderName.isNotEmpty()) {
                             Text {
                                 attr {
@@ -132,31 +103,137 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                     fontSize(12f)
                                     color(Color(0xFF999999))
                                     marginBottom(4f)
+                                    // 名字左侧缩进：头像宽度 + 头像与气泡间距，与气泡左边缘对齐
+                                    if (ctx.attr.showAvatar || ctx.attr.showAvatarPlaceholder) {
+                                        marginLeft(ctx.attr.avatarSize + ctx.attr.avatarBubbleGap)
+                                    }
                                 }
                             }
                         }
-                        // 消息气泡
+                        // 头像 + 气泡行
                         View {
                             attr {
-                                backgroundColor(Color(ctx.attr.otherBubbleColor))
-                                borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
-                                padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
-                                boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                                flexDirectionRow()
                             }
-                            Text {
+                            if (ctx.attr.showAvatar) {
+                                // 头像（带背景色，防止透明头像与背景融为一体）
+                                View {
+                                    attr {
+                                        size(ctx.attr.avatarSize, ctx.attr.avatarSize)
+                                        borderRadius(ctx.attr.avatarRadius)
+                                        backgroundColor(Color(0xFFE8E8E8))
+                                        marginTop(2f)
+                                    }
+                                    Image {
+                                        attr {
+                                            size(ctx.attr.avatarSize, ctx.attr.avatarSize)
+                                            borderRadius(ctx.attr.avatarRadius)
+                                            src(ctx.attr.avatarUrl.ifEmpty { DEFAULT_AVATAR })
+                                            resizeCover()
+                                        }
+                                    }
+                                }
+                            } else if (ctx.attr.showAvatarPlaceholder) {
+                                // 分组内非最后一条：头像占位
+                                View {
+                                    attr {
+                                        size(ctx.attr.avatarSize, ctx.attr.avatarSize)
+                                    }
+                                }
+                            }
+                            // 消息内容区
+                            Column {
                                 attr {
-                                    text(ctx.attr.content)
-                                    fontSize(ctx.attr.messageFontSize)
-                                    color(Color(ctx.attr.otherTextColor))
-                                    lineHeight(ctx.attr.messageLineHeight)
+                                    marginLeft(if (ctx.attr.showAvatar || ctx.attr.showAvatarPlaceholder) ctx.attr.avatarBubbleGap else 0f)
+                                    if (needsWrap) {
+                                        // 长文本：用固定宽度，让 Text 在此宽度内自动换行
+                                        width(bubbleMaxWidth)
+                                    }
+                                    // 短文本：不设宽度，Column 自适应内容，气泡包裹文字
                                 }
-                            }
-                            event {
-                                click {
-                                    ctx.event.onClick?.invoke()
+                                // 消息气泡
+                                View {
+                                    ref { bubbleViewRef = it }
+                                    attr {
+                                        backgroundColor(Color(ctx.attr.otherBubbleColor))
+                                        borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
+                                        padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
+                                        boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                                    }
+                                    // 消息内容
+                                    if (ctx.attr.isDeleted) {
+                                        Text {
+                                            attr {
+                                                text("此消息已被删除")
+                                                fontSize(ctx.attr.messageFontSize)
+                                                color(Color(0xFF999999))
+                                                lineHeight(ctx.attr.messageLineHeight)
+                                            }
+                                        }
+                                    } else {
+                                        Text {
+                                            attr {
+                                                text(ctx.attr.content)
+                                                fontSize(ctx.attr.messageFontSize)
+                                                color(Color(ctx.attr.otherTextColor))
+                                                lineHeight(ctx.attr.messageLineHeight)
+                                            }
+                                        }
+                                    }
+                                    // 已编辑标记
+                                    if (ctx.attr.isEdited && !ctx.attr.isDeleted) {
+                                        Text {
+                                            attr {
+                                                text("(已编辑)")
+                                                fontSize(10f)
+                                                color(Color(0xFF999999))
+                                                marginTop(2f)
+                                            }
+                                        }
+                                    }
+                                    event {
+                                        click {
+                                            ctx.event.onClick?.invoke()
+                                        }
+                                        longPress {
+                                            if (ctx.event.onLongPressWithPosition != null) {
+                                                bubbleViewRef?.view?.let { view ->
+                                                    val frame = view.frame
+                                                    val frameInRoot = view.convertFrame(frame, toView = null)
+                                                    ctx.event.onLongPressWithPosition?.invoke(
+                                                        frameInRoot.x, frameInRoot.y,
+                                                        frameInRoot.width, frameInRoot.height
+                                                    )
+                                                } ?: ctx.event.onLongPress?.invoke()
+                                            } else {
+                                                ctx.event.onLongPress?.invoke()
+                                            }
+                                        }
+                                    }
                                 }
-                                longPress {
-                                    ctx.event.onLongPress?.invoke()
+                                // 置顶标记
+                                if (ctx.attr.isPinned) {
+                                    Text {
+                                        attr {
+                                            text("📌 已置顶")
+                                            fontSize(10f)
+                                            color(Color(0xFF4F8FFF))
+                                            marginTop(2f)
+                                        }
+                                    }
+                                }
+                                // 反应栏（气泡下方）
+                                if (ctx.attr.reactions.isNotEmpty()) {
+                                    ChatReactionBar {
+                                        attr {
+                                            reactions = ctx.attr.reactions
+                                        }
+                                        event {
+                                            onReactionClick = { type ->
+                                                ctx.event.onReactionClick?.invoke(type)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -201,6 +278,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                         }
                         // 消息气泡（渐变色）
                         View {
+                            ref { bubbleViewRef = it }
                             attr {
                                 backgroundLinearGradient(
                                     Direction.TO_RIGHT,
@@ -211,12 +289,35 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                 padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
                                 boxShadow(BoxShadow(0f, 1f, 6f, Color(0x334F8FFF)))
                             }
-                            Text {
-                                attr {
-                                    text(ctx.attr.content)
-                                    fontSize(ctx.attr.messageFontSize)
-                                    color(Color(ctx.attr.selfTextColor))
-                                    lineHeight(ctx.attr.messageLineHeight)
+                            // 消息内容
+                            if (ctx.attr.isDeleted) {
+                                Text {
+                                    attr {
+                                        text("此消息已被删除")
+                                        fontSize(ctx.attr.messageFontSize)
+                                        color(Color(0xCCFFFFFF))
+                                        lineHeight(ctx.attr.messageLineHeight)
+                                    }
+                                }
+                            } else {
+                                Text {
+                                    attr {
+                                        text(ctx.attr.content)
+                                        fontSize(ctx.attr.messageFontSize)
+                                        color(Color(ctx.attr.selfTextColor))
+                                        lineHeight(ctx.attr.messageLineHeight)
+                                    }
+                                }
+                            }
+                            // 已编辑标记
+                            if (ctx.attr.isEdited && !ctx.attr.isDeleted) {
+                                Text {
+                                    attr {
+                                        text("(已编辑)")
+                                        fontSize(10f)
+                                        color(Color(0xCCFFFFFF))
+                                        marginTop(2f)
+                                    }
                                 }
                             }
                             event {
@@ -224,7 +325,42 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                     ctx.event.onClick?.invoke()
                                 }
                                 longPress {
-                                    ctx.event.onLongPress?.invoke()
+                                    if (ctx.event.onLongPressWithPosition != null) {
+                                        bubbleViewRef?.view?.let { view ->
+                                            val frame = view.frame
+                                            val frameInRoot = view.convertFrame(frame, toView = null)
+                                            ctx.event.onLongPressWithPosition?.invoke(
+                                                frameInRoot.x, frameInRoot.y,
+                                                frameInRoot.width, frameInRoot.height
+                                            )
+                                        } ?: ctx.event.onLongPress?.invoke()
+                                    } else {
+                                        ctx.event.onLongPress?.invoke()
+                                    }
+                                }
+                            }
+                        }
+                        // 置顶标记
+                        if (ctx.attr.isPinned) {
+                            Text {
+                                attr {
+                                    text("📌 已置顶")
+                                    fontSize(10f)
+                                    color(Color(0xFF4F8FFF))
+                                    marginTop(2f)
+                                }
+                            }
+                        }
+                        // 反应栏（气泡下方）
+                        if (ctx.attr.reactions.isNotEmpty()) {
+                            ChatReactionBar {
+                                attr {
+                                    reactions = ctx.attr.reactions
+                                }
+                                event {
+                                    onReactionClick = { type ->
+                                        ctx.event.onReactionClick?.invoke(type)
+                                    }
                                 }
                             }
                         }
@@ -337,12 +473,26 @@ class ChatBubbleAttr : ComposeAttr() {
     var rowPaddingH: Float by observable(12f)
     /** 头像与气泡的间距 */
     var avatarBubbleGap: Float by observable(8f)
+
+    // ---------- 新增属性（反应、编辑/删除状态） ----------
+    /** 消息反应列表 */
+    var reactions: List<ReactionItem> by observable(emptyList())
+    /** 是否已编辑 */
+    var isEdited: Boolean by observable(false)
+    /** 是否已删除（软删除） */
+    var isDeleted: Boolean by observable(false)
+    /** 是否已置顶 */
+    var isPinned: Boolean by observable(false)
 }
 
 class ChatBubbleEvent : ComposeEvent() {
     var onClick: (() -> Unit)? = null
     var onLongPress: (() -> Unit)? = null
+    /** 带位置信息的长按回调（x, y, width, height 相对于页面根节点） */
+    var onLongPressWithPosition: ((Float, Float, Float, Float) -> Unit)? = null
     var onResendClick: (() -> Unit)? = null
+    /** 反应点击回调 */
+    var onReactionClick: ((String) -> Unit)? = null
 }
 
 fun ViewContainer<*, *>.ChatBubble(init: ChatBubbleView.() -> Unit) {
