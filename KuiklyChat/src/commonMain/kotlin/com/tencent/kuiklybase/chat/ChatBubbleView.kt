@@ -67,17 +67,6 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
         return {
             // 计算气泡最大宽度
             val bubbleMaxWidth = ctx.pagerData.pageViewWidth * ctx.attr.bubbleMaxWidthRatio
-            // 气泡内左右 padding 总和
-            val bubblePaddingTotal = ctx.attr.bubblePaddingH * 2
-            // 可用于显示文字的最大宽度
-            val textMaxWidth = bubbleMaxWidth - bubblePaddingTotal
-            // 估算文字单行宽度（中文字约等于 fontSize，英文/数字约 0.6 倍 fontSize）
-            val fontSize = ctx.attr.messageFontSize
-            val estimatedTextWidth = ctx.attr.content.fold(0f) { acc, c ->
-                acc + if (c.code > 0x7F) fontSize else fontSize * 0.6f
-            }
-            // 是否需要换行：文字预估宽度超过可显示宽度，或有引用回复
-            val needsWrap = estimatedTextWidth > textMaxWidth || ctx.attr.quotedMessageContent.isNotEmpty()
 
             // 气泡 View 的引用，用于获取气泡在页面坐标系中的精确位置
             var bubbleViewRef: ViewRef<DivView>? = null
@@ -155,13 +144,8 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                             Column {
                                 attr {
                                     marginLeft(if (ctx.attr.showAvatar || ctx.attr.showAvatarPlaceholder) ctx.attr.avatarBubbleGap else 0f)
-                                    if (needsWrap) {
-                                        // 长文本或有引用：用固定宽度，让 Text 有明确的换行边界
-                                        width(bubbleMaxWidth)
-                                    } else {
-                                        // 短文本：自适应内容宽度，但不超过最大宽度
-                                        maxWidth(bubbleMaxWidth)
-                                    }
+                                    width(bubbleMaxWidth)
+                                    alignItems(FlexAlign.FLEX_START)
                                 }
                                 // 消息气泡
                                 View {
@@ -171,9 +155,13 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                         borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
                                         padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
                                         boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                                        maxWidth(bubbleMaxWidth)
                                     }
                                     // P0: 引用回复块（在正文之前显示被引用的消息）
                                     if (ctx.attr.quotedMessageContent.isNotEmpty()) {
+                                        // 引用块需要确定宽度让内部 Text 换行
+                                        // 宽度 = 气泡最大宽度 - 气泡左右 padding
+                                        val quoteBlockWidth = bubbleMaxWidth - ctx.attr.bubblePaddingH * 2
                                         View {
                                             attr {
                                                 flexDirectionRow()
@@ -181,8 +169,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                                 borderRadius(6f)
                                                 padding(6f, 8f, 6f, 8f)
                                                 marginBottom(6f)
-                                                // 限制引用块宽度为气泡内容区宽度，让内部 Text 有换行边界
-                                                width(bubbleMaxWidth - bubblePaddingTotal)
+                                                width(quoteBlockWidth)
                                             }
                                             // 引用竖线
                                             View {
@@ -355,11 +342,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
 
                     Column {
                         attr {
-                            if (needsWrap) {
-                                width(bubbleMaxWidth)
-                            } else {
-                                maxWidth(bubbleMaxWidth)
-                            }
+                            width(bubbleMaxWidth)
                             alignItems(FlexAlign.FLEX_END)
                         }
                         // 消息气泡（渐变色）
@@ -374,9 +357,12 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                 borderRadius(BorderRectRadius(12f, 2f, 12f, 12f))
                                 padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
                                 boxShadow(BoxShadow(0f, 1f, 6f, Color(0x334F8FFF)))
+                                maxWidth(bubbleMaxWidth)
                             }
                             // P0: 引用回复块（自己发送的引用）
                             if (ctx.attr.quotedMessageContent.isNotEmpty()) {
+                                // 引用块需要确定宽度让内部 Text 换行
+                                val quoteBlockWidth = bubbleMaxWidth - ctx.attr.bubblePaddingH * 2
                                 View {
                                     attr {
                                         flexDirectionRow()
@@ -384,8 +370,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                         borderRadius(6f)
                                         padding(6f, 8f, 6f, 8f)
                                         marginBottom(6f)
-                                        // 限制引用块宽度为气泡内容区宽度，让内部 Text 有换行边界
-                                        width(bubbleMaxWidth - bubblePaddingTotal)
+                                        width(quoteBlockWidth)
                                     }
                                     // 引用竖线
                                     View {
