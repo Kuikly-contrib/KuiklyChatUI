@@ -120,18 +120,22 @@ fun ViewContainer<*, *>.ChatSession(
 
     cfg.scrollToBottomAction = scrollToBottom
 
-    // P0: 内置操作菜单——自动包装长按回调
+    // P0: 内置操作菜单——通过 overlayRef 管理响应式状态
+    var overlayRef: ViewRef<MessageOptionsOverlayView>? = null
+
     if (cfg.enableBuiltInMessageOptions) {
         val userLongPressWithPosition = cfg.onMessageLongPressWithPosition
         val userLongPress = cfg.onMessageLongPress
         cfg.onMessageLongPressWithPosition = { message, x, y, w, h ->
             if (message.type != MessageType.SYSTEM) {
-                cfg._optionsTargetMessage = message
-                cfg._optionsTargetX = x
-                cfg._optionsTargetY = y
-                cfg._optionsTargetW = w
-                cfg._optionsTargetH = h
-                cfg._showMessageOptions = true
+                overlayRef?.view?.let { overlay ->
+                    overlay.overlayAttr.targetMessage = message
+                    overlay.overlayAttr.targetX = x
+                    overlay.overlayAttr.targetY = y
+                    overlay.overlayAttr.targetW = w
+                    overlay.overlayAttr.targetH = h
+                    overlay.overlayAttr.isVisible = true
+                }
             }
             // 也调用用户设置的原始回调
             userLongPressWithPosition?.invoke(message, x, y, w, h)
@@ -140,12 +144,14 @@ fun ViewContainer<*, *>.ChatSession(
         if (cfg.onMessageLongPress == null) {
             cfg.onMessageLongPress = { message ->
                 if (message.type != MessageType.SYSTEM) {
-                    cfg._optionsTargetMessage = message
-                    cfg._optionsTargetX = 0f
-                    cfg._optionsTargetY = 100f
-                    cfg._optionsTargetW = 200f
-                    cfg._optionsTargetH = 50f
-                    cfg._showMessageOptions = true
+                    overlayRef?.view?.let { overlay ->
+                        overlay.overlayAttr.targetMessage = message
+                        overlay.overlayAttr.targetX = 0f
+                        overlay.overlayAttr.targetY = 100f
+                        overlay.overlayAttr.targetW = 200f
+                        overlay.overlayAttr.targetH = 50f
+                        overlay.overlayAttr.isVisible = true
+                    }
                 }
                 userLongPress?.invoke(message)
             }
@@ -540,9 +546,76 @@ fun ViewContainer<*, *>.ChatSession(
             )
         }
 
-        // ========== P0: 内置操作菜单（自动管理菜单状态） ==========
+        // ========== P0: 内置操作菜单（通过 ComposeView 的 observable 实现响应式状态） ==========
         if (cfg.enableBuiltInMessageOptions) {
-            vif({ cfg._showMessageOptions }) {
+            MessageOptionsOverlay {
+                ref { overlayRef = it }
+                attr {
+                    menuActions = cfg.messageActions
+                    // 传递主题色
+                    menuBgColor = themeColors.menuBackgroundColor
+                    textColor = themeColors.menuTextColor
+                    destructiveColor = themeColors.menuDestructiveColor
+                    dividerColor = themeColors.dividerColor
+                    // 气泡样式信息
+                    bubblePrimaryColor = theme.primaryColor
+                    bubblePrimaryGradientEndColor = theme.primaryGradientEndColor
+                    bubbleOtherBubbleColor = theme.otherBubbleColor
+                    bubbleOtherTextColor = theme.otherTextColor
+                    bubbleSelfTextColor = theme.selfTextColor
+                    bubblePaddingH = theme.bubblePaddingH
+                    bubblePaddingV = theme.bubblePaddingV
+                    bubbleFontSize = theme.messageFontSize
+                    bubbleLineHeight = theme.messageLineHeight
+                    // 回调
+                    onActionClickCallback = { action ->
+                        overlayRef?.view?.overlayAttr?.targetMessage?.let { msg ->
+                            // 处理内置操作
+                            when (action.key) {
+                                "reply", "quote" -> {
+                                    cfg.replyToMessage(msg)
+                                }
+                            }
+                            cfg.onMessageAction?.invoke(msg, action)
+                        }
+                    }
+                    onReactionSelectCallback = { emoji ->
+                        overlayRef?.view?.overlayAttr?.targetMessage?.let { msg ->
+                            cfg.onReactionClick?.invoke(msg, emoji)
+                        }
+                    }
+                    onDismissCallback = {
+                        cfg._showMessageOptions = false
+                        cfg._optionsTargetMessage = null
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================
+// 内部：操作菜单状态管理组件
+// ============================
+
+/**
+ * 内部 ComposeView，用于管理消息操作菜单的响应式状态。
+ * ChatSessionConfig 是普通类，不支持 by observable，
+ * 而 vif 需要 observable 属性才能响应变化。
+ * 此组件将菜单的显示/隐藏状态放在 ComposeAttr 中，
+ * 通过 observable 实现响应式更新。
+ */
+internal class MessageOptionsOverlayView : ComposeView<MessageOptionsOverlayAttr, ComposeEvent>() {
+    override fun createAttr(): MessageOptionsOverlayAttr = MessageOptionsOverlayAttr()
+    override fun createEvent(): ComposeEvent = ComposeEvent()
+
+    /** 公开 attr 访问器，因为 ComposeView.attr 是 protected 的 */
+    val overlayAttr: MessageOptionsOverlayAttr get() = attr
+
+    override fun body(): ViewBuilder {
+        val ctx = this
+        return {
+            vif({ ctx.attr.isVisible }) {
                 View {
                     attr {
                         positionAbsolute()
@@ -553,50 +626,40 @@ fun ViewContainer<*, *>.ChatSession(
                     }
                     ChatMessageOptions {
                         attr {
-                            message = cfg._optionsTargetMessage
-                            actions = cfg.messageActions
-                            targetX = cfg._optionsTargetX
-                            targetY = cfg._optionsTargetY
-                            targetWidth = cfg._optionsTargetW
-                            targetHeight = cfg._optionsTargetH
-                            screenWidth = getPager().pageData.pageViewWidth
-                            screenHeight = getPager().pageData.pageViewHeight
+                            message = ctx.attr.targetMessage
+                            actions = ctx.attr.menuActions
+                            targetX = ctx.attr.targetX
+                            targetY = ctx.attr.targetY
+                            targetWidth = ctx.attr.targetW
+                            targetHeight = ctx.attr.targetH
+                            screenWidth = ctx.pagerData.pageViewWidth
+                            screenHeight = ctx.pagerData.pageViewHeight
                             // 传递主题色
-                            menuBgColor = themeColors.menuBackgroundColor
-                            textColor = themeColors.menuTextColor
-                            destructiveColor = themeColors.menuDestructiveColor
-                            dividerColor = themeColors.dividerColor
-                            // 气泡样式信息
-                            bubblePrimaryColor = theme.primaryColor
-                            bubblePrimaryGradientEndColor = theme.primaryGradientEndColor
-                            bubbleOtherBubbleColor = theme.otherBubbleColor
-                            bubbleOtherTextColor = theme.otherTextColor
-                            bubbleSelfTextColor = theme.selfTextColor
-                            bubblePaddingH = theme.bubblePaddingH
-                            bubblePaddingV = theme.bubblePaddingV
-                            bubbleFontSize = theme.messageFontSize
-                            bubbleLineHeight = theme.messageLineHeight
+                            menuBgColor = ctx.attr.menuBgColor
+                            textColor = ctx.attr.textColor
+                            destructiveColor = ctx.attr.destructiveColor
+                            dividerColor = ctx.attr.dividerColor
+                            // 气泡样式
+                            bubblePrimaryColor = ctx.attr.bubblePrimaryColor
+                            bubblePrimaryGradientEndColor = ctx.attr.bubblePrimaryGradientEndColor
+                            bubbleOtherBubbleColor = ctx.attr.bubbleOtherBubbleColor
+                            bubbleOtherTextColor = ctx.attr.bubbleOtherTextColor
+                            bubbleSelfTextColor = ctx.attr.bubbleSelfTextColor
+                            bubblePaddingH = ctx.attr.bubblePaddingH
+                            bubblePaddingV = ctx.attr.bubblePaddingV
+                            bubbleFontSize = ctx.attr.bubbleFontSize
+                            bubbleLineHeight = ctx.attr.bubbleLineHeight
                         }
                         event {
                             onActionClick = { action ->
-                                cfg._optionsTargetMessage?.let { msg ->
-                                    // 处理内置操作
-                                    when (action.key) {
-                                        "reply", "quote" -> {
-                                            cfg.replyToMessage(msg)
-                                        }
-                                    }
-                                    cfg.onMessageAction?.invoke(msg, action)
-                                }
+                                ctx.attr.onActionClickCallback?.invoke(action)
                             }
                             onReactionSelect = { emoji ->
-                                cfg._optionsTargetMessage?.let { msg ->
-                                    cfg.onReactionClick?.invoke(msg, emoji)
-                                }
+                                ctx.attr.onReactionSelectCallback?.invoke(emoji)
                             }
                             onDismiss = {
-                                cfg._showMessageOptions = false
-                                cfg._optionsTargetMessage = null
+                                ctx.attr.isVisible = false
+                                ctx.attr.onDismissCallback?.invoke()
                             }
                         }
                     }
@@ -604,6 +667,39 @@ fun ViewContainer<*, *>.ChatSession(
             }
         }
     }
+}
+
+internal class MessageOptionsOverlayAttr : ComposeAttr() {
+    var isVisible: Boolean by observable(false)
+    var targetMessage: ChatMessage? by observable(null)
+    var menuActions: List<MessageAction> by observable(emptyList())
+    var targetX: Float by observable(0f)
+    var targetY: Float by observable(0f)
+    var targetW: Float by observable(0f)
+    var targetH: Float by observable(0f)
+    // 主题色
+    var menuBgColor: Long by observable(0xF2FFFFFF)
+    var textColor: Long by observable(0xFF1A1A1A)
+    var destructiveColor: Long by observable(0xFFFF3B30)
+    var dividerColor: Long by observable(0x1A000000)
+    // 气泡样式
+    var bubblePrimaryColor: Long by observable(0xFF4F8FFF)
+    var bubblePrimaryGradientEndColor: Long by observable(0xFF6C5CE7)
+    var bubbleOtherBubbleColor: Long by observable(0xFFFFFFFF)
+    var bubbleOtherTextColor: Long by observable(0xFF333333)
+    var bubbleSelfTextColor: Long by observable(0xFFFFFFFF)
+    var bubblePaddingH: Float by observable(12f)
+    var bubblePaddingV: Float by observable(10f)
+    var bubbleFontSize: Float by observable(15f)
+    var bubbleLineHeight: Float by observable(22f)
+    // 回调
+    var onActionClickCallback: ((MessageAction) -> Unit)? = null
+    var onReactionSelectCallback: ((String) -> Unit)? = null
+    var onDismissCallback: (() -> Unit)? = null
+}
+
+internal fun ViewContainer<*, *>.MessageOptionsOverlay(init: MessageOptionsOverlayView.() -> Unit) {
+    addChild(MessageOptionsOverlayView(), init)
 }
 
 // ============================
