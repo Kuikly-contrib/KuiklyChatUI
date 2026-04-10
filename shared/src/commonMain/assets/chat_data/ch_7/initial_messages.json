@@ -1,0 +1,141 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_7",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch7_001",
+        "type": "SYSTEM",
+        "content": "Eve 创建了群聊「周末活动群」",
+        "is_self": false,
+        "timestamp": 1710748800000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_002",
+        "type": "TEXT",
+        "content": "大家好！建个群方便组织周末活动 🎉",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1710748860000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_003",
+        "type": "TEXT",
+        "content": "好主意！上次团建太久远了",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1710748920000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_004",
+        "type": "TEXT",
+        "content": "这周末有什么安排吗？",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1710748980000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_005",
+        "type": "TEXT",
+        "content": "提议去爬白云山，天气预报说周六是晴天 ☀️",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1710749040000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_006",
+        "type": "TEXT",
+        "content": "我投一票爬山！",
+        "is_self": false,
+        "sender_name": "Diana",
+        "sender_id": "user_4",
+        "sender_avatar": "",
+        "timestamp": 1710749100000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_007",
+        "type": "TEXT",
+        "content": "+1 爬山",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1710749160000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_008",
+        "type": "TEXT",
+        "content": "那就定了！周六早上 9 点在地铁站 A 出口集合 🏔️\n\n需要准备：\n• 运动鞋\n• 水和零食\n• 防晒霜\n• 好心情 😄",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1710749220000,
+        "status": "SENT",
+        "is_pinned": true,
+        "reactions": [
+          { "type": "👍", "count": 5, "is_own_reaction": true },
+          { "type": "🏔️", "count": 3, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "ch7_009",
+        "type": "IMAGE",
+        "content": "https://picsum.photos/500/300",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1711094400000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "IMAGE",
+            "url": "https://picsum.photos/500/300",
+            "width": 500,
+            "height": 300
+          }
+        ]
+      },
+      {
+        "id": "ch7_010",
+        "type": "TEXT",
+        "content": "上次爬山的照片，风景真好！",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1711094460000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch7_011",
+        "type": "TEXT",
+        "content": "这周六去爬山怎么样？",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

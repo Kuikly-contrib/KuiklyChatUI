@@ -1,0 +1,120 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_1",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch1_001",
+        "type": "SYSTEM",
+        "content": "你已添加 Alice 为好友",
+        "is_self": false,
+        "timestamp": 1711180800000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_002",
+        "type": "TEXT",
+        "content": "Hi！我是 Alice，很高兴认识你 😊",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711180860000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_003",
+        "type": "TEXT",
+        "content": "你好 Alice！我也很高兴认识你",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711180920000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_004",
+        "type": "TEXT",
+        "content": "听说你也在做跨端开发？",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711180980000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_005",
+        "type": "TEXT",
+        "content": "是的，我最近在用 Kuikly 框架，体验非常好！",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711181040000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_006",
+        "type": "TEXT",
+        "content": "Kuikly？我之前没听说过，能介绍一下吗？",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711181100000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_007",
+        "type": "TEXT",
+        "content": "它是基于 Kotlin Multiplatform 的跨端框架，支持 Android、iOS、鸿蒙和 H5 四端，包增量只有 0.3MB",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711181160000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "👍", "count": 1, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "ch1_008",
+        "type": "TEXT",
+        "content": "听起来很不错！改天教教我呗",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711181220000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_009",
+        "type": "TEXT",
+        "content": "没问题，随时可以交流 👋",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711181280000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch1_010",
+        "type": "TEXT",
+        "content": "你好，最近怎么样？",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

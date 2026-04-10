@@ -13,12 +13,13 @@ import com.tencent.kuikly.core.views.*
 import com.kuikly.kuiklychat.base.BasePager
 import com.tencent.kuiklybase.chat.ai.AiMessageText
 import com.tencent.kuiklybase.chat.ai.AiTypingState
+import com.tencent.kuiklybase.chat.ai.ChatAiTypingIndicator
 
 /**
  * AI 消息文本组件 Demo 页面
  *
  * 展示 AiMessageText 组件的流式输出 + Markdown 渲染效果。
- * 模拟 AI 对话场景，外部逐步追加文本，组件内部逐字动画显示。
+ * 模拟真实 AI 对话场景：气泡包裹 + 头像 + 打字指示器 + 流式增量渲染。
  */
 @Page("ai_message_text_demo", supportInLocal = true)
 internal class AiMessageTextDemoPage : BasePager() {
@@ -28,6 +29,36 @@ internal class AiMessageTextDemoPage : BasePager() {
     private var typingState3 by observable<AiTypingState>(AiTypingState.Nothing)
     private var isStreaming by observable(false)
     private var streamIndex = 0
+
+    companion object {
+        /** AI 助手头像 */
+        private const val AI_AVATAR = "https://vfiles.gtimg.cn/wuji_dashboard/wupload/xy/starter/62394e19.png"
+
+        /** 流式输出的分块内容 */
+        private val STREAM_CHUNKS = listOf(
+            "## 什么是",
+            " Kotlin Multiplatform?\n\n",
+            "Kotlin Multiplatform（KMP）是 ",
+            "JetBrains 推出的**跨平台开发技术**",
+            "，允许开发者使用 Kotlin 语言",
+            "编写可在多个平台共享的代码。\n\n",
+            "### 主要优势\n\n",
+            "- 🔄 **代码共享** — ",
+            "业务逻辑一次编写，多端复用\n",
+            "- 🎯 **原生性能** — ",
+            "编译为各平台原生代码\n",
+            "- 🛠️ **渐进式采用** — ",
+            "可以逐步迁移现有项目\n\n",
+            "### 示例代码\n\n",
+            "```kotlin\n",
+            "expect fun platformName(): String\n\n",
+            "fun greeting(): String {\n",
+            "    return \"Hello from \${platformName()}!\"\n",
+            "}\n```\n\n",
+            "> KMP 已被 Google 官方推荐",
+            "为 Android 多平台开发方案。",
+        )
+    }
 
     override fun body(): ViewBuilder {
         val ctx = this
@@ -90,24 +121,14 @@ internal class AiMessageTextDemoPage : BasePager() {
                     }
                     View {
                         attr {
-                            padding(16f)
+                            padding(12f)
                         }
 
-                        // ========== 模拟流式输出 ==========
-                        Text {
-                            attr {
-                                text("模拟 AI 流式输出")
-                                fontSize(14f)
-                                fontWeightSemisolid()
-                                color(Color(0xFF666666))
-                                marginBottom(8f)
-                            }
-                        }
-                        // 控制按钮
+                        // ========== 控制按钮区域 ==========
                         View {
                             attr {
                                 flexDirectionRow()
-                                marginBottom(8f)
+                                marginBottom(12f)
                             }
                             View {
                                 attr {
@@ -148,53 +169,105 @@ internal class AiMessageTextDemoPage : BasePager() {
                                     }
                                 }
                             }
-                            vif({ ctx.isStreaming }) {
-                                View {
+                        }
+
+                        // ========== AI 消息气泡（头像 + 气泡） ==========
+                        View {
+                            attr {
+                                flexDirectionRow()
+                                alignItems(FlexAlign.FLEX_START)
+                            }
+
+                            // AI 头像
+                            View {
+                                attr {
+                                    size(40f, 40f)
+                                    borderRadius(8f)
+                                    backgroundColor(Color(0xFFE8E8E8))
+                                    marginTop(2f)
+                                }
+                                Image {
                                     attr {
-                                        marginLeft(8f)
-                                        alignSelf(FlexAlign.CENTER)
+                                        size(40f, 40f)
+                                        borderRadius(8f)
+                                        src(AI_AVATAR)
+                                        resizeCover()
                                     }
-                                    Text {
+                                }
+                            }
+
+                            // 气泡内容区
+                            View {
+                                attr {
+                                    marginLeft(8f)
+                                    flex(1f)
+                                }
+
+                                // 发送者名称
+                                Text {
+                                    attr {
+                                        text("AI 助手")
+                                        fontSize(12f)
+                                        color(Color(0xFF999999))
+                                        marginBottom(4f)
+                                    }
+                                }
+
+                                // ===== 打字指示器（流式生成中显示） =====
+                                vif({ ctx.isStreaming && ctx.streamContent.isEmpty() }) {
+                                    View {
                                         attr {
-                                            text("🔄 生成中...")
-                                            fontSize(12f)
-                                            color(Color(0xFF6C5CE7))
+                                            backgroundColor(Color.WHITE)
+                                            borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
+                                            boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                                        }
+                                        ChatAiTypingIndicator {
+                                            attr {
+                                                text = "AI 正在思考"
+                                                dotColor = 0xFF6C5CE7
+                                                textColor = 0xFF666666
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        }
-                        View {
-                            attr {
-                                backgroundColor(Color.WHITE)
-                                borderRadius(12f)
-                                marginBottom(24f)
-                                boxShadow(BoxShadow(0f, 2f, 8f, Color(0x1A000000)))
-                                minHeight(60f)
-                            }
-                            vif({ ctx.streamContent.isNotEmpty() }) {
-                                AiMessageText {
-                                    attr {
-                                        messageId = "stream_001"
-                                        content = ctx.streamContent
-                                        typingState = ctx.typingState3
-                                        textColor = 0xFF333333
-                                        fontSize = 15f
-                                        typingSpeed = 2
+
+                                // ===== 消息气泡（有内容时显示） =====
+                                vif({ ctx.streamContent.isNotEmpty() }) {
+                                    View {
+                                        attr {
+                                            backgroundColor(Color.WHITE)
+                                            borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
+                                            boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                                            maxWidth(ctx.pagerData.pageViewWidth * 0.65f)
+                                        }
+                                        AiMessageText {
+                                            attr {
+                                                messageId = "stream_001"
+                                                content = ctx.streamContent
+                                                typingState = ctx.typingState3
+                                                textColor = 0xFF333333
+                                                fontSize = 15f
+                                                typingSpeed = 2
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                            velse {
-                                View {
-                                    attr {
-                                        allCenter()
-                                        padding(20f)
-                                    }
-                                    Text {
+
+                                // ===== 占位提示（未开始时显示） =====
+                                vif({ !ctx.isStreaming && ctx.streamContent.isEmpty() }) {
+                                    View {
                                         attr {
-                                            text("点击「开始生成」模拟 AI 流式输出")
-                                            fontSize(14f)
-                                            color(Color(0xFF999999))
+                                            backgroundColor(Color.WHITE)
+                                            borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
+                                            boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
+                                            padding(12f, 16f, 12f, 16f)
+                                        }
+                                        Text {
+                                            attr {
+                                                text("点击「开始生成」模拟 AI 流式输出")
+                                                fontSize(14f)
+                                                color(Color(0xFF999999))
+                                            }
                                         }
                                     }
                                 }
@@ -215,7 +288,10 @@ internal class AiMessageTextDemoPage : BasePager() {
         streamIndex = 0
         isStreaming = true
         typingState3 = AiTypingState.Generating("stream_001")
-        appendStreamChunk()
+        // 先显示 typing indicator 一段时间，再开始输出内容
+        setTimeout(800) {
+            appendStreamChunk()
+        }
     }
 
     private fun appendStreamChunk() {
@@ -241,32 +317,5 @@ internal class AiMessageTextDemoPage : BasePager() {
         streamContent = ""
         streamIndex = 0
         typingState3 = AiTypingState.Nothing
-    }
-
-    companion object {
-        /** 流式输出的分块内容 */
-        private val STREAM_CHUNKS = listOf(
-            "## 什么是",
-            " Kotlin Multiplatform?\n\n",
-            "Kotlin Multiplatform（KMP）是 ",
-            "JetBrains 推出的**跨平台开发技术**",
-            "，允许开发者使用 Kotlin 语言",
-            "编写可在多个平台共享的代码。\n\n",
-            "### 主要优势\n\n",
-            "- 🔄 **代码共享** — ",
-            "业务逻辑一次编写，多端复用\n",
-            "- 🎯 **原生性能** — ",
-            "编译为各平台原生代码\n",
-            "- 🛠️ **渐进式采用** — ",
-            "可以逐步迁移现有项目\n\n",
-            "### 示例代码\n\n",
-            "```kotlin\n",
-            "expect fun platformName(): String\n\n",
-            "fun greeting(): String {\n",
-            "    return \"Hello from \${platformName()}!\"\n",
-            "}\n```\n\n",
-            "> KMP 已被 Google 官方推荐",
-            "为 Android 多平台开发方案。",
-        )
     }
 }

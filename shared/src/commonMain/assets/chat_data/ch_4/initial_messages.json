@@ -1,0 +1,89 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_4",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch4_001",
+        "type": "SYSTEM",
+        "content": "管理员创建了群聊「全员通知群」",
+        "is_self": false,
+        "timestamp": 1710921600000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch4_002",
+        "type": "TEXT",
+        "content": "📢 【重要通知】\n\n各位同事好，本周五（3月22日）下午 2:00 将在 3 楼会议室召开季度总结会议，请大家准时参加。\n\n议程：\n1. Q1 业绩回顾\n2. Q2 目标规划\n3. 团队建设活动安排",
+        "is_self": false,
+        "sender_name": "管理员",
+        "sender_id": "admin_001",
+        "sender_avatar": "",
+        "timestamp": 1710921660000,
+        "status": "SENT",
+        "is_pinned": true
+      },
+      {
+        "id": "ch4_003",
+        "type": "TEXT",
+        "content": "收到",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1710921720000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch4_004",
+        "type": "TEXT",
+        "content": "好的，已记录",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1710921780000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch4_005",
+        "type": "TEXT",
+        "content": "📢 【系统维护通知】\n\n本周六凌晨 2:00-6:00 将进行服务器升级维护，期间内部系统将暂时不可用，请大家提前做好准备。",
+        "is_self": false,
+        "sender_name": "管理员",
+        "sender_id": "admin_001",
+        "sender_avatar": "",
+        "timestamp": 1711180800000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch4_006",
+        "type": "TEXT",
+        "content": "📢 【福利通知】\n\n公司为大家准备了下午茶，今天 3:00 在茶水间领取 🍰☕",
+        "is_self": false,
+        "sender_name": "管理员",
+        "sender_id": "admin_001",
+        "sender_avatar": "",
+        "timestamp": 1711267080000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "🎉", "count": 15, "is_own_reaction": true },
+          { "type": "❤️", "count": 8, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "ch4_007",
+        "type": "TEXT",
+        "content": "收到，我马上处理",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

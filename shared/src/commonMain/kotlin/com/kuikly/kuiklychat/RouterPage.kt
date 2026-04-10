@@ -294,6 +294,78 @@ internal class RouterPage : BasePager() {
                 }
             }
 
+            // 频道列表 Demo 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(260f, 48f)
+                        borderRadius(24f)
+                        backgroundLinearGradient(
+                            Direction.TO_RIGHT,
+                            ColorStop(Color(0xFFE17055), 0f),
+                            ColorStop(Color(0xFFD63031), 1f)
+                        )
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 4f, 12f, Color(0x33E17055)))
+                    }
+                    Text {
+                        attr {
+                            text("📋 频道列表 Demo")
+                            fontSize(18f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("channel_list_demo")
+                        }
+                    }
+                }
+            }
+
+            // 频道详情 Demo 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(260f, 48f)
+                        borderRadius(24f)
+                        backgroundLinearGradient(
+                            Direction.TO_RIGHT,
+                            ColorStop(Color(0xFF0984E3), 0f),
+                            ColorStop(Color(0xFF74B9FF), 1f)
+                        )
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 4f, 12f, Color(0x330984E3)))
+                    }
+                    Text {
+                        attr {
+                            text("👥 频道详情 Demo")
+                            fontSize(18f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("channel_detail_demo")
+                        }
+                    }
+                }
+            }
+
 
 
         }

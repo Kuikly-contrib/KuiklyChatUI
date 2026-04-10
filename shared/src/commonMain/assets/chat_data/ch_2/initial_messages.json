@@ -1,0 +1,174 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_2",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch2_001",
+        "type": "SYSTEM",
+        "content": "Alice 创建了群聊「项目讨论组」",
+        "is_self": false,
+        "timestamp": 1711094400000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_002",
+        "type": "SYSTEM",
+        "content": "Alice 邀请了 Bob、Charlie、Diana、Eve 加入群聊",
+        "is_self": false,
+        "timestamp": 1711094460000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_003",
+        "type": "TEXT",
+        "content": "大家好，这个群用来讨论项目进度和技术问题",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711094520000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_004",
+        "type": "TEXT",
+        "content": "收到！我负责前端部分",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711094580000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_005",
+        "type": "TEXT",
+        "content": "我负责后端 API 开发",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1711094640000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_006",
+        "type": "TEXT",
+        "content": "我来做 UI 设计和交互稿",
+        "is_self": false,
+        "sender_name": "Diana",
+        "sender_id": "user_4",
+        "sender_avatar": "",
+        "timestamp": 1711094700000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_007",
+        "type": "TEXT",
+        "content": "我负责测试和质量保障 💪",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1711094760000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_008",
+        "type": "TEXT",
+        "content": "好的，我来整理一下任务分配表",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711094820000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_009",
+        "type": "TEXT",
+        "content": "第一阶段目标：两周内完成核心功能开发\n\n1. 前端：频道列表 + 聊天页面 (@Bob)\n2. 后端：消息 API + 实时推送 (@Charlie)\n3. 设计：完成所有页面的设计稿 (@Diana)\n4. 测试：编写测试用例 (@Eve)",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711094880000,
+        "status": "SENT",
+        "is_pinned": true,
+        "reactions": [
+          { "type": "👍", "count": 4, "is_own_reaction": false },
+          { "type": "🔥", "count": 2, "is_own_reaction": true }
+        ]
+      },
+      {
+        "id": "ch2_010",
+        "type": "TEXT",
+        "content": "我这边设计稿已经完成了 80%，明天可以给大家评审",
+        "is_self": false,
+        "sender_name": "Diana",
+        "sender_id": "user_4",
+        "sender_avatar": "",
+        "timestamp": 1711181040000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_011",
+        "type": "IMAGE",
+        "content": "https://picsum.photos/800/600",
+        "is_self": false,
+        "sender_name": "Diana",
+        "sender_id": "user_4",
+        "sender_avatar": "",
+        "timestamp": 1711181100000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "IMAGE",
+            "url": "https://picsum.photos/800/600",
+            "width": 800,
+            "height": 600
+          }
+        ]
+      },
+      {
+        "id": "ch2_012",
+        "type": "TEXT",
+        "content": "设计稿看起来很棒！配色很舒服",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1711181160000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "❤️", "count": 1, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "ch2_013",
+        "type": "TEXT",
+        "content": "后端 API 文档我已经写好了，大家可以看看有没有问题",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1711267140000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch2_014",
+        "type": "TEXT",
+        "content": "明天下午开会，别忘了",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

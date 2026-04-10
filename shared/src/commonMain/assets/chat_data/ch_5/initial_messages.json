@@ -1,0 +1,122 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_5",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch5_001",
+        "type": "SYSTEM",
+        "content": "欢迎来到 # 技术分享 频道",
+        "is_self": false,
+        "timestamp": 1710835200000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch5_002",
+        "type": "TEXT",
+        "content": "🔥 今日推荐：Kotlin 2.0 正式发布！\n\n主要更新：\n• K2 编译器正式稳定\n• 编译速度提升 2 倍\n• 更好的 Multiplatform 支持\n• 新的 Compose 编译器插件",
+        "is_self": false,
+        "sender_name": "技术小编",
+        "sender_id": "editor_001",
+        "sender_avatar": "",
+        "timestamp": 1710835260000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "🔥", "count": 12, "is_own_reaction": true },
+          { "type": "👍", "count": 8, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "ch5_003",
+        "type": "TEXT",
+        "content": "K2 编译器确实快了很多，我们项目升级后编译时间从 3 分钟降到了 1.5 分钟",
+        "is_self": false,
+        "sender_name": "Alice",
+        "sender_id": "user_1",
+        "sender_avatar": "",
+        "timestamp": 1710835320000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch5_004",
+        "type": "TEXT",
+        "content": "分享一个实用技巧：在 Kuikly 中使用 FlexBox 布局时，记得给 Text 组件的父容器设置确定的 width，否则文本不会换行",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711008000000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "💡", "count": 5, "is_own_reaction": false }
+        ]
+      },
+      {
+        "id": "ch5_005",
+        "type": "TEXT",
+        "content": "补充一下，颜色值也要注意必须包含 Alpha 通道，比如 0xFF4F8FFF 而不是 0x4F8FFF",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711008060000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch5_006",
+        "type": "TEXT",
+        "content": "📚 推荐阅读：《跨端开发框架选型指南 2024》\n\n对比了 Flutter、React Native、Kuikly、KMP 等主流方案的优劣势，值得一看",
+        "is_self": false,
+        "sender_name": "技术小编",
+        "sender_id": "editor_001",
+        "sender_avatar": "",
+        "timestamp": 1711094400000,
+        "status": "SENT",
+        "thread_count": 7
+      },
+      {
+        "id": "ch5_007",
+        "type": "IMAGE",
+        "content": "https://picsum.photos/700/400",
+        "is_self": false,
+        "sender_name": "Diana",
+        "sender_id": "user_4",
+        "sender_avatar": "",
+        "timestamp": 1711180800000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "IMAGE",
+            "url": "https://picsum.photos/700/400",
+            "width": 700,
+            "height": 400
+          }
+        ]
+      },
+      {
+        "id": "ch5_008",
+        "type": "TEXT",
+        "content": "这个架构图画得很清晰！",
+        "is_self": false,
+        "sender_name": "Eve",
+        "sender_id": "user_5",
+        "sender_avatar": "",
+        "timestamp": 1711180860000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch5_009",
+        "type": "TEXT",
+        "content": "周末一起吃饭吗？",
+        "is_self": false,
+        "sender_name": "Diana",
+        "sender_id": "user_4",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

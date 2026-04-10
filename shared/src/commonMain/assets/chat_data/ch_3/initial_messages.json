@@ -1,0 +1,110 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_3",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch3_001",
+        "type": "TEXT",
+        "content": "Bob，上次你说的那个 Flutter 和 Kuikly 的性能对比，有结论了吗？",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711094400000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch3_002",
+        "type": "TEXT",
+        "content": "有的！我做了一组 benchmark 测试",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711094460000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch3_003",
+        "type": "TEXT",
+        "content": "Kuikly 在列表滚动场景下帧率更稳定，因为它复用了平台原生 UI 组件，不需要自绘",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711094520000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch3_004",
+        "type": "TEXT",
+        "content": "而且包体积差距很大，Kuikly 只增加 0.3MB，Flutter 至少要 4MB+",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711094580000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "💯", "count": 1, "is_own_reaction": true }
+        ]
+      },
+      {
+        "id": "ch3_005",
+        "type": "TEXT",
+        "content": "这个数据很有说服力！能把测试报告发我看看吗？",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711094640000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch3_006",
+        "type": "FILE",
+        "content": "跨端框架性能对比报告.pdf",
+        "is_self": false,
+        "sender_name": "Bob",
+        "sender_id": "user_2",
+        "sender_avatar": "",
+        "timestamp": 1711094700000,
+        "status": "SENT",
+        "attachments": [
+          {
+            "type": "FILE",
+            "url": "https://example.com/benchmark_report.pdf",
+            "title": "跨端框架性能对比报告.pdf",
+            "mime_type": "application/pdf",
+            "file_size": 3145728
+          }
+        ]
+      },
+      {
+        "id": "ch3_007",
+        "type": "TEXT",
+        "content": "收到，我仔细看看",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711094760000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch3_008",
+        "type": "TEXT",
+        "content": "项目进度更新：已完成 80%",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711267200000,
+        "status": "SENT"
+      }
+    ]
+  }
+}

@@ -17,7 +17,9 @@ import com.tencent.kuiklybase.chat.session.*
  *
  * 展示 ChatSession 组件的完整功能。
  * 消息数据从本地 JSON 文件读取，模拟真实的网络接口调用场景：
- * - 初始消息：加载 `chat_data/initial_messages.json`
+ * - 根据 channelId 参数加载不同频道的消息数据
+ * - 初始消息：加载 `chat_data/{channelId}/initial_messages.json`
+ * - 无 channelId 时 fallback 到 `chat_data/initial_messages.json`
  * - 历史消息：分页加载 `chat_data/history_page{N}.json`
  * - JSON 格式参考常见 IM 接口的标准响应格式
  */
@@ -29,6 +31,9 @@ internal class ChatDemoPage : BasePager() {
     // 持有 ChatSession 配置引用
     private var chatSessionConfig: ChatSessionConfig? = null
 
+    // 当前频道 ID（从页面参数获取）
+    private var channelId: String = ""
+
     // 加载历史消息 Demo 相关
     private var historyPageIndex = 0  // 已加载的历史页数
     private val maxHistoryPages = 3   // 最多加载 3 页历史
@@ -38,7 +43,9 @@ internal class ChatDemoPage : BasePager() {
 
     override fun created() {
         super.created()
-        // 从本地 JSON 文件加载初始消息（模拟网络请求）
+        // 从页面参数获取 channelId
+        channelId = pageData.params.optString("channelId")
+        // 根据 channelId 从本地 JSON 文件加载对应频道的消息（模拟网络请求）
         loadInitialMessages()
     }
 
@@ -174,13 +181,40 @@ internal class ChatDemoPage : BasePager() {
      */
     private fun loadInitialMessages() {
         val bridge = acquireModule<BridgeModule>(BridgeModule.MODULE_NAME)
-        bridge.readAssetFile("chat_data/initial_messages.json") { response ->
+        // 根据 channelId 决定加载哪个目录的数据
+        val assetPath = if (channelId.isNotEmpty()) {
+            "chat_data/$channelId/initial_messages.json"
+        } else {
+            "chat_data/initial_messages.json"
+        }
+        bridge.readAssetFile(assetPath) { response ->
             val result = response?.optString("result") ?: ""
             if (result.isNotEmpty()) {
                 val apiResponse = ChatMessageParser.parseResponse(result)
                 if (apiResponse.code == 0 && apiResponse.messages.isNotEmpty()) {
                     messageList.addAll(apiResponse.messages)
                     // 根据服务端返回决定是否还有更多历史
+                    chatSessionConfig?.hasMoreEarlier = apiResponse.hasMore
+                }
+            } else if (channelId.isNotEmpty()) {
+                // 频道专属数据不存在时，fallback 到默认数据
+                loadFallbackMessages(bridge)
+                return@readAssetFile
+            }
+            isInitialLoading = false
+        }
+    }
+
+    /**
+     * 加载 fallback 默认消息（当频道专属数据不存在时）
+     */
+    private fun loadFallbackMessages(bridge: BridgeModule) {
+        bridge.readAssetFile("chat_data/initial_messages.json") { response ->
+            val result = response?.optString("result") ?: ""
+            if (result.isNotEmpty()) {
+                val apiResponse = ChatMessageParser.parseResponse(result)
+                if (apiResponse.code == 0 && apiResponse.messages.isNotEmpty()) {
+                    messageList.addAll(apiResponse.messages)
                     chatSessionConfig?.hasMoreEarlier = apiResponse.hasMore
                 }
             }
@@ -261,6 +295,7 @@ internal class ChatDemoPage : BasePager() {
     }
 
     private fun createAutoReply(userMessage: String): ChatMessage {
+        val chatTitle = pageData.params.optString("chatTitle").ifEmpty { "小助手" }
         val replies = listOf(
             "收到你的消息：\"$userMessage\"",
             "好的，我知道了～",
@@ -273,7 +308,7 @@ internal class ChatDemoPage : BasePager() {
         return ChatMessageHelper.createTextMessage(
             content = replies.random(),
             isSelf = false,
-            senderName = "小助手",
+            senderName = chatTitle,
         )
     }
 

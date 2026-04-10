@@ -1,0 +1,90 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "session_id": "ch_6",
+    "has_more": false,
+    "messages": [
+      {
+        "id": "ch6_001",
+        "type": "TEXT",
+        "content": "Charlie，后端接口什么时候能好？前端这边等着联调呢",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711008000000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch6_002",
+        "type": "TEXT",
+        "content": "消息列表接口已经好了，频道列表接口还在开发中",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1711008060000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch6_003",
+        "type": "TEXT",
+        "content": "消息列表接口的文档在哪里？",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711008120000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch6_004",
+        "type": "TEXT",
+        "content": "我发你 API 文档链接：\n\nGET /api/v1/channels/{channelId}/messages\n\n参数：\n• limit: 每页条数（默认20）\n• before: 游标（上一页最后一条消息ID）\n• after: 游标（下一页第一条消息ID）\n\n返回格式和我们之前约定的一样",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1711008180000,
+        "status": "SENT",
+        "reactions": [
+          { "type": "👍", "count": 1, "is_own_reaction": true }
+        ]
+      },
+      {
+        "id": "ch6_005",
+        "type": "TEXT",
+        "content": "好的，我先用 mock 数据开发，等你接口好了再联调",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711008240000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch6_006",
+        "type": "TEXT",
+        "content": "频道列表接口预计明天下午能好",
+        "is_self": false,
+        "sender_name": "Charlie",
+        "sender_id": "user_3",
+        "sender_avatar": "",
+        "timestamp": 1711008300000,
+        "status": "SENT"
+      },
+      {
+        "id": "ch6_007",
+        "type": "TEXT",
+        "content": "好的，明天见",
+        "is_self": true,
+        "sender_name": "我",
+        "sender_id": "user_self",
+        "sender_avatar": "",
+        "timestamp": 1711008360000,
+        "status": "SENT"
+      }
+    ]
+  }
+}
