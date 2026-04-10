@@ -1,30 +1,9 @@
 # KuiklyChat
 
-基于 [Kuikly](https://kuikly.tencent.com) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙、H5 多端运行。
+基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙、H5 多端运行。
 
-设计参考 [Stream Chat Compose SDK](https://getstream.io/chat/sdk/compose/)，提供开箱即用的聊天界面和高度灵活的定制能力。
 
-## 目录
 
-- [接入指南](#接入指南)
-- [核心 API](#核心-api)
-  - [ChatSession（核心入口）](#chatsession核心入口)
-  - [ChatSessionConfig（配置类）](#chatsessionconfig配置类)
-  - [ChatMessage（消息模型）](#chatmessage消息模型)
-  - [ChatMessageHelper（工具类）](#chatmessagehelper工具类)
-  - [MessageRendererFactory（渲染工厂）](#messagerendererfactory渲染工厂)
-  - [ChatComponentFactory（组件工厂）](#chatcomponentfactory组件工厂)
-  - [Handler / Formatter（处理器/格式化器）](#handler--formatter处理器格式化器)
-  - [ChatRepository（数据仓库接口）](#chatrepository数据仓库接口)
-  - [ChatPreviewData（预览/Mock 数据）](#chatpreviewdata预览mock-数据)
-- [主题系统](#主题系统)
-- [Slot 插槽系统](#slot-插槽系统)
-- [内置组件](#内置组件)
-- [使用示例](#使用示例)
-- [发布到 Maven](#发布到-maven)
-- [注意事项](#注意事项)
-
----
 
 ## 接入指南
 
@@ -53,16 +32,27 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:{version}-{kotlinVersion}")
-                // 例如：
-                // implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21")
             }
         }
     }
 }
 ```
 
-> 版本号格式：`{baseVersion}-{kotlinVersion}`，例如 `1.0.0-2.0.21`。鸿蒙平台使用 `1.0.0-2.0.21-KBA-010` 格式。
+在 `build.ohos.gradle.kts` 中添加：
+
+```kotlin
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                // KuiklyChat 聊天组件
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21-KBA-010")
+            }
+        }
+    }
+}
+```
 
 ### 3. 导入包
 
@@ -1634,51 +1624,7 @@ primaryColor = 0x4F8FFF     // ❌ 缺少 Alpha 通道
 composerSafeAreaBottom = ctx.pagerData.safeAreaInsets.bottom
 ```
 
-### 7. 自动滚动无需手动控制
 
-组件内部已处理所有滚动逻辑。只需 `messageList.add(msg)` 即可，无需手动调用 `scrollToBottomAction`。
-
----
-
-## 源码结构
-
-```
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/
-  model/
-    ChatMessage.kt               — 数据模型（ChatMessage / MessageType / MessageStatus / ReactionItem / Attachment / MessageAction / MessageContext / ChatMessageHelper）
-    ChatChannel.kt               — 频道数据模型（ChatChannel / ChannelType / ChatChannelMember / ChatChannelHelper）
-    ChatComponentFactory.kt      — 组件工厂接口 + DefaultChatComponentFactory 默认实现
-    ChatHandlers.kt              — 可替换处理器接口（DateSeparatorHandler / MessagePositionHandler / ChannelNameFormatter / MessagePreviewFormatter / MessageTextFormatter / TimestampFormatter）+ 默认实现
-    ChatRepository.kt            — 数据仓库接口（ChatRepository / ChatMessagesResponse / ChatChannelsResponse）
-    ChatPreviewData.kt           — 预览/Mock 数据（ChatPreviewData / MockChatRepository）
-    ChatTheme.kt                 — 主题系统（ChatThemeMode / ChatThemeColors / LightThemeColors / DarkThemeColors）
-  session/
-    ChatSessionConfig.kt         — 配置类（ChatSessionConfig / ChatThemeOptions / MessageListOptions / ChatSlotOptions / MessageComposerState / 所有 Slot 类型别名）
-    ChatSessionView.kt           — ChatSession 入口 + 消息列表渲染 + 加载历史 + 位置补偿 + 自动滚动
-  bubble/
-    ChatBubbleView.kt            — ChatBubble 气泡组件 + ChatSystemMessage 系统消息组件
-    MessageRendererFactory.kt    — 渲染工厂接口 + 5 个内置渲染器
-    ChatMessageOptionsView.kt    — ChatMessageOptions 操作菜单组件（模糊背景 + 镂空 + 动画）
-    ChatReactionBarView.kt       — ChatReactionBar 反应栏组件
-  channel/
-    ChatChannelListConfig.kt     — 频道列表配置类（ChannelListTheme / ChannelListSlots / ChatChannelListConfig）
-    ChatChannelListView.kt       — ChatChannelList 频道列表组件
-    ChatChannelHeaderView.kt     — ChatChannelHeaderView 频道列表导航栏组件
-    ChatChannelItemView.kt       — ChatChannelItemView 频道项组件
-    ChatChannelMemberView.kt     — ChatChannelMemberView 频道成员组件
-  composer/
-    ChatMessageComposerView.kt   — ChatMessageComposer 输入框组件（5-Slot 架构）
-  indicator/
-    ChatDateSeparatorView.kt     — ChatDateSeparator 日期分隔符组件
-    ChatTypingIndicatorView.kt   — ChatTypingIndicator 输入指示器组件（三点跳动动画）
-  navigation/
-    ChatNavigationBarView.kt     — ChatNavigationBar 导航栏组件
-  ai/
-    AiMessageTextView.kt         — AI 消息文本组件（Markdown 渲染 + 流式打字效果）
-    ChatAiTypingIndicatorView.kt — AI 输入指示器组件
-```
-
----
 
 ## License
 
