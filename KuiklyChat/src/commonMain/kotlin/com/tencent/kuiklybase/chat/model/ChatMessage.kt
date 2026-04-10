@@ -181,7 +181,6 @@ object ChatMessageHelper {
      *
      * 注意：在高并发场景中，建议业务方使用 UUID 或服务端生成的 ID。
      */
-    @Synchronized
     fun generateId(): String {
         messageIdCounter++
         return "msg_${messageIdCounter}_${platformCurrentTimeMillis()}"

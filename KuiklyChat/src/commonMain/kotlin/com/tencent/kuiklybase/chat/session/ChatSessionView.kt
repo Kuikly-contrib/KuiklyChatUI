@@ -1513,8 +1513,21 @@ private fun formatFileSize(bytes: Long): String {
     if (bytes <= 0) return ""
     return when {
         bytes < 1024 -> "${bytes} B"
-        bytes < 1024 * 1024 -> "${"%.1f".format(bytes / 1024f)} KB"
-        bytes < 1024 * 1024 * 1024 -> "${"%.1f".format(bytes / (1024f * 1024f))} MB"
-        else -> "${"%.2f".format(bytes / (1024f * 1024f * 1024f))} GB"
+        bytes < 1024 * 1024 -> "${roundToDecimals(bytes / 1024.0, 1)} KB"
+        bytes < 1024 * 1024 * 1024 -> "${roundToDecimals(bytes / (1024.0 * 1024.0), 1)} MB"
+        else -> "${roundToDecimals(bytes / (1024.0 * 1024.0 * 1024.0), 2)} GB"
     }
+}
+
+
+private fun roundToDecimals(value: Double, decimals: Int): String {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    val rounded = kotlin.math.round(value * multiplier) / multiplier
+    // 确保小数位数正确（例如 1.0 → "1.0" 而非 "1"）
+    val parts = rounded.toString().split(".")
+    val intPart = parts[0]
+    val fracPart = if (parts.size > 1) parts[1] else ""
+    val paddedFrac = fracPart.padEnd(decimals, '0').take(decimals)
+    return "$intPart.$paddedFrac"
 }

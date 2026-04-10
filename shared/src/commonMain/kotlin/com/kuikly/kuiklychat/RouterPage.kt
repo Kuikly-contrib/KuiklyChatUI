@@ -258,6 +258,42 @@ internal class RouterPage : BasePager() {
                 }
             }
 
+            // AI 消息文本 Demo 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(260f, 48f)
+                        borderRadius(24f)
+                        backgroundLinearGradient(
+                            Direction.TO_RIGHT,
+                            ColorStop(Color(0xFF00B894), 0f),
+                            ColorStop(Color(0xFF00CEC9), 1f)
+                        )
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 4f, 12f, Color(0x3300B894)))
+                    }
+                    Text {
+                        attr {
+                            text("📝 AI 消息文本 Demo")
+                            fontSize(18f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("ai_message_text_demo")
+                        }
+                    }
+                }
+            }
+
 
 
         }
