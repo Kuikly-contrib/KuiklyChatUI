@@ -1,0 +1,16 @@
+name: KuiklyChatUI                     # 组件英文名，必填，纯英文不允许带空格
+displayName: "KuiklyChat 聊天UI组件"             # 组件展示名，选填，填写后替代英文名进行展示
+version: 1.0.0                # 组件版本，必填
+apiVersion: npm/v1
+platform: kuikly
+summary: "基于 KuiklyUI 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙多端运行"     # 组件介绍摘要，必填，用于市场首页展示
+description: "KuiklyChatUI 是基于 KuiklyUI 跨端框架的聊天 UI 组件库，提供 ChatSession（聊天会话）、ChatChannelList（频道列表）、ChatBubble（消息气泡）、ChatMessageOptions（操作菜单）等完整聊天 UI 能力。支持多种消息类型（文本/图片/视频/文件/系统/自定义），内置双主题、Slot 插槽、ComponentFactory 组件工厂、MessageRendererFactory 渲染器工厂等多层扩展机制，以及 AiMessageText 流式 Markdown 渲染、ChatRepository 数据仓库抽象等。支持 Android、iOS、鸿蒙三端运行。" # 组件详细介绍，必填，用于组件详情页展示
+team: "Kuikly"                  # 团队名称，必填，用于市场团队展示，由上架业务团队自行定义即可
+kotlin: 2.0.21                    # 组件的kotlin版本环境
+kuiklyType: "Kuikly组件"               # 官方KMP组件或者是Kuikly组件,kuikly组件包含自定义module和自定义view两种类别
+kuiklyTarget:                        # 以下字段标识组件可运行的平台
+  - android                     # 组件是否支持Android端运行
+  - iOS                         # 组件是否支持iOS端运行
+  - ohosNative                  # 支持native产物在鸿蒙上运行
+owner:                            # 负责人
+  - yukiykchen
