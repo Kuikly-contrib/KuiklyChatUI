@@ -212,7 +212,7 @@ class ChatMessageOptionsView : ComposeView<ChatMessageOptionsAttr, ChatMessageOp
                                 } else ""
                                 val mimeType = attachment?.mimeType
                                     ?: ctx.attr.message?.extra?.get("mimeType") ?: ""
-                                val fileIcon = getFileIcon(mimeType)
+                                val fileStyle = getFileStyle(mimeType)
                                 View {
                                     attr {
                                         size(msgW, msgH)
@@ -227,15 +227,17 @@ class ChatMessageOptionsView : ComposeView<ChatMessageOptionsAttr, ChatMessageOp
                                     View {
                                         attr {
                                             size(40f, 40f)
-                                            borderRadius(8f)
-                                            backgroundColor(Color(ctx.attr.bubblePrimaryColor))
+                                            borderRadius(10f)
+                                            backgroundColor(Color(fileStyle.second))
                                             allCenter()
                                             marginRight(12f)
                                         }
                                         Text {
                                             attr {
-                                                text(fileIcon)
-                                                fontSize(20f)
+                                                text(fileStyle.first)
+                                                fontSize(if (fileStyle.first.length > 3) 10f else 12f)
+                                                fontWeightBold()
+                                                color(Color.WHITE)
                                             }
                                         }
                                     }
@@ -486,17 +488,17 @@ fun ViewContainer<*, *>.ChatMessageOptions(init: ChatMessageOptionsView.() -> Un
     addChild(ChatMessageOptionsView(), init)
 }
 
-private fun getFileIcon(mimeType: String): String {
+private fun getFileStyle(mimeType: String): Pair<String, Long> {
     return when {
-        mimeType.startsWith("image/") -> "🖼️"
-        mimeType.startsWith("video/") -> "🎬"
-        mimeType.startsWith("audio/") -> "🎵"
-        mimeType.contains("pdf") -> "📕"
-        mimeType.contains("word") || mimeType.contains("document") -> "📝"
-        mimeType.contains("excel") || mimeType.contains("spreadsheet") -> "📊"
-        mimeType.contains("powerpoint") || mimeType.contains("presentation") -> "📙"
-        mimeType.contains("zip") || mimeType.contains("rar") || mimeType.contains("tar") -> "📦"
-        mimeType.startsWith("text/") -> "📄"
-        else -> "📄"
+        mimeType.contains("pdf") -> "PDF" to 0xFFE5484D
+        mimeType.contains("word") || mimeType.contains("document") -> "DOC" to 0xFF4A90D9
+        mimeType.contains("excel") || mimeType.contains("spreadsheet") -> "XLS" to 0xFF30A46C
+        mimeType.contains("powerpoint") || mimeType.contains("presentation") -> "PPT" to 0xFFE5734A
+        mimeType.startsWith("image/") -> "IMG" to 0xFF9B59B6
+        mimeType.startsWith("video/") -> "VID" to 0xFF6C5CE7
+        mimeType.startsWith("audio/") -> "MP3" to 0xFFE08C3B
+        mimeType.contains("zip") || mimeType.contains("rar") || mimeType.contains("tar") -> "ZIP" to 0xFF7C8894
+        mimeType.startsWith("text/") -> "TXT" to 0xFF8E8E93
+        else -> "FILE" to 0xFF8E8E93
     }
 }

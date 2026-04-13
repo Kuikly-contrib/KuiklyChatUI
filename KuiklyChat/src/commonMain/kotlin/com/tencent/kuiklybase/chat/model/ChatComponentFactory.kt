@@ -460,20 +460,22 @@ open class DefaultChatComponentFactory : ChatComponentFactory {
         mimeType: String,
         primaryColor: Long
     ) {
+        val (label, bgColor) = getFileStyle(mimeType)
         container.apply {
             View {
                 attr {
                     size(40f, 40f)
-                    borderRadius(8f)
-                    backgroundColor(Color(primaryColor))
+                    borderRadius(10f)
+                    backgroundColor(Color(bgColor))
                     allCenter()
                     marginRight(12f)
                 }
                 Text {
                     attr {
-                        // 根据 MIME 类型选择不同图标
-                        text(getFileIconForMimeType(mimeType))
-                        fontSize(20f)
+                        text(label)
+                        fontSize(if (label.length > 3) 10f else 12f)
+                        fontWeightBold()
+                        color(Color.WHITE)
                     }
                 }
             }
@@ -485,20 +487,19 @@ open class DefaultChatComponentFactory : ChatComponentFactory {
 // 辅助函数
 // ============================
 
-/**
- * 根据 MIME 类型返回对应的文件图标
- */
-private fun getFileIconForMimeType(mimeType: String): String {
+private data class FileStyle(val label: String, val color: Long)
+
+private fun getFileStyle(mimeType: String): FileStyle {
     return when {
-        mimeType.startsWith("image/") -> "🖼️"
-        mimeType.startsWith("video/") -> "🎬"
-        mimeType.startsWith("audio/") -> "🎵"
-        mimeType.contains("pdf") -> "📕"
-        mimeType.contains("word") || mimeType.contains("document") -> "📝"
-        mimeType.contains("excel") || mimeType.contains("spreadsheet") -> "📊"
-        mimeType.contains("powerpoint") || mimeType.contains("presentation") -> "📙"
-        mimeType.contains("zip") || mimeType.contains("rar") || mimeType.contains("tar") -> "📦"
-        mimeType.startsWith("text/") -> "📄"
-        else -> "📄"
+        mimeType.contains("pdf") -> FileStyle("PDF", 0xFFE5484D)
+        mimeType.contains("word") || mimeType.contains("document") -> FileStyle("DOC", 0xFF4A90D9)
+        mimeType.contains("excel") || mimeType.contains("spreadsheet") -> FileStyle("XLS", 0xFF30A46C)
+        mimeType.contains("powerpoint") || mimeType.contains("presentation") -> FileStyle("PPT", 0xFFE5734A)
+        mimeType.startsWith("image/") -> FileStyle("IMG", 0xFF9B59B6)
+        mimeType.startsWith("video/") -> FileStyle("VID", 0xFF6C5CE7)
+        mimeType.startsWith("audio/") -> FileStyle("MP3", 0xFFE08C3B)
+        mimeType.contains("zip") || mimeType.contains("rar") || mimeType.contains("tar") -> FileStyle("ZIP", 0xFF7C8894)
+        mimeType.startsWith("text/") -> FileStyle("TXT", 0xFF8E8E93)
+        else -> FileStyle("FILE", 0xFF8E8E93)
     }
 }

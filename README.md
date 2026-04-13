@@ -2,8 +2,9 @@
 
 基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙、H5 多端运行。
 
-
-
+<div align="center">
+  <img src="asserts/chat.png" alt="聊天界面示例" width="300">
+</div>
 
 ## 接入指南
 
@@ -880,6 +881,10 @@ val channels = repository.getChannels(limit = 20)
 
 频道/会话列表组件，展示用户的所有聊天频道，支持搜索、未读计数、在线状态等。
 
+<div align="center">
+  <img src="asserts/channel.png" alt="频道列表示例" width="300">
+</div>
+
 **函数签名**：
 
 ```kotlin
@@ -1282,6 +1287,10 @@ container.ChatSystemMessage {
 ### AiMessageText — AI 消息文本（流式 Markdown 渲染）
 
 在聊天气泡中显示 AI 生成的 Markdown 内容，支持**逐字打字动画**和**流式增量渲染**。
+
+<div align="center">
+  <img src="asserts/ai_chat.png" alt="AI 聊天示例" width="300">
+</div>
 
 **Attr 属性：**
 

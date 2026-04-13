@@ -986,10 +986,6 @@ fun defaultMessageActions(): List<MessageAction> = listOf(
         label = "回复"
     ),
     MessageAction(
-        key = "quote",
-        label = "引用"
-    ),
-    MessageAction(
         key = "edit",
         label = "编辑",
         isVisible = { it.isSelf && it.type == MessageType.TEXT }
