@@ -35,7 +35,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.2-2.0.21")
             }
         }
     }
@@ -50,7 +50,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21-KBA-010")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.2-2.0.21-KBA-010")
             }
         }
     }

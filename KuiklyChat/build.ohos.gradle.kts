@@ -34,11 +34,6 @@ kotlin {
         publishLibraryVariants("release")
     }
 
-    js(IR) {
-        browser()
-        binaries.executable()
-    }
-
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -47,12 +42,13 @@ kotlin {
     ohosArm64()
 
     sourceSets {
-        val coreGroup = project.kuiklyCoreGroup()
-        val coreVersion = Version.getKuiklyOhosVersion()
         val commonMain by getting {
             dependencies {
-                implementation("${coreGroup}:core:${coreVersion}")
-                implementation("${coreGroup}:core-annotations:${coreVersion}")
+                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-2.0.21-ohos")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-KBA-002")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1-KBA-003")
             }
         }
         val commonTest by getting {
