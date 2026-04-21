@@ -145,7 +145,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                             Column {
                                 attr {
                                     marginLeft(if (ctx.attr.showAvatar || ctx.attr.showAvatarPlaceholder) ctx.attr.avatarBubbleGap else 0f)
-                                    maxWidth(bubbleMaxWidth)
+                                    width(bubbleMaxWidth)
                                     alignItems(FlexAlign.FLEX_START)
                                 }
                                 // 消息气泡
@@ -156,7 +156,6 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                         borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
                                         padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
                                         boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
-                                        maxWidth(bubbleMaxWidth)
                                     }
                                     // P0: 引用回复块（在正文之前显示被引用的消息）
                                     if (ctx.attr.quotedMessageContent.isNotEmpty()) {
@@ -167,7 +166,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                                 borderRadius(6f)
                                                 padding(6f, 8f, 6f, 8f)
                                                 marginBottom(6f)
-                                                maxWidth(bubbleMaxWidth - ctx.attr.bubblePaddingH * 2)
+                                                width(bubbleMaxWidth - ctx.attr.bubblePaddingH * 2)
                                             }
                                             // 引用竖线
                                             View {
@@ -349,7 +348,7 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
 
                     Column {
                         attr {
-                            maxWidth(bubbleMaxWidth)
+                            width(bubbleMaxWidth)
                             alignItems(FlexAlign.FLEX_END)
                         }
                         // 消息气泡（渐变色）
@@ -364,19 +363,18 @@ class ChatBubbleView : ComposeView<ChatBubbleAttr, ChatBubbleEvent>() {
                                 borderRadius(BorderRectRadius(12f, 2f, 12f, 12f))
                                 padding(ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH, ctx.attr.bubblePaddingV, ctx.attr.bubblePaddingH)
                                 boxShadow(BoxShadow(0f, 1f, 6f, Color(0x334F8FFF)))
-                                maxWidth(bubbleMaxWidth)
                             }
-                            // P0: 引用回复块（自己发送的引用）
-                            if (ctx.attr.quotedMessageContent.isNotEmpty()) {
-                                View {
-                                    attr {
-                                        flexDirectionRow()
-                                        backgroundColor(Color(0x33FFFFFF))
-                                        borderRadius(6f)
-                                        padding(6f, 8f, 6f, 8f)
-                                        marginBottom(6f)
-                                        maxWidth(bubbleMaxWidth - ctx.attr.bubblePaddingH * 2)
-                                    }
+                                // P0: 引用回复块（自己发送的引用）
+                                if (ctx.attr.quotedMessageContent.isNotEmpty()) {
+                                    View {
+                                        attr {
+                                            flexDirectionRow()
+                                            backgroundColor(Color(0x33FFFFFF))
+                                            borderRadius(6f)
+                                            padding(6f, 8f, 6f, 8f)
+                                            marginBottom(6f)
+                                            width(bubbleMaxWidth - ctx.attr.bubblePaddingH * 2)
+                                        }
                                     // 引用竖线
                                     View {
                                         attr {
