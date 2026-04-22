@@ -47,6 +47,8 @@ kotlin {
             dependencies {
                 implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
                 implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
+                // 聊天会话组件（本地模块，带 ohos 配置）
+                implementation(project(":KuiklyChat"))
 
             }
         }

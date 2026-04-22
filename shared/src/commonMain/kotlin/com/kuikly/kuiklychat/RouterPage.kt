@@ -365,6 +365,41 @@ internal class RouterPage : BasePager() {
                     }
                 }
             }
+            // AG-UI 协议 Demo 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(260f, 48f)
+                        borderRadius(24f)
+                        backgroundLinearGradient(
+                            Direction.TO_RIGHT,
+                            ColorStop(Color(0xFF8E44AD), 0f),
+                            ColorStop(Color(0xFF3498DB), 1f)
+                        )
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 4f, 12f, Color(0x338E44AD)))
+                    }
+                    Text {
+                        attr {
+                            text("🤖 AG-UI 协议 Demo")
+                            fontSize(18f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("agui_demo")
+                        }
+                    }
+                }
+            }
 
 
 

@@ -196,11 +196,13 @@ internal class AiMessageTextDemoPage : BasePager() {
                                 }
                             }
 
-                            // 气泡内容区
+                            // 气泡内容区 — 方案 C：固定宽度容器
+                            // 所有气泡占满该宽度，保证内部 Markdown Text 有确定宽度可换行
                             View {
                                 attr {
                                     marginLeft(8f)
-                                    flex(1f)
+                                    // 固定宽度 = 屏宽 - Scroller padding(12*2) - 头像(40) - marginLeft(8) = 屏宽 - 72
+                                    width(ctx.pagerData.pageViewWidth - 72f)
                                 }
 
                                 // 发送者名称
@@ -238,7 +240,8 @@ internal class AiMessageTextDemoPage : BasePager() {
                                             backgroundColor(Color.WHITE)
                                             borderRadius(BorderRectRadius(2f, 12f, 12f, 12f))
                                             boxShadow(BoxShadow(0f, 1f, 6f, Color(0x1A000000)))
-                                            maxWidth(ctx.pagerData.pageViewWidth * 0.65f)
+                                            // 不加 alignSelfFlexStart：让气泡默认 stretch 到父容器宽度，
+                                            // 这样内部 Markdown 的 Text 才有确定宽度可以换行
                                         }
                                         AiMessageText {
                                             attr {
