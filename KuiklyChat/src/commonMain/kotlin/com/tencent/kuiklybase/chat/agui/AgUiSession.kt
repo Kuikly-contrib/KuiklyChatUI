@@ -62,7 +62,7 @@ class AgUiSession private constructor(
     var aiAvatarUrl: String = "",
     /** 自定义事件扩展点注册表 */
     val handlerRegistry: AgUiHandlerRegistry = AgUiHandlerRegistry()
-) {
+) : AgUiMappingContext {
 
     /**
      * 常规构造：使用 Kuikly [ObservableList] 作为内部存储（生产环境默认用法）。
@@ -86,7 +86,7 @@ class AgUiSession private constructor(
     )
 
     /** 当前运行 ID（RUN_STARTED 时写入） */
-    var currentRunId: String = ""
+    override var currentRunId: String = ""
         private set
 
     /**
@@ -105,11 +105,11 @@ class AgUiSession private constructor(
         get() = messages as ObservableList<ChatMessage>
 
     /** 当前是否正在运行（RUN_STARTED 到 RUN_FINISHED/RUN_ERROR 之间） */
-    var isRunning: Boolean = false
+    override var isRunning: Boolean = false
         private set
 
     /** 当前步骤名（STEP_STARTED 时写入） */
-    var currentStep: String = ""
+    override var currentStep: String = ""
         private set
 
     /** 最近一次错误信息 */
@@ -118,6 +118,165 @@ class AgUiSession private constructor(
 
     /** Agent 状态字典（STATE_SNAPSHOT / STATE_DELTA 累积） */
     private val stateMap = mutableMapOf<String, Any?>()
+
+    /** [AgUiMappingContext.stateView] 的只读代理 */
+    override val stateView: Map<String, Any?> get() = stateMap
+
+    /** [AgUiMappingContext.messagesView] 的只读代理（返回 `messages` 自身视图） */
+    override val messagesView: List<ChatMessage> get() = messages
+
+    // ============================
+    // 事件 → 卡片 Mapper 责任链
+    // ============================
+
+    /** 事件 → ChatMessage 自定义映射器链（优先级高于默认处理） */
+    val mapperChain = EventToCardMapperChain()
+
+    /** 注册一个事件映射器（等价于 mapperChain.register） */
+    fun registerMapper(mapper: EventToCardMapper) {
+        mapperChain.register(mapper)
+    }
+
+    // ============================
+    // Loading 状态
+    // ============================
+
+    /** 工具调用 ID → 工具名（方便快速知道"当前在调用什么"） */
+    private val activeToolCalls = linkedMapOf<String, String>()
+
+    /** 当前所有活跃的 Loading 占位消息 ID（按插入顺序） */
+    private val loadingMessageIds = linkedSetOf<String>()
+
+    /** Loading 状态监听器列表 */
+    private val loadingListeners = mutableListOf<AgUiLoadingListener>()
+
+    /** 订阅 Loading 状态变化 */
+    fun onLoadingChanged(listener: AgUiLoadingListener) {
+        loadingListeners.add(listener)
+    }
+
+    /** 取消订阅 Loading 状态变化 */
+    fun removeLoadingListener(listener: AgUiLoadingListener) {
+        loadingListeners.remove(listener)
+    }
+
+    /** 获取当前 Loading 状态的只读快照 */
+    fun loadingSnapshot(): AgUiLoadingSnapshot {
+        val primaryTitle = loadingMessageIds.firstOrNull()
+            ?.let { id -> messages.firstOrNull { it.id == id } }
+            ?.let { LoadingInfo.from(it).title }
+            .orEmpty()
+        return AgUiLoadingSnapshot(
+            runActive = isRunning,
+            runId = currentRunId,
+            currentStep = currentStep,
+            currentToolCall = activeToolCalls.values.lastOrNull().orEmpty(),
+            activeLoadingMessages = loadingMessageIds.toList(),
+            primaryLoadingTitle = primaryTitle
+        )
+    }
+
+    private fun notifyLoadingChanged() {
+        if (loadingListeners.isEmpty()) return
+        val snapshot = loadingSnapshot()
+        loadingListeners.forEach { it.onLoadingChanged(snapshot) }
+    }
+
+    /**
+     * 显示一条 Loading 占位消息。
+     *
+     * 用法：
+     * ```
+     * session.showLoading(id = "planning", title = "正在分析需求...")
+     * // ... 耗时操作 ...
+     * session.updateLoading(id = "planning", subtitle = "拆解步骤")
+     * session.dismissLoading("planning")
+     * ```
+     *
+     * @param id 消息 ID（重复调用会更新同一条消息）
+     * @param title 主标题
+     * @param subtitle 副标题
+     * @param style Loading 风格（[LoadingStyle] 其一）
+     * @param target 关联目标（工具名、文件名等）
+     */
+    fun showLoading(
+        id: String,
+        title: String = "正在思考",
+        subtitle: String = "",
+        style: String = LoadingStyle.DOTS,
+        target: String = ""
+    ) {
+        loadingMessageIds.add(id)
+        upsertMessage(
+            RichCardPayload.loading(
+                id = id,
+                title = title,
+                subtitle = subtitle,
+                style = style,
+                target = target,
+                senderName = aiSenderName,
+                senderAvatar = aiAvatarUrl
+            )
+        )
+        notifyLoadingChanged()
+    }
+
+    /**
+     * 更新已存在的 Loading 占位消息。
+     *
+     * 任意参数传 null 表示不修改该字段；传空串视为清空。
+     */
+    fun updateLoading(
+        id: String,
+        title: String? = null,
+        subtitle: String? = null,
+        style: String? = null,
+        target: String? = null
+    ) {
+        val idx = messages.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        val current = messages[idx]
+        val newExtra = current.extra.toMutableMap()
+        title?.let { newExtra[AgUiExtraKeys.LOADING_TITLE] = it }
+        subtitle?.let { newExtra[AgUiExtraKeys.LOADING_SUBTITLE] = it }
+        style?.let { newExtra[AgUiExtraKeys.LOADING_STYLE] = it }
+        target?.let { newExtra[AgUiExtraKeys.LOADING_TARGET] = it }
+        messages[idx] = current.copy(
+            content = title ?: current.content,
+            extra = newExtra
+        )
+        notifyLoadingChanged()
+    }
+
+    /**
+     * 移除 Loading 占位消息。
+     *
+     * @param id 要移除的 Loading 消息 ID
+     * @param replaceWith 若非 null，用此消息替换原占位（避免闪烁），否则直接删除
+     */
+    fun dismissLoading(id: String, replaceWith: ChatMessage? = null) {
+        loadingMessageIds.remove(id)
+        val idx = messages.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            if (replaceWith != null) {
+                messages[idx] = replaceWith
+            } else {
+                messages.removeAt(idx)
+            }
+        }
+        notifyLoadingChanged()
+    }
+
+    /** 清除所有 Loading 占位消息。 */
+    fun dismissAllLoading() {
+        val ids = loadingMessageIds.toList()
+        loadingMessageIds.clear()
+        ids.forEach { id ->
+            val idx = messages.indexOfFirst { it.id == id }
+            if (idx >= 0) messages.removeAt(idx)
+        }
+        notifyLoadingChanged()
+    }
 
     /** 生命周期回调 */
     var onRunStarted: ((runId: String) -> Unit)? = null
@@ -143,9 +302,25 @@ class AgUiSession private constructor(
      *
      * 调用此方法后，[messages] 列表会相应更新，UI 自动响应。
      *
+     * 处理顺序：
+     *  1. 先让 [mapperChain] 尝试拦截事件（业务可完全自定义事件 → 卡片映射）
+     *  2. Mapper 命中 → upsert 映射产生的消息，跳过默认处理
+     *  3. Mapper 未命中 → 走默认状态机分支
+     *
      * @param event AG-UI 事件对象
      */
     fun dispatch(event: AgUiEvent) {
+        // 1) 先让自定义 mapper 拦截（业务优先）
+        val mapped = mapperChain.apply(event, this)
+        if (mapped != null) {
+            upsertMessage(mapped)
+            // 即使被 mapper 消费，仍执行一次生命周期同步（让 isRunning / currentStep 维持正确）
+            updateLifecycleState(event)
+            notifyLoadingChanged()
+            return
+        }
+
+        // 2) 默认状态机
         when (event) {
             // ---- Lifecycle ----
             is AgUiEvent.RunStarted -> handleRunStarted(event)
@@ -188,6 +363,30 @@ class AgUiSession private constructor(
             is AgUiEvent.Custom -> handlerRegistry.getCustomHandler(event.name)?.handle(event, this)
             is AgUiEvent.Meta -> handlerRegistry.getMetaHandler(event.metaType)?.handle(event, this)
             is AgUiEvent.Unknown -> handlerRegistry.unknownEventHandler?.handle(event, this)
+        }
+
+        // 每次事件分发后同步 Loading 快照
+        notifyLoadingChanged()
+    }
+
+    /**
+     * 把生命周期字段更新从 [handleRunStarted] 等方法剥离出来，
+     * 便于 Mapper 消费事件后仍然维持生命周期状态正确性。
+     */
+    private fun updateLifecycleState(event: AgUiEvent) {
+        when (event) {
+            is AgUiEvent.RunStarted -> {
+                currentRunId = event.runId
+                isRunning = true
+            }
+            is AgUiEvent.RunFinished, is AgUiEvent.RunError -> {
+                isRunning = false
+            }
+            is AgUiEvent.StepStarted -> currentStep = event.stepName
+            is AgUiEvent.StepFinished -> if (currentStep == event.stepName) currentStep = ""
+            is AgUiEvent.ToolCallStart -> activeToolCalls[event.toolCallId] = event.toolCallName
+            is AgUiEvent.ToolCallResult -> activeToolCalls.remove(event.toolCallId)
+            else -> Unit
         }
     }
 
@@ -234,10 +433,13 @@ class AgUiSession private constructor(
         reasoningBuffers.clear()
         activityMessages.clear()
         stateMap.clear()
+        activeToolCalls.clear()
+        loadingMessageIds.clear()
         currentRunId = ""
         isRunning = false
         currentStep = ""
         lastError = ""
+        notifyLoadingChanged()
     }
 
     // ============================
@@ -253,6 +455,7 @@ class AgUiSession private constructor(
 
     private fun handleRunFinished(event: AgUiEvent.RunFinished) {
         isRunning = false
+        activeToolCalls.clear()
         // 关闭所有未闭合的流式缓冲，确保消息状态为 SENT
         streamingBuffers.keys.toList().forEach { messageId ->
             finalizeTextMessage(messageId)
@@ -263,6 +466,7 @@ class AgUiSession private constructor(
     private fun handleRunError(event: AgUiEvent.RunError) {
         isRunning = false
         lastError = event.message
+        activeToolCalls.clear()
         // 将所有未完成的流式消息标记为失败
         streamingBuffers.keys.toList().forEach { messageId ->
             val idx = messages.indexOfFirst { it.id == messageId }
@@ -382,6 +586,7 @@ class AgUiSession private constructor(
             parentMessageId = event.parentMessageId,
             argsBuffer = StringBuilder()
         )
+        activeToolCalls[event.toolCallId] = event.toolCallName
         handlerRegistry.toolCallStartHandler?.handle(
             event.toolCallId,
             event.toolCallName,
@@ -401,6 +606,7 @@ class AgUiSession private constructor(
 
     private fun handleToolCallResult(event: AgUiEvent.ToolCallResult) {
         val buffer = toolCallBuffers.remove(event.toolCallId)
+        activeToolCalls.remove(event.toolCallId)
         val toolName = buffer?.toolCallName ?: ""
         val custom = handlerRegistry.toolResultHandler?.handle(
             toolCallId = event.toolCallId,

@@ -292,6 +292,10 @@ fun ViewContainer<*, *>.ChatSession(
 
                     // vforLazy 闭包内只能有一个根子节点，用外层 View 包裹日期分隔符和消息
                     View {
+                        attr {
+                            // 保证 List 项在交叉轴上拉伸填满宽度，否则内部 flex(1f) 会失效
+                            alignSelfStretch()
+                        }
                     // ========== 加载历史消息指示器（仅在列表第一项上方显示） ==========
                     if (index == 0 && listOptions.onLoadEarlier != null) {
                         if (listOptions.isLoadingEarlier) {
