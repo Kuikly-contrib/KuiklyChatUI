@@ -5,6 +5,7 @@ import com.tencent.kuikly.core.layout.FlexAlign
 import com.tencent.kuikly.core.reactive.handler.*
 import com.tencent.kuikly.core.timer.setTimeout
 import com.tencent.kuikly.core.views.*
+import com.tencent.kuiklybase.chat.widget.BouncingDots
 
 // ============================
 // AI 打字效果指示器组件
@@ -39,16 +40,6 @@ class ChatAiTypingIndicatorView : ComposeView<ChatAiTypingIndicatorAttr, Compose
     override fun createEvent(): ComposeEvent = ComposeEvent()
 
     // ---- 动画状态 ----
-
-    /**
-     * 三个圆点各自的动画阶段
-     * 每个圆点在 0→1→0 之间循环，通过延迟错开形成波浪效果
-     * dotPhase 取值 0~5，每个圆点在不同阶段激活：
-     *   dot0: phase 0,1 激活
-     *   dot1: phase 1,2 激活
-     *   dot2: phase 2,3 激活
-     */
-    private var dotPhase by observable(0)
 
     /**
      * 微光闪烁阶段（0 或 1 交替），控制整体 opacity 在 0.6~1.0 之间渐变
@@ -93,35 +84,12 @@ class ChatAiTypingIndicatorView : ComposeView<ChatAiTypingIndicatorAttr, Compose
                     }
                 }
 
-                // ===== 三个跳动圆点 =====
-                for (i in 0..2) {
-                    View {
-                        attr {
-                            val dotSize = ctx.attr.dotSize
-                            size(dotSize, dotSize)
-                            borderRadius(dotSize / 2f)
-                            backgroundColor(Color(ctx.attr.dotColor))
-                            if (i < 2) {
-                                marginRight(ctx.attr.dotGap)
-                            }
-
-                            // 波浪式缩放动画：
-                            // 每个圆点根据 dotPhase 判断是否处于激活状态
-                            // dot0 在 phase=0 时激活
-                            // dot1 在 phase=1 时激活
-                            // dot2 在 phase=2 时激活
-                            val isActive = (ctx.dotPhase % 3) == i
-                            if (isActive) {
-                                opacity(1f)
-                                transform(Scale(1.4f, 1.4f))
-                            } else {
-                                // 非激活圆点保持较小且半透明
-                                val minScale = 0.55f
-                                opacity(0.5f)
-                                transform(Scale(minScale, minScale))
-                            }
-                            animate(Animation.easeInOut(0.25f), ctx.dotPhase)
-                        }
+                // ===== 三个跳动圆点（复用 BouncingDots 组件） =====
+                BouncingDots {
+                    attr {
+                        dotColor = ctx.attr.dotColor
+                        dotSize = ctx.attr.dotSize
+                        dotGap = ctx.attr.dotGap
                     }
                 }
             }
@@ -130,20 +98,8 @@ class ChatAiTypingIndicatorView : ComposeView<ChatAiTypingIndicatorAttr, Compose
 
     override fun viewDidLayout() {
         super.viewDidLayout()
-        // 启动圆点波浪动画
-        startDotAnimation()
         // 启动微光闪烁动画
         startShimmerAnimation()
-    }
-
-    /**
-     * 圆点波浪动画：每 200ms 切换一次 dotPhase（0→1→2→0 循环）
-     */
-    private fun startDotAnimation() {
-        setTimeout(DOT_ANIMATION_INTERVAL) {
-            dotPhase = (dotPhase + 1) % 3
-            startDotAnimation()
-        }
     }
 
     /**
@@ -157,8 +113,6 @@ class ChatAiTypingIndicatorView : ComposeView<ChatAiTypingIndicatorAttr, Compose
     }
 
     companion object {
-        /** 圆点动画切换间隔（毫秒），对应参考代码中的 delayUnit = 200 */
-        private const val DOT_ANIMATION_INTERVAL = 200
         /** 微光闪烁切换间隔（毫秒） */
         private const val SHIMMER_ANIMATION_INTERVAL = 800
     }

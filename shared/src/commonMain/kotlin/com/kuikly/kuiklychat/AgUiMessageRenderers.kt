@@ -431,12 +431,18 @@ fun ViewContainer<*, *>.AgUiEventTimeline(
 ) {
     val getItems = items
     val getExpanded = expanded
+
+    // 将响应式依赖提升到构建阶段：getExpanded() 和 getItems() 在 View 创建时求值，
+    // Kuikly 会自动追踪其中访问的 observable，变化时整个 View 重新构建
+    val expandedVal = getExpanded()
+    val itemList = getItems().takeLast(maxVisible).reversed()
+
     View {
         attr {
             positionAbsolute()
             right(12f)
             bottom(12f)
-            width(if (getExpanded()) 240f else 44f)
+            width(if (expandedVal) 240f else 44f)
             borderRadius(12f)
             backgroundColor(Color(0xE61A202E))
             boxShadow(BoxShadow(0f, 4f, 12f, Color(0x66000000)))
@@ -453,14 +459,14 @@ fun ViewContainer<*, *>.AgUiEventTimeline(
             }
             Text {
                 attr {
-                    text(if (getExpanded()) "📊 事件时间轴" else "📊")
+                    text(if (expandedVal) "📊 事件时间轴" else "📊")
                     fontSize(12f)
                     color(Color.WHITE)
                     fontWeightSemiBold()
                     flex(1f)
                 }
             }
-            vif({ getExpanded() }) {
+            if (expandedVal) {
                 Text {
                     attr {
                         text("×")
@@ -475,7 +481,7 @@ fun ViewContainer<*, *>.AgUiEventTimeline(
         }
 
         // 展开态：列表
-        vif({ getExpanded() }) {
+        if (expandedVal) {
             View {
                 attr {
                     paddingBottom(8f)
@@ -490,8 +496,7 @@ fun ViewContainer<*, *>.AgUiEventTimeline(
                     }
                 }
 
-                val list = getItems().takeLast(maxVisible).reversed()
-                if (list.isEmpty()) {
+                if (itemList.isEmpty()) {
                     View {
                         attr {
                             paddingLeft(6f)
@@ -508,7 +513,7 @@ fun ViewContainer<*, *>.AgUiEventTimeline(
                         }
                     }
                 } else {
-                    list.forEach { item ->
+                    itemList.forEach { item ->
                         AgUiEventTimelineRow(item)
                     }
                 }

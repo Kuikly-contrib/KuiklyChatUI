@@ -25,142 +25,7 @@ internal class RouterPage : BasePager() {
             attr {
                 backgroundColor(Color.WHITE)
             }
-            // 背景图
-            RouterNavBar {
-                attr {
-                    title = TITLE
-                    backDisable = true
-                }
-            }
 
-            View {
-                attr {
-                    allCenter()
-                    margin(20f)
-                }
-                View {
-                    attr {
-                        backgroundColor(Color.WHITE)
-                        borderRadius(10f)
-                        padding(10f)
-                    }
-                    Image {
-                        attr {
-                            src(LOGO)
-                            size(
-                                pagerData.pageViewWidth * 0.6f,
-                                (pagerData.pageViewWidth * 0.6f) * (1987f / 2894f)
-                            )
-                        }
-                    }
-                }
-
-            }
-
-            View {
-                attr {
-                    flexDirectionRow()
-                }
-                View {
-                    attr {
-                        margin(all = 10f)
-                        marginTop(0f)
-                        height(40f)
-                        flex(1f)
-                        borderRadius(5f)
-                    }
-                    View {
-                        attr {
-                            absolutePositionAllZero()
-                            backgroundLinearGradient(
-                                Direction.TO_LEFT,
-                                ColorStop(Color(0xFF23D3FD), 0f),
-                                ColorStop(Color(0xFFAD37FE), 1f)
-                            )
-                        }
-                        View {
-                            attr {
-                                absolutePosition(top = 1f, left = 1f, right = 1f, bottom = 1f)
-                                backgroundColor(Color.WHITE)
-                                borderRadius(5f)
-                            }
-                        }
-                    }
-                    Input {
-                        ref {
-                            ctx.inputRef = it
-                        }
-                        attr {
-                            flex(1f)
-                            fontSize(15f)
-                            color(Color(0xFFAD37FE))
-                            marginLeft(10f)
-                            marginRight(10f)
-                            placeholder(PLACEHOLDER)
-                            autofocus(true)
-                            placeholderColor(Color(0xAA23D3FD))
-
-                        }
-                        event {
-                            textDidChange {
-                                ctx.inputText = it.text
-                            }
-                        }
-                    }
-                }
-                Button {
-                    attr {
-                        size(80f, 40f)
-                        borderRadius(20f)
-                        marginLeft(2f)
-                        marginRight(15f)
-                        backgroundLinearGradient(
-                            Direction.TO_BOTTOM,
-                            ColorStop(Color(0xAA23D3FD), 0f),
-                            ColorStop(Color(0xAAAD37FE), 1f)
-                        )
-
-                        titleAttr {
-                            text(JUMP_TEXT)
-                            fontSize(17f)
-                            color(Color.WHITE)
-                        }
-                    }
-                    event {
-                        click {
-                            if (ctx.inputText.isEmpty()) {
-                                ctx.bridgeModule.toast("请输入PageName")
-                            } else {
-                                ctx.inputRef.view?.blur() // 失焦
-                                getPager().acquireModule<SharedPreferencesModule>(
-                                    SharedPreferencesModule.MODULE_NAME
-                                ).setItem(
-                                    CACHE_KEY, ctx.inputText
-                                )
-                                ctx.jumpPage(ctx.inputText)
-
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            Text {
-                attr {
-                    fontSize(15f)
-                    marginLeft(10f)
-                    marginTop(5f)
-                    text(if (pagerData.params.optString("execute_mode") == "1") AAR_MODE_TIP else TIP)
-
-                    backgroundLinearGradient(
-                        Direction.TO_RIGHT,
-                        ColorStop(Color(0xFFAD37FE), 0f),
-                        ColorStop(Color(0xFF23D3FD), 1f)
-                    )
-
-                }
-            }
 
             View {
                 attr {
@@ -432,6 +297,42 @@ internal class RouterPage : BasePager() {
                     event {
                         click {
                             ctx.jumpPage("agent_rich_card_demo")
+                        }
+                    }
+                }
+            }
+
+            // Agent 卡片 UI（独立 Demo） 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(260f, 48f)
+                        borderRadius(24f)
+                        backgroundLinearGradient(
+                            Direction.TO_RIGHT,
+                            ColorStop(Color(0xFF8B5CF6), 0f),
+                            ColorStop(Color(0xFF06B6D4), 1f)
+                        )
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 4f, 12f, Color(0x338B5CF6)))
+                    }
+                    Text {
+                        attr {
+                            text("🎨 Agent 卡片 UI")
+                            fontSize(18f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("agent_card_demo")
                         }
                     }
                 }

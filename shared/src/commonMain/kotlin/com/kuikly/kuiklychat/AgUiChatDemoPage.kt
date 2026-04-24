@@ -14,6 +14,7 @@ import com.tencent.kuiklybase.chat.model.ChatMessage
 import com.tencent.kuiklybase.chat.model.ChatMessageHelper
 import com.tencent.kuiklybase.chat.model.MessageStatus
 import com.tencent.kuiklybase.chat.model.MessageType
+import com.tencent.kuiklybase.chat.bubble.defaultMessageRenderers
 import com.tencent.kuiklybase.chat.session.ChatSession
 import com.tencent.kuiklybase.chat.session.ChatSessionConfig
 
@@ -367,6 +368,17 @@ internal class AgUiChatDemoPage : BasePager() {
                     attr {
                         flex(1f)
                     }
+                    // DEBUG: 显示当前消息数量（调试用，确认消息是否被正确添加）
+                    Text {
+                        attr {
+                            text("DEBUG: messages.size = ${ctx.session.messages.size}")
+                            fontSize(10f)
+                            color(Color(0xFFFF0000))
+                            positionAbsolute()
+                            top(4f)
+                            left(4f)
+                        }
+                    }
                     ChatSession({ ctx.session.observableMessages }) {
                         title = ""
                         showNavigationBar = false
@@ -379,6 +391,8 @@ internal class AgUiChatDemoPage : BasePager() {
                             backgroundColor = 0xFFF0F2F5
                         }
 
+                        // 注册默认内置渲染器（文本 / 图片 / 系统 / 视频 / 文件）
+                        messageRenderers.addAll(defaultMessageRenderers())
                         // 注册 AG-UI 专属渲染器 —— 让不同事件类型有差异化视觉
                         messageRenderers.add(ToolResultRenderer())
                         messageRenderers.add(ActivityRenderer())
