@@ -5,7 +5,13 @@ pluginManagement {
         mavenCentral()
         mavenLocal()
         maven {
-            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
+            url = uri("https://mirrors.tencent.com/repository/maven/tencentvideo")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
         }
     }
 }
@@ -16,7 +22,13 @@ dependencyResolutionManagement {
         mavenCentral()
         mavenLocal()
         maven {
-            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
+            url = uri("https://mirrors.tencent.com/repository/maven/tencentvideo")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
         }
     }
 }

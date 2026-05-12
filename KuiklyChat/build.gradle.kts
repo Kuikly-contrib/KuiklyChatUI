@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.compose")
     id("com.android.library")
     `maven-publish`
 }
@@ -43,16 +44,21 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    macosX64()
+    macosArm64()
+
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
-                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
+                // Compose DSL 支持
+                implementation("com.tencent.kuikly:compose:${Version.getKuiklyVersion()}")
                 // KuiklyMarkdown — Markdown 渲染组件
-                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-2.0.21")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-internal-2.1.21")
                 // KuiklyMarkdown 所需的依赖
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-KBA-002")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1-KBA-003")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             }
         }
         val commonTest by getting {
@@ -69,6 +75,13 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+        }
+        val macosX64Main by getting
+        val macosArm64Main by getting
+        val macosMain by creating {
+            dependsOn(commonMain)
+            macosX64Main.dependsOn(this)
+            macosArm64Main.dependsOn(this)
         }
     }
 }

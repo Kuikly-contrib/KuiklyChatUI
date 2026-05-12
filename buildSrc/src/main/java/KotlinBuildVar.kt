@@ -1,8 +1,8 @@
 object Version {
 
-    private const val KUIKLY_VERSION = "2.15.0"
-    private const val KOTLIN_VERSION = "2.0.21"
-    private const val KOTLIN_OHOS_VERSION = "2.0.21-ohos"
+    private const val KUIKLY_VERSION = "2.17.1-beta"
+    private const val KOTLIN_VERSION = "2.1.21"
+    private const val KOTLIN_OHOS_VERSION = "2.0.21-mini-009"
 
     /**
      * 获取 Kuikly 版本号，版本号规则：${shortVersion}-${kotlinVersion}
@@ -22,6 +22,6 @@ object Version {
 
 object BuildPlugin {
     val kuikly by lazy {
-        "com.tencent.kuikly-open:core-gradle-plugin:${Version.getKuiklyVersion()}"
+        "com.tencent.kuikly:core-gradle-plugin:${Version.getKuiklyVersion()}"
     }
 }

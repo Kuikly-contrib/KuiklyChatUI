@@ -63,7 +63,7 @@ data class AgUiLoadingSnapshot(
             primaryLoadingTitle.isNotEmpty() -> primaryLoadingTitle
             currentToolCall.isNotEmpty() -> "正在调用 $currentToolCall"
             currentStep.isNotEmpty() -> "正在执行 $currentStep"
-            runActive -> "AI 正在思考..."
+            runActive -> "正在思考中..."
             else -> ""
         }
 

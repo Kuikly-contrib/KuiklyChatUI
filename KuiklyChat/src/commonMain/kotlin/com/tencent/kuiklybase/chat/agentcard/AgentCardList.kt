@@ -78,6 +78,11 @@ fun ViewContainer<*, *>.renderCard(
         is AgentCard.Custom -> CustomCard(card, theme)
         is AgentCard.TextMessage -> TextMessageCard(card, theme)
         is AgentCard.UserMessage -> UserMessageCard(card, theme)
+        // openspec: add-workflow-phase-progress
+        // DSL 版当前未启用（Compose 已接管所有渲染），noop 分支让 when 穷尽
+        // 即可。如需 DSL 端渲染，可在此实现 PhaseHeaderCard / TodoProgressCard。
+        is AgentCard.PhaseHeader -> {}
+        is AgentCard.TodoProgress -> {}
     }
 }
 

@@ -22,26 +22,6 @@ fun ViewContainer<*, *>.TextMessageCard(
             flexDirectionRow()
             alignItems(FlexAlign.FLEX_START)
         }
-        // 左侧头像
-        View {
-            attr {
-                size(32f, 32f)
-                borderRadius(16f)
-                backgroundLinearGradient(
-                    Direction.TO_BOTTOM_RIGHT,
-                    ColorStop(Color(0xFF6366F1), 0f),
-                    ColorStop(Color(0xFF8B5CF6), 1f)
-                )
-                allCenter()
-                marginRight(8f)
-            }
-            Text {
-                attr {
-                    text("🤖")
-                    fontSize(16f)
-                }
-            }
-        }
         // 气泡
         View {
             attr {

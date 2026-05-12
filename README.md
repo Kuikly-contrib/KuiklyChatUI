@@ -12,20 +12,50 @@
 
 ### 1. 添加 Maven 仓库
 
-在 `settings.gradle.kts` 中添加仓库地址：
+**标准平台（Android / iOS / JS / macOS）**
+
+在 `settings.gradle.kts` 中添加：
 
 ```kotlin
 dependencyResolutionManagement {
     repositories {
-        // ... 其他仓库
+        google()
+        mavenCentral()
         maven {
-            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")
+        }
+    }
+}
+```
+
+**鸿蒙平台（HarmonyOS）**
+
+在 `settings.ohos.gradle.kts` 中添加：
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/tencentvideo")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
         }
     }
 }
 ```
 
 ### 2. 添加依赖
+
+**标准平台（Android / iOS / JS / macOS）**
 
 在模块的 `build.gradle.kts` 中添加：
 
@@ -35,12 +65,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.3-2.0.21")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.1.21-SNAPSHOT")
             }
         }
     }
 }
 ```
+
+**鸿蒙平台（HarmonyOS）**
 
 在 `build.ohos.gradle.kts` 中添加：
 
@@ -50,7 +82,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.3-2.0.21-KBA-010")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21-mini-009-SNAPSHOT")
             }
         }
     }

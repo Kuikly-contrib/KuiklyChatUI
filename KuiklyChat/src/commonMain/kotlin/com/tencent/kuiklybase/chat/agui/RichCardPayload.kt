@@ -234,7 +234,7 @@ object RichCardPayload {
      */
     fun loading(
         id: String,
-        title: String = "正在思考",
+        title: String = "正在思考中",
         subtitle: String = "",
         style: String = LoadingStyle.DOTS,
         target: String = "",

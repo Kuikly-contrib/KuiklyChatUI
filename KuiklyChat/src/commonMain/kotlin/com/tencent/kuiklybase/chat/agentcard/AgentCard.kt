@@ -208,6 +208,37 @@ sealed class AgentCard {
         val content: String,
         override val timestamp: Long = 0L
     ) : AgentCard()
+
+    // ============================
+    // 16. 阶段进入头（workflow phase entry header）
+    //     openspec: add-workflow-phase-progress
+    //     仅 5 阶段（WORKSPACE / PLAN / DESIGN / LINT / COMPILE）使用；
+    //     DEVELOPMENT 由 TodoProgress 一统承担。
+    // ============================
+    data class PhaseHeader(
+        override val id: String,
+        /** "WORKSPACE_CREATE" | "PLAN_CONFIRM" | "DESIGN_SYSTEM" | "LINT" | "COMPILE" */
+        val phaseId: String,
+        /** 中文显示名（如 "设计系统确定"） */
+        val phaseName: String,
+        /** "running" | "done" | "failed" */
+        val status: String,
+        /** 触发因，便于调试 */
+        val reason: String,
+        override val timestamp: Long = 0L
+    ) : AgentCard()
+
+    // ============================
+    // 17. TodoWrite 进度卡（DEV 阶段进入头 + 后续更新合体）
+    //     openspec: add-workflow-phase-progress
+    // ============================
+    data class TodoProgress(
+        override val id: String,
+        val items: List<TodoProgressItem>,
+        val completed: Int,
+        val total: Int,
+        override val timestamp: Long = 0L
+    ) : AgentCard()
 }
 
 // ============================
@@ -228,6 +259,18 @@ enum class FileOp {
 enum class ToolState {
     PENDING, RUNNING, SUCCESS, FAILED
 }
+
+/**
+ * TodoWrite 单条任务（KuiklyChat 模块内）。
+ *
+ * openspec: add-workflow-phase-progress
+ */
+data class TodoProgressItem(
+    val content: String,
+    /** "pending" | "in_progress" | "completed" */
+    val status: String,
+    val activeForm: String? = null,
+)
 
 /** 加载样式 */
 enum class LoadingStyle {

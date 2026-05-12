@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.compose")
     id("com.android.library")
     `maven-publish`
 }
@@ -14,6 +15,8 @@ val groupId: String = findProperty("groupId") as? String
 val mavenRepoUrl: String = findProperty("mavenRepoUrl") as? String
     ?: findProperty("MAVEN_REPO_URL") as? String
     ?: "https://mirrors.tencent.com/repository/maven/kuikly-open/"
+// 内部版发布地址（如需发布到内部仓库，请使用下面地址）：
+// ?: "https://mirrors.tencent.com/repository/maven/kuikly/"
 val mavenUsername: String = findProperty("mavenUsername") as? String
     ?: findProperty("MAVEN_USERNAME") as? String
     ?: ""
@@ -44,9 +47,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
-                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
-                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-2.0.21-ohos")
+                implementation("com.tencent.kuikly:core:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyOhosVersion()}")
+                // Compose DSL 支持
+                implementation("com.tencent.kuikly:compose:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-internal-2.0.21-mini-009")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-KBA-002")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1-KBA-003")
             }
