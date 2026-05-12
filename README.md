@@ -65,7 +65,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.1.21-SNAPSHOT")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-internal-2.1.21")
             }
         }
     }
@@ -82,7 +82,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // KuiklyChat 聊天组件
-                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-2.0.21-mini-009-SNAPSHOT")
+                implementation("com.tencent.kuiklybase:KuiklyChat:1.0.0-internal-2.0.21-mini-009")
             }
         }
     }
@@ -317,7 +317,8 @@ data class ChatMessage(
     val isDeleted: Boolean = false,                    // 是否已删除（软删除）
     val isPinned: Boolean = false,                     // 是否置顶
     val readBy: List<String> = emptyList(),            // 已读用户 ID 列表
-    val attachments: List<Attachment> = emptyList()    // 附件列表
+    val attachments: List<Attachment> = emptyList(),   // 附件列表
+    val quotedMessage: ChatMessage? = null             // 引用回复的原消息
 )
 ```
 
@@ -2387,6 +2388,231 @@ private fun runAgent(userInput: String) {
 | Activity 进度 | 计划卡片按 snapshot → delta 顺序渐进更新 |
 | 断线重连 | MESSAGES_SNAPSHOT 覆盖后消息列表恢复一致 |
 | 错误 | RunError 时未完成消息显示"发送失败"，支持重发 |
+
+---
+
+
+## Agent 卡片系统
+
+KuiklyChat 内置了一套 **Agent 卡片系统**，独立于 ChatSession，专门用于展示 AI Agent 的各种事件和状态。支持代码块、命令执行、文件编辑、工具调用、思考过程等 17 种卡片类型。
+
+### 卡片类型一览
+
+| 卡片类型 | 类名 | 说明 |
+|----------|------|------|
+| **代码块** | `AgentCard.CodeBlock` | 多语言代码展示，含行号/复制/折叠 |
+| **命令执行** | `AgentCard.CommandExec` | Shell/Python 终端风格执行输出 |
+| **文件编辑** | `AgentCard.FileEdit` | 文件 diff / 新建显示 |
+| **工具调用** | `AgentCard.ToolCall` | 工具调用参数和结果展示 |
+| **思考过程** | `AgentCard.Thinking` | AI 思考过程（灰色虚线气泡） |
+| **搜索结果** | `AgentCard.SearchResult` | 搜索结果列表 + 高亮 |
+| **加载占位** | `AgentCard.Loading` | 多种加载样式（dots/spinner/progress/skeleton） |
+| **错误提示** | `AgentCard.Error` | 错误信息展示 |
+| **链接预览** | `AgentCard.LinkPreview` | URL 链接卡片预览 |
+| **表格** | `AgentCard.Table` | 数据表格展示 |
+| **图表** | `AgentCard.Chart` | 条形图/折线图/饼图 |
+| **任务规划** | `AgentCard.Plan` | 多步骤任务规划清单（状态/进度） |
+| **文本消息** | `AgentCard.TextMessage` | Assistant 流式文本 |
+| **用户消息** | `AgentCard.UserMessage` | 用户输入消息 |
+| **阶段头** | `AgentCard.PhaseHeader` | 工作流阶段进入头 |
+| **待办进度** | `AgentCard.TodoProgress` | TodoWrite 进度卡 |
+| **自定义** | `AgentCard.Custom` | 业务自定义卡片 |
+
+### AgentCard 数据模型
+
+```kotlin
+// 代码块卡片
+AgentCard.CodeBlock(
+    id = "code_1",
+    code = "println(\"Hello World\")",
+    language = "kotlin",
+    filename = "Main.kt",
+    collapsedByDefault = false  // 超过10行自动折叠
+)
+
+// 命令执行卡片
+AgentCard.CommandExec(
+    id = "cmd_1",
+    command = "npm install",
+    cwd = "/project",
+    shell = "bash",
+    state = ExecState.RUNNING,  // RUNNING/SUCCESS/FAILED/CANCELED
+    output = "Installing dependencies...",
+    exitCode = 0,
+    durationMs = 1500
+)
+
+// 文件编辑卡片
+AgentCard.FileEdit(
+    id = "edit_1",
+    filePath = "src/main.kt",
+    operation = FileOp.UPDATE,  // CREATE/UPDATE/DELETE/RENAME
+    diffText = "@@ -1,3 +1,5 @@\n+import ...",
+    additions = 10,
+    deletions = 2
+)
+
+// 工具调用卡片
+AgentCard.ToolCall(
+    id = "tool_1",
+    toolName = "read_file",
+    toolCallId = "call_123",
+    state = ToolState.SUCCESS,  // PENDING/RUNNING/SUCCESS/FAILED
+    args = "{\"path\": \"/src/main.kt\"}",
+    result = "File content...",
+    errorMessage = ""
+)
+
+// 任务规划卡片
+AgentCard.Plan(
+    id = "plan_1",
+    title = "实施计划",
+    summary = "共 4 步",
+    steps = listOf(
+        PlanStep(id = "s1", title = "分析需求", status = PlanStepStatus.DONE),
+        PlanStep(id = "s2", title = "编写代码", status = PlanStepStatus.RUNNING),
+        PlanStep(id = "s3", title = "测试验证", status = PlanStepStatus.PENDING),
+        PlanStep(id = "s4", title = "部署上线", status = PlanStepStatus.PENDING)
+    )
+)
+```
+
+### AgentCardList（DSL 版）
+
+基于 Kuikly DSL 的卡片列表组件：
+
+```kotlin
+class AgentPage : BasePager() {
+    var cards by observableList<AgentCard>()
+
+    override fun body(): ViewBuilder {
+        val ctx = this
+        return {
+            View {
+                attr { flex(1f) }
+                AgentCardList(
+                    cards = { ctx.cards },
+                    theme = AgentCardTheme.Default,
+                    onCopyCode = { code -> /* 复制代码 */ },
+                    onLinkClick = { url -> /* 打开链接 */ },
+                    onRetry = { card -> /* 重试操作 */ }
+                )
+            }
+        }
+    }
+}
+```
+
+### ComposeAgentCardList（Compose 版）
+
+基于 Kuikly Compose 的卡片列表组件：
+
+```kotlin
+@Composable
+fun AgentCardScreen(cards: List<AgentCard>) {
+    ComposeAgentCardList(
+        cards = cards,
+        theme = ComposeCardTheme.Default,
+        callbacks = ComposeCardCallbacks(
+            onCopyCode = { code -> /* 复制 */ },
+            onLinkClick = { url -> /* 打开 */ },
+            onRetry = { card -> /* 重试 */ }
+        ),
+        options = ComposeCardListOptions(),
+        modifier = Modifier.fillMaxSize()
+    )
+}
+```
+
+### AgUiCardSession（AG-UI 卡片会话）
+
+将 AG-UI 事件流自动映射为 AgentCard 列表：
+
+```kotlin
+class AiAgentPage : BasePager() {
+    private val cardSession = AgUiCardSession(
+        threadId = "thread_001",
+        selfSenderId = "user_001"
+    )
+
+    override fun body(): ViewBuilder {
+        val ctx = this
+        return {
+            View {
+                attr { flex(1f) }
+                // 使用 Compose 版卡片列表
+                ComposeAgentCardList(
+                    cards = cardSession.cards,
+                    theme = ComposeCardTheme.Default
+                )
+            }
+        }
+    }
+
+    private fun handleSseData(line: String) {
+        // AG-UI 事件自动映射为 AgentCard
+        cardSession.dispatchSseData(line)
+    }
+}
+```
+
+### 主题配置
+
+```kotlin
+// DSL 版主题
+val theme = AgentCardTheme(
+    backgroundColor = 0xFFFFFFFF,
+    cardBackgroundColor = 0xFFF5F5F5,
+    textColor = 0xFF333333,
+    codeBackgroundColor = 0xFF1E1E1E,
+    codeTextColor = 0xFFD4D4D4,
+    // ... 更多配置
+)
+
+// Compose 版主题
+val composeTheme = ComposeCardTheme(
+    backgroundColor = Color.White,
+    cardBackgroundColor = Color(0xFFF5F5F5),
+    textColor = Color.DarkGray,
+    // ... 更多配置
+)
+```
+
+---
+
+## ChatMessage 引用回复
+
+ChatMessage 支持引用回复功能，通过 `quotedMessage` 字段实现：
+
+```kotlin
+// 创建引用回复消息
+val replyMessage = ChatMessage(
+    id = ChatMessageHelper.generateId(),
+    content = "这是我的回复",
+    isSelf = true,
+    type = MessageType.TEXT,
+    quotedMessage = originalMessage  // 引用的原消息
+)
+
+// 在 ChatSessionConfig 中管理回复状态
+ChatSession({ ctx.messageList }) {
+    // 设置回复消息
+    replyToMessage(targetMessage)
+    
+    // 取消回复
+    cancelReply()
+    
+    // 发送时检查是否有引用
+    onSendMessage = { text ->
+        val msg = ChatMessageHelper.createTextMessage(content = text, isSelf = true)
+        val finalMsg = _replyingToMessage?.let { 
+            msg.copy(quotedMessage = it) 
+        } ?: msg
+        messageList.add(finalMsg)
+        cancelReply()  // 发送后清除引用状态
+    }
+}
+```
 
 ---
 
