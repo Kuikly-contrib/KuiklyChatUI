@@ -87,6 +87,38 @@ internal class RouterPage : BasePager() {
                 }
             }
 
+            // KuiklyAI Compose DSL Demo 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(220f, 48f)
+                        borderRadius(8f)
+                        backgroundColor(Color(0xFF176B5B))
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 3f, 10f, Color(0x33176B5B)))
+                    }
+                    Text {
+                        attr {
+                            text("KuiklyAI Demo")
+                            fontSize(17f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("kuiklyai_demo")
+                        }
+                    }
+                }
+            }
+
             // AI 打字指示器 Demo 入口
             View {
                 attr {

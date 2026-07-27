@@ -2,6 +2,7 @@ import com.tencent.kuikly.gradle.config.KuiklyConfig
 
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.compose")
     kotlin("native.cocoapods")
     id("com.android.library")
     id("com.google.devtools.ksp")

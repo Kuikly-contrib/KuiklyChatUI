@@ -53,17 +53,20 @@ kotlin {
                 implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
                 implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
                 // Compose DSL 支持
-                implementation("com.tencent.kuikly:compose:${Version.getKuiklyVersion()}")
+                api("com.tencent.kuikly:compose:${Version.getKuiklyVersion()}")
                 // KuiklyMarkdown — Markdown 渲染组件
                 implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-internal-2.1.21")
                 // KuiklyMarkdown 所需的依赖
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                // 多平台（jvm/js/native 全支持），不会破坏非 JVM target 的测试编译。
+                // 用于测试 KuiklyAI 的 Flow 流式与挂起逻辑。
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
             }
         }
         val androidMain by getting

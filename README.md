@@ -1972,14 +1972,82 @@ class ChatDemoPage : BasePager() {
 
 ---
 
+## KuiklyAI 工具集（Compose DSL）
 
+KuiklyAI 面向人机对话场景。宿主只需传入一个 `LlmProvider`，即可获得多轮历史、
+流式 Markdown、停止生成、错误重试、附件与语音扩展点、样式配置和会话序列化。
+传输由宿主注入，核心库不绑定云厂商 SDK 或网络栈。
 
+### 零后端接入
 
+```kotlin
+import androidx.compose.runtime.remember
+import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
+import com.tencent.kuiklybase.chat.kuiklyai.ui.KuiklyAiChatView
+
+@Composable
+fun AiPage() {
+    val provider = remember { EchoLlmProvider() }
+    KuiklyAiChatView(
+        provider = provider,
+        suggestions = listOf("总结这份文档", "解释 Kotlin Flow")
+    )
+}
+```
+
+`EchoLlmProvider` 不需要网络或 API key，适合 Demo、UI 联调和测试。项目内置的
+`kuiklyai_demo` 页面可从 Router 的 **KuiklyAI Demo** 入口打开，源码位于
+`shared/src/commonMain/kotlin/com/kuikly/kuiklychat/KuiklyAiDemoPage.kt`。
+
+### 接入真实模型
+
+`OpenAiCompatibleProvider` 可连接任意兼容 `/chat/completions` SSE 协议的端点：
+
+```kotlin
+val provider = OpenAiCompatibleProvider(
+    transport = appLlmTransport,
+    baseUrl = "https://your-gateway.example.com/v1",
+    model = "your-model",
+    apiKey = apiKey
+)
+```
+
+宿主实现唯一的传输接口即可复用已有 Ktor、OkHttp、URLSession 或 Kuikly
+`HttpRequestModule`：
+
+```kotlin
+fun interface LlmTransport {
+    fun openStream(
+        request: LlmHttpRequest,
+        sink: LlmStreamSink
+    ): LlmSubscription
+}
+```
+
+调用 `LlmSubscription.cancel()` 必须中断底层连接，`KuiklyAiChatView` 的停止按钮
+会通过 Flow 取消自动触发它。已有 AG-UI 服务可改用 `AgUiLlmProvider`，结构化事件
+通过 `onEvent` 回调交给宿主的富卡片会话。
+
+### 历史与平台能力
+
+```kotlin
+val json = LlmChatSerializer.encode(provider.history)
+provider.setHistory(LlmChatSerializer.decode(json))
+
+KuiklyAiChatView(
+    provider = provider,
+    attachmentPicker = appAttachmentPicker,
+    speechRecognizer = appSpeechRecognizer
+)
+```
+
+`LlmChatSerializer` 只负责 JSON 编解码，不读写文件或数据库；内联附件字节默认不
+进入历史。`LlmAttachmentPicker` 与 `LlmSpeechRecognizer` 都由宿主实现，未注入或
+不可用时对应入口不会显示。
+
+完整设计与 API 取舍见 [`docs/design/feature-kuiklyai-toolkit.md`](docs/design/feature-kuiklyai-toolkit.md)。
 
 ---
-
-
-
 
 ## AG-UI 协议集成
 

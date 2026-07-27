@@ -19,6 +19,8 @@ owner: @kuikly-chat-team
 | 平台隔离 | `commonMain` 不引 `android./java./javax./platform./kotlinx.cinterop` | `check-layer-deps.sh` 规则 1 | ✅ 脚本已强制 |
 | 日志要规范 | 禁止裸 `println` | `check-layer-deps.sh` 规则 4 | ✅ 脚本已强制 |
 | 文件要短 | 单文件 ≤ 400 行 | `check-layer-deps.sh` 规则 5 + `scripts/file-size-baseline.txt` | ✅ 脚本已强制（存量豁免，新增阻断） |
+| Provider 保持 UI 无关 | `kuiklyai/provider` 与 `history` 不依赖 Compose/UI 包 | `check-layer-deps.sh` 规则 6 | ✅ 脚本已强制 |
+| AI Provider 不绑定厂商 | `kuiklyai` 不引厂商 SDK 或具体网络栈 | `check-layer-deps.sh` 规则 7 | ✅ 脚本已强制 |
 | 文档不过期 | 设计文档 `last_updated` ≤ 60 天 | `scripts/check-doc-freshness.sh`（PR Gate 7 + 每周定时） | ✅ 脚本已强制（仅告警） |
 | 组件要纯 | UI 组件不直接调后端 | 由「`agui` 不依赖 UI」反向保证；UI 直连后端目前无检查 | ⚠️ 仅约定 |
 | API 调用要统一 | 禁止直接网络调用，走 `ChatRepository` | 无自动校验 | ⚠️ 仅约定 |

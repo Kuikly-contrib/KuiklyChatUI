@@ -45,6 +45,26 @@ if grep -rn --include='*.kt' 'println(' "$CHAT_ROOT" | grep -vE '\*|//'; then
       "docs/conventions/logging.md"
 fi
 
+# 规则6：kuiklyai 的 provider/history 层不得依赖任何 UI 包。
+# LlmProvider 是对外扩展点，第三方要能在不碰 Compose 的前提下实现它。
+if grep -rn --include='*.kt' -E "import[[:space:]]+(com\.tencent\.kuikly\.compose|com\.tencent\.kuiklybase\.chat\.(bubble|session|channel|composer|navigation|indicator|widget|agentcard|agentcard_compose|kuiklyai\.(ui|runtime)))" \
+  "$CHAT_ROOT/kuiklyai/provider" "$CHAT_ROOT/kuiklyai/history" 2>/dev/null; then
+  err "kuiklyai 的 provider/history 层依赖了 UI 包。" \
+      "provider 层只产出 LlmChatMessage；渲染由 kuiklyai/ui 负责，两者通过模型解耦。" \
+      "docs/design/feature-kuiklyai-toolkit.md"
+fi
+
+# 规则7：kuiklyai 不得依赖任何厂商 SDK。
+# 这是 KuiklyAI 与 Flutter AI Toolkit 的核心差异——后者的唯一官方实现
+# 绑死 Firebase，导致「provider 可插拔」只在接口层成立。内置实现一律
+# 只依赖宿主注入的 LlmTransport，不引入任何具体厂商依赖。
+if grep -rn --include='*.kt' -E "^[[:space:]]*import[[:space:]]+(com\.google\.(firebase|ai)|com\.firebase|dev\.langchain4j|com\.openai|com\.anthropic|com\.aallam\.openai|io\.ktor)" \
+  "$CHAT_ROOT/kuiklyai" 2>/dev/null; then
+  err "kuiklyai 引入了厂商 SDK 或具体网络栈依赖。" \
+      "内置 provider 只能依赖 LlmTransport 抽象，由宿主注入网络实现；厂商适配放到宿主侧或独立可选模块。" \
+      "docs/design/feature-kuiklyai-toolkit.md"
+fi
+
 # 规则5：单文件 ≤ 400 行。存量超标文件登记在 baseline 中，只告警不阻断；
 # 新增超标文件直接阻断。baseline 中已达标的文件必须移除，否则报错，防止清单腐化。
 STALE_BASELINE=""
