@@ -1,0 +1,26 @@
+# .github/workflows/doc-gardening.yml
+# 文档卫生：定时扫描 docs/ 中过期的设计文档，输出告警（不自动修改）。
+# 对应「3.3 Gate 7」与「4.1 后台清理 Agent」的文档部分。
+name: Doc Gardening
+
+on:
+  schedule:
+    - cron: '17 2 * * 1'   # 每周一 02:17 UTC
+  workflow_dispatch:
+
+jobs:
+  doc-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 与 PR 门禁 Gate 7 共用同一脚本，避免两处逻辑漂移。
+      - name: Scan stale design docs
+        run: bash scripts/check-doc-freshness.sh all
+
+      # 可选：将告警作为 Issue 创建，便于追踪
+      # - name: Open issue on stale docs
+      #   if: ${{ failure() }}
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: core.warning('存在过期设计文档，请安排更新')

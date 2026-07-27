@@ -1,0 +1,71 @@
+# .github/workflows/agent-guardrails.yml
+# Agent 护栏：在 PR 阶段锁死质量与架构约束。
+# 适配 KuiklyChat（Kotlin Multiplatform / Gradle）。原模板的 Node/tsc/nyc 步骤已替换为 Gradle 等价物。
+name: Agent Guardrails
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # doc-freshness gate 需要 git 历史
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # ── Gate 1: 编译（含类型检查）──
+      # 本模块无 jvm() target，JVM 侧编译走 android target 的 Kotlin 任务。
+      - name: Compile
+        run: ./gradlew :KuiklyChat:compileDebugKotlinAndroid :KuiklyChat:compileDebugUnitTestKotlinAndroid
+
+      # ── Gate 2: 静态分析（Lint / Detekt，可选）──
+      # 启用：在 KuiklyChat/build.gradle.kts 的 plugins 加 id("io.gitlab.arturbosch.detekt")
+      # 并在 commonTest / 各源集配置 detekt { ... }。未启用时此步自动跳过。
+      - name: Detekt
+        continue-on-error: true
+        run: ./gradlew :KuiklyChat:detekt || echo "⚠️ Detekt 未配置，跳过（在 build.gradle.kts 启用 id(\"io.gitlab.arturbosch.detekt\")）"
+
+      # ── Gate 3: 单元测试 ──
+      - name: Unit Tests
+        run: ./gradlew :KuiklyChat:testDebugUnitTest
+
+      # ── Gate 4: 覆盖率阈值（可选，Kover）──
+      # 启用：在 build.gradle.kts 加 id("org.jetbrains.kotlinx.kover")，
+      # 并配置 kover { reports { verify { rule { minBound(0.80) } } } }。
+      - name: Coverage Threshold
+        continue-on-error: true
+        run: |
+          ./gradlew :KuiklyChat:koverXmlReport || echo "⚠️ Kover 未配置，跳过覆盖率门槛"
+          if [ -f KuiklyChat/build/reports/kover/xml/report.xml ]; then
+            COVERAGE=$(grep -o 'line-rate="[0-9.]*"' KuiklyChat/build/reports/kover/xml/report.xml | head -1 | sed 's/line-rate="//;s/"//')
+            COVERAGE_PCT=$(awk "BEGIN{printf \"%.0f\", $COVERAGE*100}")
+            echo "覆盖率：${COVERAGE_PCT}%"
+            if [ "$COVERAGE_PCT" -lt 80 ]; then
+              echo "❌ 代码覆盖率 ${COVERAGE_PCT}% < 80%"
+              echo "✅ FIX: 为新增代码添加 commonTest 单测"
+              exit 1
+            fi
+          fi
+
+      # ── Gate 5 + 6: 架构约束与文件大小（零依赖，必过）──
+      # 分层依赖、裸 println、单文件 ≤ 400 行都在同一脚本里，本地可用同一条命令复现。
+      # 存量超标文件登记在 scripts/file-size-baseline.txt 中，仅告警；新增违规阻断。
+      - name: Architecture & File Size Check
+        run: bash scripts/check-layer-deps.sh
+
+      # ── Gate 7: 文档新鲜度（PR 改动触发告警，不阻断）──
+      # 以 front-matter 的 last_updated 为准（与 docs/README.md、doc-gardening.yml 同一套口径），
+      # 而不是 git 提交时间——PR 里刚改过的文件提交时间必然是新的，那样检查恒为空。
+      - name: Doc Freshness
+        run: bash scripts/check-doc-freshness.sh changed "origin/${{ github.base_ref }}"
