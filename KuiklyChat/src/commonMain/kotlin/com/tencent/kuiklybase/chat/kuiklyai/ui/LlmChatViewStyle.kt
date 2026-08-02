@@ -2,6 +2,11 @@ package com.tencent.kuiklybase.chat.kuiklyai.ui
 
 import com.tencent.kuiklybase.chat.agentcard_compose.ComposeCardTheme
 
+enum class LlmChatDesignSystem {
+    MATERIAL,
+    CUPERTINO
+}
+
 /**
  * [KuiklyAiChatView] 的视觉配置。
  *
@@ -14,6 +19,7 @@ import com.tencent.kuiklybase.chat.agentcard_compose.ComposeCardTheme
  * 里面的代码块还是浅色"这种割裂。
  */
 data class LlmChatViewStyle(
+    val designSystem: LlmChatDesignSystem = LlmChatDesignSystem.MATERIAL,
     // ---- 背景 ----
     val backgroundColor: Long = 0xFFF8FAFC,
 
@@ -62,6 +68,39 @@ data class LlmChatViewStyle(
     companion object {
         val Default = LlmChatViewStyle()
 
+        val Material = Default
+
+        val Cupertino = Default.copy(
+            designSystem = LlmChatDesignSystem.CUPERTINO,
+            backgroundColor = 0xFFF2F2F7,
+            userBubbleGradientStart = 0xFF007AFF,
+            userBubbleGradientEnd = 0xFF007AFF,
+            llmTextColor = 0xFF1C1C1E,
+            llmBubbleColor = 0xFFFFFFFF,
+            titleColor = 0xFF1C1C1E,
+            mutedColor = 0xFF8E8E93,
+            composerBackgroundColor = 0xFFF2F2F7,
+            composerBorderColor = 0xFFC7C7CC,
+            composerTextColor = 0xFF1C1C1E,
+            composerPlaceholderColor = 0xFF8E8E93,
+            sendButtonColor = 0xFF007AFF,
+            sendButtonDisabledColor = 0xFFAEAEB2,
+            stopButtonColor = 0xFFFF3B30,
+            suggestionBackgroundColor = 0xFFFFFFFF,
+            suggestionBorderColor = 0xFFD1D1D6,
+            suggestionTextColor = 0xFF007AFF,
+            bubbleRadius = 18f,
+            composerRadius = 18f,
+            cardTheme = ComposeCardTheme.Default
+        )
+
+        fun forDesignSystem(designSystem: LlmChatDesignSystem): LlmChatViewStyle = when (
+            designSystem
+        ) {
+            LlmChatDesignSystem.MATERIAL -> Material
+            LlmChatDesignSystem.CUPERTINO -> Cupertino
+        }
+
         /** 深色主题。 */
         val Dark = LlmChatViewStyle(
             backgroundColor = 0xFF0F172A,
@@ -97,6 +136,11 @@ data class LlmChatViewStrings(
     val sendLabel: String = "发送",
     val stopLabel: String = "停止",
     val retryLabel: String = "重试",
+    val editLabel: String = "编辑",
+    val copyLabel: String = "复制",
+    val editSubmitLabel: String = "重新发送",
+    val editingLabel: String = "正在编辑最新消息",
+    val editCancelLabel: String = "取消",
     val attachLabel: String = "附件",
     val voiceLabel: String = "语音",
     val photoLibraryLabel: String = "相册",

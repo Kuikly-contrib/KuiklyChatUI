@@ -29,6 +29,10 @@ import kotlinx.coroutines.flow.Flow
  */
 interface LlmProvider {
 
+    /** Actual attachment types supported by the provider's wire format. */
+    val capabilities: LlmProviderCapabilities
+        get() = LlmProviderCapabilities()
+
     /** 当前会话历史。实现方需保证返回只读快照，外部不可变更。 */
     val history: List<LlmChatMessage>
 

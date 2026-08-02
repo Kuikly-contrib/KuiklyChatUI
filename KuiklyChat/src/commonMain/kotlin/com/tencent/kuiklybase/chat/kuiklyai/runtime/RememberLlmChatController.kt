@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmAttachmentPicker
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmClipboard
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmSpeechRecognizer
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmProvider
 
@@ -18,15 +19,17 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmProvider
 fun rememberLlmChatController(
     provider: LlmProvider,
     attachmentPicker: LlmAttachmentPicker? = null,
-    speechRecognizer: LlmSpeechRecognizer? = null
+    speechRecognizer: LlmSpeechRecognizer? = null,
+    clipboard: LlmClipboard? = null
 ): LlmChatController {
     val scope = rememberCoroutineScope()
-    val controller = remember(provider, attachmentPicker, speechRecognizer) {
+    val controller = remember(provider, attachmentPicker, speechRecognizer, clipboard) {
         LlmChatController(
             provider = provider,
             scope = scope,
             attachmentPicker = attachmentPicker,
-            speechRecognizer = speechRecognizer
+            speechRecognizer = speechRecognizer,
+            clipboard = clipboard
         )
     }
     DisposableEffect(controller) {

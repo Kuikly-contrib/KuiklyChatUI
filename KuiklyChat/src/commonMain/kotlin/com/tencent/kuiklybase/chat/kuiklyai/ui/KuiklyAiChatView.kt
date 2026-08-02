@@ -1,6 +1,10 @@
 package com.tencent.kuiklybase.chat.kuiklyai.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Column
@@ -18,10 +22,14 @@ import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmAttachmentPicker
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformServices
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmClipboard
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmSpeechRecognizer
+import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
+import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatUiEvent
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
 
 /**
@@ -63,6 +71,7 @@ import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
  * @param safeAreaBottom 底部安全区高度，传 `pagerData.safeAreaInsets.bottom`
  * @param attachmentPicker 附件选择实现；为 null 时不显示附件按钮
  * @param speechRecognizer 语音识别实现；为 null 时不显示麦克风按钮
+ * @param platformServices 平台能力聚合参数；与旧的单项参数同时传入时聚合参数优先
  * @param onEditMessage 用户消息点击回调；配合
  *        [LlmChatController.editAndResend] 实现编辑重发
  * @param messageBuilder 自定义消息渲染，返回 true 表示已接管该条消息
@@ -78,12 +87,21 @@ fun KuiklyAiChatView(
     speechRecognizer: LlmSpeechRecognizer? = null,
     onEditMessage: ((LlmChatMessage) -> Unit)? = null,
     messageBuilder: (@Composable (LlmChatMessage) -> Boolean)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    clipboard: LlmClipboard? = null,
+    designSystem: LlmChatDesignSystem = style.designSystem,
+    platformServices: LlmChatPlatformServices = LlmChatPlatformServices()
 ) {
+    val resolvedServices = LlmChatPlatformServices(
+        clipboard = platformServices.clipboard ?: clipboard,
+        attachmentPicker = platformServices.attachmentPicker ?: attachmentPicker,
+        speechRecognizer = platformServices.speechRecognizer ?: speechRecognizer
+    )
     val controller = rememberLlmChatController(
         provider = provider,
-        attachmentPicker = attachmentPicker,
-        speechRecognizer = speechRecognizer
+        attachmentPicker = resolvedServices.attachmentPicker,
+        speechRecognizer = resolvedServices.speechRecognizer,
+        clipboard = resolvedServices.clipboard
     )
 
     KuiklyAiChatView(
@@ -94,7 +112,8 @@ fun KuiklyAiChatView(
         safeAreaBottom = safeAreaBottom,
         onEditMessage = onEditMessage,
         messageBuilder = messageBuilder,
-        modifier = modifier
+        modifier = modifier,
+        designSystem = designSystem
     )
 }
 
@@ -114,19 +133,29 @@ fun KuiklyAiChatView(
     safeAreaBottom: Float = 0f,
     onEditMessage: ((LlmChatMessage) -> Unit)? = null,
     messageBuilder: (@Composable (LlmChatMessage) -> Boolean)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    designSystem: LlmChatDesignSystem = style.designSystem
 ) {
+    val effectiveStyle = if (style.designSystem == designSystem) {
+        style
+    } else {
+        style.copy(designSystem = designSystem)
+    }
+    var previewedImage by remember { mutableStateOf<LlmAttachment?>(null) }
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(style.backgroundColor))
+            .background(Color(effectiveStyle.backgroundColor))
     ) {
         LlmMessageList(
             controller = controller,
-            style = style,
+            style = effectiveStyle,
             strings = strings,
             suggestions = suggestions,
             onEditMessage = onEditMessage,
+            onPreviewImage = { attachment ->
+                previewedImage = attachment
+            },
             messageBuilder = messageBuilder,
             modifier = Modifier.weight(1f)
         )
@@ -137,18 +166,33 @@ fun KuiklyAiChatView(
             LlmErrorBanner(
                 message = error.message,
                 retryable = error.retryable,
-                style = style,
+                style = effectiveStyle,
                 strings = strings,
                 onRetry = { controller.retryLast() },
                 onDismiss = { controller.dismissError() }
             )
         }
 
+        controller.transientEvent?.let { event ->
+            LlmTransientEventBanner(
+                event = event,
+                style = effectiveStyle,
+                onDismiss = controller::consumeTransientEvent
+            )
+        }
+
         LlmChatInput(
             controller = controller,
-            style = style,
+            style = effectiveStyle,
             strings = strings,
-            safeAreaBottom = safeAreaBottom
+            safeAreaBottom = safeAreaBottom,
+            onPreviewImage = { previewedImage = it }
+        )
+    }
+    previewedImage?.let { attachment ->
+        LlmImagePreviewDialog(
+            attachment = attachment,
+            onDismiss = { previewedImage = null }
         )
     }
 }
@@ -198,5 +242,34 @@ private fun LlmErrorBanner(
             color = Color(style.errorColor),
             modifier = Modifier.clickable { onDismiss() }
         )
+    }
+}
+
+@Composable
+private fun LlmTransientEventBanner(
+    event: LlmChatUiEvent,
+    style: LlmChatViewStyle,
+    onDismiss: () -> Unit
+) {
+    val text = when (event) {
+        is LlmChatUiEvent.TextCopied -> "已复制到剪贴板"
+        is LlmChatUiEvent.AttachmentRejected -> event.message
+        is LlmChatUiEvent.PlatformOperationFailed -> event.message
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(style.suggestionBackgroundColor))
+            .padding(horizontal = style.contentPaddingH.dp, vertical = 8.dp)
+            .clickable { onDismiss() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            color = Color(style.suggestionTextColor),
+            modifier = Modifier.weight(1f)
+        )
+        Text(text = "×", fontSize = 15.sp, color = Color(style.mutedColor))
     }
 }

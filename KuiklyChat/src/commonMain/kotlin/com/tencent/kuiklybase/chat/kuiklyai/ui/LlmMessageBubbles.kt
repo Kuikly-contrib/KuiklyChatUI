@@ -25,6 +25,7 @@ import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.agentcard_compose.BouncingDots
 import com.tencent.kuiklybase.chat.agentcard_compose.StreamingMarkdownView
+import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageState
 
@@ -40,6 +41,8 @@ fun LlmUserBubble(
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     onEditClick: ((LlmChatMessage) -> Unit)? = null,
+    onCopyClick: (() -> Unit)? = null,
+    onPreviewImage: ((LlmAttachment) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val bubbleShape = RoundedCornerShape(
@@ -63,7 +66,8 @@ fun LlmUserBubble(
                 attachments = message.attachments,
                 style = style,
                 strings = strings,
-                onRemove = null
+                onRemove = null,
+                onPreviewImage = onPreviewImage
             )
             Spacer(Modifier.height(4.dp))
         }
@@ -81,13 +85,6 @@ fun LlmUserBubble(
                                 )
                             )
                         )
-                        .then(
-                            if (onEditClick != null) {
-                                Modifier.clickable { onEditClick(message) }
-                            } else {
-                                Modifier
-                            }
-                        )
                         .padding(horizontal = 12.dp, vertical = 10.dp)
                 ) {
                     Text(
@@ -99,6 +96,15 @@ fun LlmUserBubble(
                 }
             }
         }
+        LlmMessageActions(
+            style = style,
+            strings = strings,
+            showEdit = onEditClick != null,
+            onEdit = { onEditClick?.invoke(message) },
+            showCopy = onCopyClick != null && message.text.isNotEmpty(),
+            onCopy = { onCopyClick?.invoke() },
+            alignEnd = true
+        )
     }
 }
 
@@ -115,6 +121,8 @@ fun LlmResponseBubble(
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     onRetryClick: (() -> Unit)? = null,
+    onCopyClick: (() -> Unit)? = null,
+    onPreviewImage: ((LlmAttachment) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -125,6 +133,16 @@ fun LlmResponseBubble(
                 vertical = (style.messageSpacing / 2).dp
             )
     ) {
+        if (message.attachments.isNotEmpty()) {
+            LlmAttachmentRow(
+                attachments = message.attachments,
+                style = style,
+                strings = strings,
+                onPreviewImage = onPreviewImage
+            )
+            Spacer(Modifier.height(4.dp))
+        }
+
         // 流式刚开始、还没有任何 token 时显示"正在思考"，
         // 而不是一个空气泡——空气泡会让人以为界面卡死了。
         if (message.text.isEmpty() && message.state == LlmMessageState.STREAMING) {
@@ -154,6 +172,51 @@ fun LlmResponseBubble(
                 modifier = Modifier.padding(top = 4.dp)
             )
             else -> Unit
+        }
+        LlmMessageActions(
+            style = style,
+            strings = strings,
+            showEdit = false,
+            onEdit = {},
+            showCopy = onCopyClick != null && message.text.isNotEmpty(),
+            onCopy = { onCopyClick?.invoke() },
+            alignEnd = false
+        )
+    }
+}
+
+@Composable
+private fun LlmMessageActions(
+    style: LlmChatViewStyle,
+    strings: LlmChatViewStrings,
+    showEdit: Boolean,
+    onEdit: () -> Unit,
+    showCopy: Boolean,
+    onCopy: () -> Unit,
+    alignEnd: Boolean
+) {
+    if (!showEdit && !showCopy) return
+    Row(
+        modifier = Modifier
+            .padding(top = 3.dp)
+            .then(if (alignEnd) Modifier else Modifier)
+    ) {
+        if (showEdit) {
+            Text(
+                text = strings.editLabel,
+                fontSize = 11.sp,
+                color = Color(style.mutedColor),
+                modifier = Modifier.clickable { onEdit() }
+            )
+        }
+        if (showEdit && showCopy) Spacer(Modifier.width(12.dp))
+        if (showCopy) {
+            Text(
+                text = strings.copyLabel,
+                fontSize = 11.sp,
+                color = Color(style.mutedColor),
+                modifier = Modifier.clickable { onCopy() }
+            )
         }
     }
 }

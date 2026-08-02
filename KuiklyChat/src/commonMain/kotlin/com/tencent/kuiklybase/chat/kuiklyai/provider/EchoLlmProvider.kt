@@ -23,6 +23,8 @@ class EchoLlmProvider(
     private val responder: (List<LlmChatMessage>) -> String = ::defaultEchoResponse
 ) : BaseLlmProvider(clock, idPrefix = "echo") {
 
+    override val capabilities: LlmProviderCapabilities = LlmProviderCapabilities()
+
     override fun streamCompletion(context: List<LlmChatMessage>): Flow<String> = flow {
         val fullText = responder(context)
         if (fullText.isEmpty()) return@flow

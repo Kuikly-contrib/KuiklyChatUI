@@ -44,6 +44,7 @@ fun LlmMessageList(
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     suggestions: List<String> = emptyList(),
     onEditMessage: ((LlmChatMessage) -> Unit)? = null,
+    onPreviewImage: ((com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment) -> Unit)? = null,
     messageBuilder: (@Composable (LlmChatMessage) -> Boolean)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -96,7 +97,8 @@ fun LlmMessageList(
                                 controller = controller,
                                 style = style,
                                 strings = strings,
-                                onEditMessage = onEditMessage
+                                onEditMessage = onEditMessage,
+                                onPreviewImage = onPreviewImage
                             )
                         }
                     }
@@ -118,14 +120,26 @@ private fun DefaultMessageRow(
     controller: LlmChatController,
     style: LlmChatViewStyle,
     strings: LlmChatViewStrings,
-    onEditMessage: ((LlmChatMessage) -> Unit)?
+    onEditMessage: ((LlmChatMessage) -> Unit)?,
+    onPreviewImage: ((com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment) -> Unit)?
 ) {
+    val latestUserId = controller.messages.lastOrNull { it.isUser }?.id
     if (message.isUser) {
         LlmUserBubble(
             message = message,
             style = style,
             strings = strings,
-            onEditClick = onEditMessage
+            onEditClick = when {
+                onEditMessage != null -> onEditMessage
+                message.id == latestUserId -> { edited -> controller.beginEdit(edited.id) }
+                else -> null
+            },
+            onCopyClick = if (controller.clipboard != null) {
+                { controller.copyMessage(message) }
+            } else {
+                null
+            },
+            onPreviewImage = onPreviewImage
         )
     } else {
         LlmResponseBubble(
@@ -138,7 +152,13 @@ private fun DefaultMessageRow(
                 { controller.retryLast() }
             } else {
                 null
-            }
+            },
+            onCopyClick = if (controller.clipboard != null) {
+                { controller.copyMessage(message) }
+            } else {
+                null
+            },
+            onPreviewImage = onPreviewImage
         )
     }
 }

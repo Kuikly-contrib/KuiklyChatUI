@@ -62,7 +62,7 @@ kotlin {
                 implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
                 implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
                 // 聊天会话组件
-                implementation(project(":KuiklyChat"))
+                api(project(":KuiklyChat"))
             }
         }
         val commonTest by getting {

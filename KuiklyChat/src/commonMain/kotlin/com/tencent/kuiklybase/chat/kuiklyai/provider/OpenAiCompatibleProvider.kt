@@ -45,6 +45,10 @@ class OpenAiCompatibleProvider(
     clock: LlmClock = LlmClock.Unavailable
 ) : BaseLlmProvider(clock, idPrefix = "oai") {
 
+    override val capabilities: LlmProviderCapabilities = LlmProviderCapabilities(
+        attachmentKinds = setOf(LlmAttachmentKind.IMAGE)
+    )
+
     override fun streamCompletion(context: List<LlmChatMessage>): Flow<String> = flow {
         val request = LlmHttpRequest(
             url = "${baseUrl.trimEnd('/')}/chat/completions",

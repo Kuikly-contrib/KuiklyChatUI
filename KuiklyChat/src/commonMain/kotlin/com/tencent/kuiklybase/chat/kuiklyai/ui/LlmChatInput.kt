@@ -17,6 +17,7 @@ import com.tencent.kuikly.compose.foundation.layout.height
 import com.tencent.kuikly.compose.foundation.layout.padding
 import com.tencent.kuikly.compose.foundation.layout.size
 import com.tencent.kuikly.compose.foundation.layout.width
+import com.tencent.kuikly.compose.foundation.text.BasicTextField
 import com.tencent.kuikly.compose.foundation.shape.RoundedCornerShape
 import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.material3.TextField
@@ -25,12 +26,15 @@ import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.graphics.Color
+import com.tencent.kuikly.compose.ui.graphics.SolidColor
 import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.text.TextStyle
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmAttachmentSource
+import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
+import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatEditState
 
 /**
  * 输入区：待发送附件条 + 输入框 + 附件/语音/发送按钮。
@@ -47,12 +51,10 @@ fun LlmChatInput(
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     safeAreaBottom: Float = 0f,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPreviewImage: ((LlmAttachment) -> Unit)? = null
 ) {
-    val attachmentSources = controller.attachmentPicker
-        ?.supportedSources
-        ?.sortedBy { it.ordinal }
-        .orEmpty()
+    val attachmentSources = controller.availableAttachmentSources
     val hasAttachmentPicker = attachmentSources.isNotEmpty()
     val hasVoice = controller.isSpeechAvailable
     var showAttachmentSources by remember(controller.attachmentPicker) { mutableStateOf(false) }
@@ -68,12 +70,18 @@ fun LlmChatInput(
                 bottom = (8f + safeAreaBottom).dp
             )
     ) {
+        if (controller.editState is LlmChatEditState.Editing) {
+            LlmEditingHint(controller = controller, style = style, strings = strings)
+            Spacer(Modifier.height(8.dp))
+        }
+
         if (controller.pendingAttachments.isNotEmpty()) {
             LlmAttachmentRow(
                 attachments = controller.pendingAttachments,
                 style = style,
                 strings = strings,
-                onRemove = { controller.removePendingAttachment(it) }
+                onRemove = { controller.removePendingAttachment(it) },
+                onPreviewImage = onPreviewImage
             )
             Spacer(Modifier.height(8.dp))
         }
@@ -131,39 +139,48 @@ fun LlmChatInput(
                 Spacer(Modifier.width(4.dp))
             }
 
-            TextField(
-                value = controller.inputText,
-                onValueChange = { controller.onInputChange(it) },
-                textStyle = TextStyle(
-                    fontSize = style.fontSize.sp,
-                    color = Color(style.composerTextColor)
-                ),
-                placeholder = {
-                    Text(
-                        text = strings.inputPlaceholder,
+            if (style.designSystem == LlmChatDesignSystem.CUPERTINO) {
+                CupertinoInputField(
+                    controller = controller,
+                    style = style,
+                    strings = strings,
+                    modifier = Modifier.weight(1f)
+                )
+            } else {
+                TextField(
+                    value = controller.inputText,
+                    onValueChange = { controller.onInputChange(it) },
+                    textStyle = TextStyle(
                         fontSize = style.fontSize.sp,
-                        color = Color(style.composerPlaceholderColor)
-                    )
-                },
-                maxLines = 5,
-                shape = RoundedCornerShape(style.composerRadius.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color(style.composerTextColor),
-                    unfocusedTextColor = Color(style.composerTextColor),
-                    focusedContainerColor = Color(style.composerBackgroundColor),
-                    unfocusedContainerColor = Color(style.composerBackgroundColor),
-                    cursorColor = Color(style.sendButtonColor),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        1.dp,
-                        Color(style.composerBorderColor),
-                        RoundedCornerShape(style.composerRadius.dp)
-                    )
-            )
+                        color = Color(style.composerTextColor)
+                    ),
+                    placeholder = {
+                        Text(
+                            text = strings.inputPlaceholder,
+                            fontSize = style.fontSize.sp,
+                            color = Color(style.composerPlaceholderColor)
+                        )
+                    },
+                    maxLines = 5,
+                    shape = RoundedCornerShape(style.composerRadius.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color(style.composerTextColor),
+                        unfocusedTextColor = Color(style.composerTextColor),
+                        focusedContainerColor = Color(style.composerBackgroundColor),
+                        unfocusedContainerColor = Color(style.composerBackgroundColor),
+                        cursorColor = Color(style.sendButtonColor),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(
+                            1.dp,
+                            Color(style.composerBorderColor),
+                            RoundedCornerShape(style.composerRadius.dp)
+                        )
+                )
+            }
 
             Spacer(Modifier.width(8.dp))
             LlmSendButton(controller = controller, style = style, strings = strings)
@@ -237,10 +254,77 @@ private fun LlmSendButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = if (generating) strings.stopLabel else strings.sendLabel,
+            text = when {
+                generating -> strings.stopLabel
+                controller.editState is LlmChatEditState.Editing -> strings.editSubmitLabel
+                else -> strings.sendLabel
+            },
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.White
+        )
+    }
+}
+
+@Composable
+private fun CupertinoInputField(
+    controller: LlmChatController,
+    style: LlmChatViewStyle,
+    strings: LlmChatViewStrings,
+    modifier: Modifier
+) {
+    BasicTextField(
+        value = controller.inputText,
+        onValueChange = controller::onInputChange,
+        textStyle = TextStyle(
+            fontSize = style.fontSize.sp,
+            color = Color(style.composerTextColor)
+        ),
+        cursorBrush = SolidColor(Color(style.sendButtonColor)),
+        maxLines = 5,
+        modifier = modifier
+            .background(Color(style.composerBackgroundColor), RoundedCornerShape(style.composerRadius.dp))
+            .border(1.dp, Color(style.composerBorderColor), RoundedCornerShape(style.composerRadius.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        decorationBox = { innerTextField ->
+            Box {
+                if (controller.inputText.isEmpty()) {
+                    Text(
+                        text = strings.inputPlaceholder,
+                        fontSize = style.fontSize.sp,
+                        color = Color(style.composerPlaceholderColor)
+                    )
+                }
+                innerTextField()
+            }
+        }
+    )
+}
+
+@Composable
+private fun LlmEditingHint(
+    controller: LlmChatController,
+    style: LlmChatViewStyle,
+    strings: LlmChatViewStrings
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(style.suggestionBackgroundColor), RoundedCornerShape(8.dp))
+            .padding(horizontal = 10.dp, vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = strings.editingLabel,
+            fontSize = 12.sp,
+            color = Color(style.suggestionTextColor),
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = strings.editCancelLabel,
+            fontSize = 12.sp,
+            color = Color(style.suggestionTextColor),
+            modifier = Modifier.clickable { controller.cancelEdit() }
         )
     }
 }

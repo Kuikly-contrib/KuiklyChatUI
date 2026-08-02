@@ -1,6 +1,7 @@
 package com.tencent.kuiklybase.chat.kuiklyai.ui
 
 import androidx.compose.runtime.Composable
+import com.tencent.kuikly.compose.foundation.Image
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.border
 import com.tencent.kuikly.compose.foundation.clickable
@@ -18,6 +19,7 @@ import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.graphics.Color
+import com.tencent.kuikly.compose.ui.layout.ContentScale
 import com.tencent.kuikly.compose.ui.text.style.TextOverflow
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
@@ -39,6 +41,7 @@ fun LlmAttachmentRow(
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     onRemove: ((String) -> Unit)? = null,
+    onPreviewImage: ((LlmAttachment) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     if (attachments.isEmpty()) return
@@ -52,7 +55,8 @@ fun LlmAttachmentRow(
                 attachment = attachments[index],
                 style = style,
                 strings = strings,
-                onRemove = onRemove
+                onRemove = onRemove,
+                onPreviewImage = onPreviewImage
             )
         }
     }
@@ -66,7 +70,8 @@ private fun LlmAttachmentChip(
     attachment: LlmAttachment,
     style: LlmChatViewStyle,
     strings: LlmChatViewStrings,
-    onRemove: ((String) -> Unit)?
+    onRemove: ((String) -> Unit)?,
+    onPreviewImage: ((LlmAttachment) -> Unit)?
 ) {
     val shape = RoundedCornerShape(8.dp)
     Row(
@@ -77,7 +82,32 @@ private fun LlmAttachmentChip(
             .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = iconFor(attachment.kind), fontSize = 13.sp)
+        val previewSource = if (attachment.kind == LlmAttachmentKind.IMAGE) {
+            imageSource(attachment)
+        } else {
+            null
+        }
+        if (previewSource != null) {
+            Image(
+                painter = com.tencent.kuikly.compose.coil3.rememberAsyncImagePainter(
+                    model = previewSource
+                ),
+                contentDescription = attachment.name.ifEmpty { strings.emptyAttachmentName },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(shape)
+                    .then(
+                        if (onPreviewImage != null) {
+                            Modifier.clickable { onPreviewImage(attachment) }
+                        } else {
+                            Modifier
+                        }
+                    )
+            )
+        } else {
+            Text(text = iconFor(attachment.kind), fontSize = 13.sp)
+        }
         Spacer(Modifier.width(5.dp))
         Text(
             text = attachment.name.ifEmpty { strings.emptyAttachmentName },

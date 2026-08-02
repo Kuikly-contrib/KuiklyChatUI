@@ -1975,7 +1975,8 @@ class ChatDemoPage : BasePager() {
 ## KuiklyAI 工具集（Compose DSL）
 
 KuiklyAI 面向人机对话场景。宿主只需传入一个 `LlmProvider`，即可获得多轮历史、
-流式 Markdown、停止生成、错误重试、附件与语音扩展点、样式配置和会话序列化。
+流式 Markdown、停止生成、错误重试、多行输入、消息复制、最新消息编辑、图片预览缩放、
+附件与语音入口、Material/Cupertino 视觉样式和会话序列化。
 传输由宿主注入，核心库不绑定云厂商 SDK 或网络栈。
 
 ### 零后端接入
@@ -1997,7 +1998,9 @@ fun AiPage() {
 
 `EchoLlmProvider` 不需要网络或 API key，适合 Demo、UI 联调和测试。项目内置的
 `kuiklyai_demo` 页面可从 Router 的 **KuiklyAI Demo** 入口打开，源码位于
-`shared/src/commonMain/kotlin/com/kuikly/kuiklychat/KuiklyAiDemoPage.kt`。
+`shared/src/commonMain/kotlin/com/kuikly/kuiklychat/KuiklyAiDemoPage.kt`。Demo 顶部可切换
+Material/Cupertino 外观；Android 宿主会自动注册系统剪贴板、相册、相机、文件选择和
+SpeechRecognizer，适合直接安装 debug APK 验收。
 
 ### 接入真实模型
 
@@ -2037,13 +2040,15 @@ provider.setHistory(LlmChatSerializer.decode(json))
 KuiklyAiChatView(
     provider = provider,
     attachmentPicker = appAttachmentPicker,
-    speechRecognizer = appSpeechRecognizer
+    speechRecognizer = appSpeechRecognizer,
+    clipboard = appClipboard
 )
 ```
 
 `LlmChatSerializer` 只负责 JSON 编解码，不读写文件或数据库；内联附件字节默认不
-进入历史。`LlmAttachmentPicker` 与 `LlmSpeechRecognizer` 都由宿主实现，未注入或
-不可用时对应入口不会显示。
+进入历史。Provider 通过 `capabilities` 声明支持的附件类型，组件会在选择和发送前校验；
+未注入或不可用时对应入口不会显示。默认消息操作会把原始文本复制到 `LlmClipboard`，
+编辑操作只针对最新用户消息，并在提交时截断后续历史重新流式生成。
 
 完整设计与 API 取舍见 [`docs/design/feature-kuiklyai-toolkit.md`](docs/design/feature-kuiklyai-toolkit.md)。
 

@@ -1,7 +1,10 @@
 package com.kuikly.kuiklychat
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.ComposeContainer
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.clickable
@@ -25,9 +28,11 @@ import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.module.RouterModule
 import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
 import com.tencent.kuiklybase.chat.kuiklyai.ui.KuiklyAiChatView
+import com.tencent.kuiklybase.chat.kuiklyai.ui.LlmChatDesignSystem
 import com.tencent.kuiklybase.chat.kuiklyai.ui.LlmChatViewStyle
 
 /**
@@ -52,16 +57,62 @@ internal class KuiklyAiDemoPage : ComposeContainer() {
                 delayMillis = 36L
             )
         }
-        val controller = rememberLlmChatController(provider)
+        var designSystem by remember { mutableStateOf(LlmChatDesignSystem.MATERIAL) }
+        val services = LlmChatPlatformRegistry.current
+        val controller = rememberLlmChatController(
+            provider = provider,
+            attachmentPicker = services?.attachmentPicker,
+            speechRecognizer = services?.speechRecognizer,
+            clipboard = services?.clipboard
+        )
+        val style = LlmChatViewStyle.forDesignSystem(designSystem).copy(
+            backgroundColor = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFFF6F8F7
+            } else {
+                0xFFF2F2F7
+            },
+            userBubbleGradientStart = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFF176B5B
+            } else {
+                0xFF007AFF
+            },
+            userBubbleGradientEnd = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFF125247
+            } else {
+                0xFF007AFF
+            },
+            sendButtonColor = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFF176B5B
+            } else {
+                0xFF007AFF
+            },
+            suggestionBackgroundColor = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFFEAF4F0
+            } else {
+                0xFFFFFFFF
+            },
+            suggestionBorderColor = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFFB9D8CD
+            } else {
+                0xFFD1D1D6
+            },
+            suggestionTextColor = if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                0xFF125247
+            } else {
+                0xFF007AFF
+            }
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(DemoStyle.backgroundColor))
+                .background(Color(style.backgroundColor))
         ) {
             Spacer(Modifier.height(pagerData.statusBarHeight.dp))
             DemoNavigationBar(
                 controller = controller,
+                designSystem = designSystem,
+                onDesignSystemChange = { designSystem = it },
                 onBack = {
                     getPager()
                         .acquireModule<RouterModule>(RouterModule.MODULE_NAME)
@@ -70,7 +121,7 @@ internal class KuiklyAiDemoPage : ComposeContainer() {
             )
             KuiklyAiChatView(
                 controller = controller,
-                style = DemoStyle,
+                style = style,
                 suggestions = DemoSuggestions,
                 safeAreaBottom = pagerData.safeAreaInsets.bottom,
                 modifier = Modifier.weight(1f)
@@ -82,6 +133,8 @@ internal class KuiklyAiDemoPage : ComposeContainer() {
 @Composable
 private fun DemoNavigationBar(
     controller: LlmChatController,
+    designSystem: LlmChatDesignSystem,
+    onDesignSystemChange: (LlmChatDesignSystem) -> Unit,
     onBack: () -> Unit
 ) {
     Row(
@@ -107,6 +160,20 @@ private fun DemoNavigationBar(
             modifier = Modifier.weight(1f)
         )
         Text(
+            text = if (designSystem == LlmChatDesignSystem.MATERIAL) "Material" else "Cupertino",
+            fontSize = 11.sp,
+            color = Color(0xFF176B5B),
+            modifier = Modifier.clickable {
+                onDesignSystemChange(
+                    if (designSystem == LlmChatDesignSystem.MATERIAL) {
+                        LlmChatDesignSystem.CUPERTINO
+                    } else {
+                        LlmChatDesignSystem.MATERIAL
+                    }
+                )
+            }
+        )
+        Text(
             text = "清空",
             fontSize = 13.sp,
             color = Color(0xFF176B5B),
@@ -120,14 +187,4 @@ private val DemoSuggestions = listOf(
     "帮我整理今天的待办事项",
     "用 Markdown 写一份会议纪要",
     "解释 Kotlin Flow 的背压处理"
-)
-
-private val DemoStyle = LlmChatViewStyle.Default.copy(
-    backgroundColor = 0xFFF6F8F7,
-    userBubbleGradientStart = 0xFF176B5B,
-    userBubbleGradientEnd = 0xFF125247,
-    sendButtonColor = 0xFF176B5B,
-    suggestionBackgroundColor = 0xFFEAF4F0,
-    suggestionBorderColor = 0xFFB9D8CD,
-    suggestionTextColor = 0xFF125247
 )

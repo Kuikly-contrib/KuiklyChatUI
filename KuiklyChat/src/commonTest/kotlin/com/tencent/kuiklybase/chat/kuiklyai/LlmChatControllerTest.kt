@@ -1,6 +1,7 @@
 package com.tencent.kuiklybase.chat.kuiklyai
 
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmSpeechListener
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmClipboard
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmSpeechRecognizer
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmSpeechResult
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmSpeechSession
@@ -9,6 +10,8 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.BaseLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageState
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
+import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatEditState
+import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatUiEvent
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -108,6 +111,75 @@ class LlmChatControllerTest {
         controller.dispose()
     }
 
+    @Test
+    fun latestUserMessageCanBeEditedAndResubmitted() = runTest {
+        val controller = LlmChatController(
+            provider = EchoLlmProvider(chunkSize = 100, delayMillis = 0L),
+            scope = this
+        )
+        controller.onInputChange("before")
+        controller.send()
+        runCurrent()
+
+        val latestUser = controller.messages.last { it.isUser }
+        controller.onInputChange("draft outside editor")
+        controller.beginEdit(latestUser.id)
+        assertEquals("before", controller.inputText)
+        assertTrue(controller.editState is LlmChatEditState.Editing)
+
+        controller.onInputChange("after")
+        controller.send()
+        runCurrent()
+
+        assertEquals(LlmChatEditState.Idle, controller.editState)
+        assertEquals("after", controller.messages.first { it.isUser }.text)
+        assertEquals(2, controller.messages.size)
+        controller.dispose()
+    }
+
+    @Test
+    fun cancelEditRestoresComposerDraft() = runTest {
+        val controller = LlmChatController(
+            provider = EchoLlmProvider(delayMillis = 0L),
+            scope = this
+        )
+        controller.onInputChange("outside")
+        controller.send()
+        runCurrent()
+        val latestUser = controller.messages.last { it.isUser }
+
+        controller.onInputChange("unsent draft")
+        controller.beginEdit(latestUser.id)
+        controller.cancelEdit()
+
+        assertEquals("unsent draft", controller.inputText)
+        assertEquals(LlmChatEditState.Idle, controller.editState)
+        controller.dispose()
+    }
+
+    @Test
+    fun copyUsesHostClipboardAndEmitsOneShotEvent() = runTest {
+        val clipboard = RecordingClipboard()
+        val controller = LlmChatController(
+            provider = EchoLlmProvider(delayMillis = 0L),
+            scope = this,
+            clipboard = clipboard
+        )
+        controller.onInputChange("copy me")
+        controller.send()
+        runCurrent()
+        val message = controller.messages.first { it.isUser }
+
+        controller.copyMessage(message)
+        runCurrent()
+
+        assertEquals("copy me", clipboard.text)
+        assertEquals(LlmChatUiEvent.TextCopied(message.id), controller.transientEvent)
+        controller.consumeTransientEvent()
+        assertEquals(null, controller.transientEvent)
+        controller.dispose()
+    }
+
     private class FakeSpeechRecognizer(
         private val available: Boolean
     ) : LlmSpeechRecognizer {
@@ -121,6 +193,14 @@ class LlmChatControllerTest {
             startCount++
             this.listener = listener
             return session
+        }
+    }
+
+    private class RecordingClipboard : LlmClipboard {
+        var text: String = ""
+
+        override suspend fun copyText(label: String, text: String) {
+            this.text = text
         }
     }
 

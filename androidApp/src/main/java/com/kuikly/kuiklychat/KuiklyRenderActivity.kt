@@ -22,6 +22,8 @@ import com.kuikly.kuiklychat.adapter.KRThreadAdapter
 import com.kuikly.kuiklychat.adapter.KRUncaughtExceptionHandlerAdapter
 import com.kuikly.kuiklychat.module.KRBridgeModule
 import com.kuikly.kuiklychat.module.KRShareModule
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
+import com.tencent.kuiklybase.chat.kuiklyai.platform.android.AndroidLlmPlatformRegistry
 import org.json.JSONObject
 
 class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorDelegate {
@@ -50,12 +52,32 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
         hrContainerView = findViewById(R.id.hr_container)
         loadingView = findViewById(R.id.hr_loading)
         errorView = findViewById(R.id.hr_error)
+        LlmChatPlatformRegistry.install(AndroidLlmPlatformRegistry.install(this))
         kuiklyRenderViewDelegator.onAttach(hrContainerView, "", pageName, createPageData())
     }
 
     override fun onDestroy() {
+        AndroidLlmPlatformRegistry.clear()
+        LlmChatPlatformRegistry.clear()
         super.onDestroy()
         kuiklyRenderViewDelegator.onDetach()
+    }
+
+    @Deprecated("Use Activity Result APIs when the host migrates the render activity")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (!AndroidLlmPlatformRegistry.dispatchActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (!AndroidLlmPlatformRegistry.dispatchPermissionResult(requestCode, grantResults)) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 
     override fun onPause() {
