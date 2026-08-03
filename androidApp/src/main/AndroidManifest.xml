@@ -13,6 +13,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
             android:name=".KuiklyRenderActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -22,7 +22,7 @@ fun interface LlmClock {
  *
  * 高并发或跨端同步场景请由服务端下发 ID，这里只保证单会话内不重复。
  */
-class LlmIdGenerator(private val prefix: String = "llm") {
+internal class LlmIdGenerator(private val prefix: String = "llm") {
     private var counter = 0L
 
     fun next(): String {
@@ -46,7 +46,7 @@ abstract class BaseLlmProvider(
 
     private val messages = mutableListOf<LlmChatMessage>()
     private val listeners = mutableListOf<LlmHistoryListener>()
-    protected val ids = LlmIdGenerator(idPrefix)
+    private val ids = LlmIdGenerator(idPrefix)
 
     override val history: List<LlmChatMessage> get() = messages.toList()
 

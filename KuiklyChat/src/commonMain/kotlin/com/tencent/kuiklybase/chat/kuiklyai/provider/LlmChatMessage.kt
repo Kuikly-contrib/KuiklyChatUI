@@ -38,6 +38,8 @@ data class LlmAttachment(
     val mimeType: String = "",
     val url: String = "",
     val bytesBase64: String = "",
+    /** UI 展示用缩略图，不参与模型请求；为空时回退到 [url] 或 [bytesBase64]。 */
+    val thumbnailBase64: String = "",
     val sizeBytes: Long = 0L
 ) {
     val hasInlineBytes: Boolean get() = bytesBase64.isNotEmpty()

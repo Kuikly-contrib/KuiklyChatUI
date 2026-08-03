@@ -30,7 +30,7 @@ import com.tencent.kuikly.compose.ui.unit.sp
  * @param suggestions 建议提示文案，点击后直接作为 prompt 发送
  */
 @Composable
-fun LlmWelcomeSection(
+internal fun LlmWelcomeSection(
     suggestions: List<String>,
     onSuggestionClick: (String) -> Unit,
     style: LlmChatViewStyle = LlmChatViewStyle.Default,

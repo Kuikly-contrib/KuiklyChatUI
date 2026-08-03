@@ -65,6 +65,13 @@ if grep -rn --include='*.kt' -E "^[[:space:]]*import[[:space:]]+(com\.google\.(f
       "docs/design/feature-kuiklyai-toolkit.md"
 fi
 
+# 规则8：KuiklyAI 内部渲染/协议辅助声明必须显式 internal，避免默认 public 扩大 ABI。
+if ! bash scripts/check-kuiklyai-api.sh; then
+  err "KuiklyAI 内部实现意外暴露为 public API。" \
+      "为实现细节添加 internal；仅公共 UI 入口、平台契约和 Provider 扩展点保持 public。" \
+      "docs/design/feature-kuiklyai-toolkit.md"
+fi
+
 # 规则5：单文件 ≤ 400 行。存量超标文件登记在 baseline 中，只告警不阻断；
 # 新增超标文件直接阻断。baseline 中已达标的文件必须移除，否则报错，防止清单腐化。
 STALE_BASELINE=""

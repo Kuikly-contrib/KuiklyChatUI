@@ -38,7 +38,7 @@ import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LlmMessageList(
+internal fun LlmMessageList(
     controller: LlmChatController,
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
@@ -124,6 +124,7 @@ private fun DefaultMessageRow(
     onPreviewImage: ((com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment) -> Unit)?
 ) {
     val latestUserId = controller.messages.lastOrNull { it.isUser }?.id
+    val copySucceeded = controller.copiedMessageId == message.id
     if (message.isUser) {
         LlmUserBubble(
             message = message,
@@ -139,6 +140,7 @@ private fun DefaultMessageRow(
             } else {
                 null
             },
+            copySucceeded = copySucceeded,
             onPreviewImage = onPreviewImage
         )
     } else {
@@ -158,6 +160,7 @@ private fun DefaultMessageRow(
             } else {
                 null
             },
+            copySucceeded = copySucceeded,
             onPreviewImage = onPreviewImage
         )
     }

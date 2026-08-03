@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.speech.RecognitionListener
@@ -179,6 +180,7 @@ private class AndroidLlmAttachmentPicker(
             name = "camera.jpg",
             mimeType = "image/jpeg",
             bytesBase64 = Base64.encodeToString(output.toByteArray(), Base64.NO_WRAP),
+            thumbnailBase64 = createThumbnailBase64(output.toByteArray()),
             sizeBytes = output.size().toLong()
         )
     }
@@ -205,11 +207,47 @@ private class AndroidLlmAttachmentPicker(
             name = name,
             mimeType = mime,
             bytesBase64 = Base64.encodeToString(bytes, Base64.NO_WRAP),
+            thumbnailBase64 = if (kind == LlmAttachmentKind.IMAGE) {
+                createThumbnailBase64(bytes)
+            } else {
+                ""
+            },
             sizeBytes = bytes.size.toLong()
         )
     }
 
+    private fun createThumbnailBase64(bytes: ByteArray): String {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return ""
+
+        val sampleSize = calculateSampleSize(bounds.outWidth, bounds.outHeight, THUMBNAIL_SIZE)
+        val options = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options) ?: return ""
+        return try {
+            ByteArrayOutputStream().use { output ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, THUMBNAIL_QUALITY, output)
+                Base64.encodeToString(output.toByteArray(), Base64.NO_WRAP)
+            }
+        } finally {
+            bitmap.recycle()
+        }
+    }
+
+    private fun calculateSampleSize(width: Int, height: Int, targetSize: Int): Int {
+        var sampleSize = 1
+        while (width / (sampleSize * 2) >= targetSize &&
+            height / (sampleSize * 2) >= targetSize
+        ) {
+            sampleSize *= 2
+        }
+        return sampleSize
+    }
+
     companion object {
+        private const val THUMBNAIL_SIZE = 256
+        private const val THUMBNAIL_QUALITY = 78
+
         private const val REQUEST_CODE = 4821
         private const val CAMERA_PERMISSION_REQUEST = 4823
     }

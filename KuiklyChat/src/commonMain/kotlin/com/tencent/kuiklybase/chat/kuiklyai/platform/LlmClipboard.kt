@@ -15,7 +15,15 @@ data class LlmChatPlatformServices(
 /**
  * Registry used by host demos rendered inside a Kuikly page. Library consumers
  * should normally pass [LlmChatPlatformServices] directly.
+ *
+ * @deprecated Pass [LlmChatPlatformServices] directly to `KuiklyAiChatView`.
+ * The registry is retained for existing host demos and will be removed in a future
+ * incompatible release.
  */
+@Deprecated(
+    message = "Pass LlmChatPlatformServices directly to KuiklyAiChatView",
+    level = DeprecationLevel.WARNING
+)
 object LlmChatPlatformRegistry {
     private var installedServices: LlmChatPlatformServices? = null
 

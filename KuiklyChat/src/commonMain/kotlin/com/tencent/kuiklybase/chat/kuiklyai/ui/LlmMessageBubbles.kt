@@ -12,6 +12,7 @@ import com.tencent.kuikly.compose.foundation.layout.Spacer
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
 import com.tencent.kuikly.compose.foundation.layout.height
 import com.tencent.kuikly.compose.foundation.layout.padding
+import com.tencent.kuikly.compose.foundation.layout.size
 import com.tencent.kuikly.compose.foundation.layout.width
 import com.tencent.kuikly.compose.foundation.shape.RoundedCornerShape
 import com.tencent.kuikly.compose.material3.Text
@@ -24,6 +25,7 @@ import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.agentcard_compose.BouncingDots
+import com.tencent.kuiklybase.chat.agentcard_compose.LucideSvgIcon
 import com.tencent.kuiklybase.chat.agentcard_compose.StreamingMarkdownView
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
@@ -36,12 +38,13 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageState
  * 避免同一个 App 里两套 AI 界面长得不一样。
  */
 @Composable
-fun LlmUserBubble(
+internal fun LlmUserBubble(
     message: LlmChatMessage,
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     onEditClick: ((LlmChatMessage) -> Unit)? = null,
     onCopyClick: (() -> Unit)? = null,
+    copySucceeded: Boolean = false,
     onPreviewImage: ((LlmAttachment) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -103,6 +106,7 @@ fun LlmUserBubble(
             onEdit = { onEditClick?.invoke(message) },
             showCopy = onCopyClick != null && message.text.isNotEmpty(),
             onCopy = { onCopyClick?.invoke() },
+            copySucceeded = copySucceeded,
             alignEnd = true
         )
     }
@@ -116,12 +120,13 @@ fun LlmUserBubble(
  * 这里不重写 Markdown，只负责气泡外壳与状态态（思考中 / 失败 / 已取消）。
  */
 @Composable
-fun LlmResponseBubble(
+internal fun LlmResponseBubble(
     message: LlmChatMessage,
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     onRetryClick: (() -> Unit)? = null,
     onCopyClick: (() -> Unit)? = null,
+    copySucceeded: Boolean = false,
     onPreviewImage: ((LlmAttachment) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -180,6 +185,7 @@ fun LlmResponseBubble(
             onEdit = {},
             showCopy = onCopyClick != null && message.text.isNotEmpty(),
             onCopy = { onCopyClick?.invoke() },
+            copySucceeded = copySucceeded,
             alignEnd = false
         )
     }
@@ -193,6 +199,7 @@ private fun LlmMessageActions(
     onEdit: () -> Unit,
     showCopy: Boolean,
     onCopy: () -> Unit,
+    copySucceeded: Boolean,
     alignEnd: Boolean
 ) {
     if (!showEdit && !showCopy) return
@@ -202,21 +209,37 @@ private fun LlmMessageActions(
             .then(if (alignEnd) Modifier else Modifier)
     ) {
         if (showEdit) {
-            Text(
-                text = strings.editLabel,
-                fontSize = 11.sp,
-                color = Color(style.mutedColor),
-                modifier = Modifier.clickable { onEdit() }
-            )
+            Box(
+                modifier = Modifier.size(20.dp).clickable { onEdit() },
+                contentAlignment = Alignment.Center
+            ) {
+                LucideSvgIcon(
+                    name = "kuikly_chat_ic_edit",
+                    size = 15.dp,
+                    tint = Color(style.mutedColor)
+                )
+            }
         }
         if (showEdit && showCopy) Spacer(Modifier.width(12.dp))
         if (showCopy) {
-            Text(
-                text = strings.copyLabel,
-                fontSize = 11.sp,
-                color = Color(style.mutedColor),
-                modifier = Modifier.clickable { onCopy() }
-            )
+            Box(
+                modifier = Modifier.size(24.dp).clickable { onCopy() },
+                contentAlignment = Alignment.Center
+            ) {
+                LucideSvgIcon(
+                    name = if (copySucceeded) {
+                        "kuikly_chat_ic_check_check"
+                    } else {
+                        "kuikly_chat_ic_copy"
+                    },
+                    size = 16.dp,
+                    tint = if (copySucceeded) {
+                        Color(style.cardTheme.successColor)
+                    } else {
+                        Color(style.mutedColor)
+                    }
+                )
+            }
         }
     }
 }

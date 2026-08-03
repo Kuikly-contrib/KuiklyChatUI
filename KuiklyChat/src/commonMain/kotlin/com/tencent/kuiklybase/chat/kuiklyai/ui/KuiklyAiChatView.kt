@@ -33,7 +33,7 @@ import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatUiEvent
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
 
 /**
- * KuiklyAI 的主入口 —— 对标 Flutter AI Toolkit 的 `LlmChatView`。
+ * KuiklyAI 的主入口
  *
  * 传入一个 [LlmProvider] 就能得到完整的 AI 对话界面：消息历史、流式输出、
  * 富文本渲染、输入区、错误重试、欢迎语与建议提示。后端协议细节全在
@@ -69,6 +69,9 @@ import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
  * @param strings 文案，宿主做多语言时替换
  * @param suggestions 空会话时展示的建议提示，点击即发送
  * @param safeAreaBottom 底部安全区高度，传 `pagerData.safeAreaInsets.bottom`
+ *
+ * 键盘适配：输入框通过 `keyboardHeightChange` 上报键盘高度，页面根布局用 bottom padding
+ * 预留同等空间。Android 宿主需要使用 `adjustNothing`，避免系统缩放与组件的手动避让叠加。
  * @param attachmentPicker 附件选择实现；为 null 时不显示附件按钮
  * @param speechRecognizer 语音识别实现；为 null 时不显示麦克风按钮
  * @param platformServices 平台能力聚合参数；与旧的单项参数同时传入时聚合参数优先
@@ -142,10 +145,15 @@ fun KuiklyAiChatView(
         style.copy(designSystem = designSystem)
     }
     var previewedImage by remember { mutableStateOf<LlmAttachment?>(null) }
+    var keyboardHeight by remember { mutableStateOf(0f) }
+    // Kuikly 的 keyboardHeightChange 返回的是布局坐标单位，直接按 dp 使用。
+    // 真机实测 258 对应约 258dp 的键盘高度，不能再除以 Android density。
+    val keyboardHeightDp = keyboardHeight.dp
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color(effectiveStyle.backgroundColor))
+            .padding(bottom = keyboardHeightDp)
     ) {
         LlmMessageList(
             controller = controller,
@@ -186,7 +194,8 @@ fun KuiklyAiChatView(
             style = effectiveStyle,
             strings = strings,
             safeAreaBottom = safeAreaBottom,
-            onPreviewImage = { previewedImage = it }
+            onPreviewImage = { previewedImage = it },
+            onKeyboardHeightChange = { keyboardHeight = it }
         )
     }
     previewedImage?.let { attachment ->

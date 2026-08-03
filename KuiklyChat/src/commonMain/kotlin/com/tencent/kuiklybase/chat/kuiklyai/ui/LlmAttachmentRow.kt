@@ -36,12 +36,13 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachmentKind
  * 不支持 `Modifier.horizontalScroll`，官方建议的平替就是 LazyRow。
  */
 @Composable
-fun LlmAttachmentRow(
+internal fun LlmAttachmentRow(
     attachments: List<LlmAttachment>,
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     onRemove: ((String) -> Unit)? = null,
     onPreviewImage: ((LlmAttachment) -> Unit)? = null,
+    showName: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     if (attachments.isEmpty()) return
@@ -56,14 +57,15 @@ fun LlmAttachmentRow(
                 style = style,
                 strings = strings,
                 onRemove = onRemove,
-                onPreviewImage = onPreviewImage
+                onPreviewImage = onPreviewImage,
+                showName = showName
             )
         }
     }
 }
 
 /**
- * 单个附件胶囊：类型图标 + 文件名（超长省略）+ 可选删除按钮。
+ * 单个附件胶囊：类型图标 + 可选文件名 + 可选删除按钮。
  */
 @Composable
 private fun LlmAttachmentChip(
@@ -71,7 +73,8 @@ private fun LlmAttachmentChip(
     style: LlmChatViewStyle,
     strings: LlmChatViewStrings,
     onRemove: ((String) -> Unit)?,
-    onPreviewImage: ((LlmAttachment) -> Unit)?
+    onPreviewImage: ((LlmAttachment) -> Unit)?,
+    showName: Boolean
 ) {
     val shape = RoundedCornerShape(8.dp)
     Row(
@@ -83,7 +86,7 @@ private fun LlmAttachmentChip(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val previewSource = if (attachment.kind == LlmAttachmentKind.IMAGE) {
-            imageSource(attachment)
+            thumbnailSource(attachment)
         } else {
             null
         }
@@ -108,15 +111,17 @@ private fun LlmAttachmentChip(
         } else {
             Text(text = iconFor(attachment.kind), fontSize = 13.sp)
         }
-        Spacer(Modifier.width(5.dp))
-        Text(
-            text = attachment.name.ifEmpty { strings.emptyAttachmentName },
-            fontSize = 12.sp,
-            color = Color(style.suggestionTextColor),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(96.dp)
-        )
+        if (showName) {
+            Spacer(Modifier.width(5.dp))
+            Text(
+                text = attachment.name.ifEmpty { strings.emptyAttachmentName },
+                fontSize = 12.sp,
+                color = Color(style.suggestionTextColor),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.width(96.dp)
+            )
+        }
         if (onRemove != null) {
             Spacer(Modifier.width(4.dp))
             Box(

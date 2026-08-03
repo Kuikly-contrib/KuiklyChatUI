@@ -138,7 +138,7 @@ data class LlmChatViewStrings(
     val retryLabel: String = "重试",
     val editLabel: String = "编辑",
     val copyLabel: String = "复制",
-    val editSubmitLabel: String = "重新发送",
+    val editSubmitLabel: String = "发送",
     val editingLabel: String = "正在编辑最新消息",
     val editCancelLabel: String = "取消",
     val attachLabel: String = "附件",
@@ -151,7 +151,8 @@ data class LlmChatViewStrings(
     val thinkingLabel: String = "正在思考…",
     val listeningLabel: String = "正在聆听…",
     val canceledLabel: String = "已停止生成",
-    val emptyAttachmentName: String = "附件"
+    val emptyAttachmentName: String = "附件",
+    val speechUnavailableHint: String = "当前设备不支持语音输入，请接入第三方语音识别 SDK"
 ) {
     companion object {
         val Default = LlmChatViewStrings()

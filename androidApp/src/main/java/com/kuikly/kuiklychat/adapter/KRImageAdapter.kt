@@ -7,19 +7,36 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.PictureDrawable
 import android.util.Base64
 import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.Options
+import com.bumptech.glide.load.ResourceDecoder
+import com.bumptech.glide.load.engine.Resource
+import com.bumptech.glide.load.resource.SimpleResource
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.caverock.androidsvg.SVG
+import com.caverock.androidsvg.SVGParseException
 import com.tencent.kuikly.core.render.android.KuiklyRenderViewContext
 import com.tencent.kuikly.core.render.android.adapter.HRImageLoadOption
 import com.tencent.kuikly.core.render.android.adapter.IKRImageAdapter
+import java.io.IOException
+import java.io.InputStream
 import kotlin.math.roundToInt
 
 class KRImageAdapter(val context: Context) : IKRImageAdapter {
+
+    init {
+        Glide.get(context).registry.prepend(
+            InputStream::class.java,
+            SVG::class.java,
+            SvgDecoder()
+        )
+    }
 
     override fun fetchDrawable(
         imageLoadOption: HRImageLoadOption,
@@ -56,6 +73,10 @@ class KRImageAdapter(val context: Context) : IKRImageAdapter {
             "file:///android_asset/$assetPath"
         } else {
             imageLoadOption.src
+        }
+        if (src.substringBefore('?').endsWith(".svg", ignoreCase = true)) {
+            requestSvgImage(src, imageLoadOption, callback)
+            return
         }
         val requestBuilder = if (src.endsWith(".gif")) {
             Glide.with(KRApplication.application)
@@ -94,6 +115,38 @@ class KRImageAdapter(val context: Context) : IKRImageAdapter {
                     callback.invoke(resource)
                 }
             })
+    }
+
+    private fun requestSvgImage(
+        src: String,
+        imageLoadOption: HRImageLoadOption,
+        callback: (drawable: Drawable?) -> Unit,
+    ) {
+        val requestBuilder = Glide.with(KRApplication.application)
+            .`as`(SVG::class.java)
+            .load(src)
+
+        if (imageLoadOption.needResize) {
+            requestBuilder.override(imageLoadOption.requestWidth, imageLoadOption.requestHeight)
+        }
+        requestBuilder.into(object : CustomTarget<SVG>() {
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+                callback.invoke(null)
+            }
+
+            override fun onLoadFailed(errorDrawable: Drawable?) {
+                super.onLoadFailed(errorDrawable)
+                callback.invoke(null)
+            }
+
+            override fun onResourceReady(
+                resource: SVG,
+                transition: Transition<in SVG>?,
+            ) {
+                callback.invoke(PictureDrawable(resource.renderToPicture()))
+            }
+        })
     }
 
     private fun loadFromBase64(
@@ -152,4 +205,23 @@ class KRImageAdapter(val context: Context) : IKRImageAdapter {
         }
     }
 
+}
+
+/** Glide decoder for SVG streams. SVG is rendered to a PictureDrawable after decoding. */
+private class SvgDecoder : ResourceDecoder<InputStream, SVG> {
+
+    override fun handles(source: InputStream, options: Options): Boolean = true
+
+    override fun decode(
+        source: InputStream,
+        width: Int,
+        height: Int,
+        options: Options,
+    ): Resource<SVG>? {
+        return try {
+            SimpleResource(SVG.getFromInputStream(source))
+        } catch (exception: SVGParseException) {
+            throw IOException("Cannot load SVG from stream", exception)
+        }
+    }
 }

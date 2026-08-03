@@ -5,9 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.tencent.kuikly.compose.extension.keyboardHeightChange
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.border
-import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
@@ -17,7 +17,6 @@ import com.tencent.kuikly.compose.foundation.layout.height
 import com.tencent.kuikly.compose.foundation.layout.padding
 import com.tencent.kuikly.compose.foundation.layout.size
 import com.tencent.kuikly.compose.foundation.layout.width
-import com.tencent.kuikly.compose.foundation.text.BasicTextField
 import com.tencent.kuikly.compose.foundation.shape.RoundedCornerShape
 import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.material3.TextField
@@ -26,15 +25,12 @@ import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.graphics.Color
-import com.tencent.kuikly.compose.ui.graphics.SolidColor
-import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.text.TextStyle
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmAttachmentSource
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
-import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatEditState
 
 /**
  * 输入区：待发送附件条 + 输入框 + 附件/语音/发送按钮。
@@ -44,19 +40,21 @@ import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatEditState
  * 就不显示附件按钮，而不是显示一个点了没反应的按钮。
  *
  * @param safeAreaBottom 底部安全区高度，由宿主传 `pagerData.safeAreaInsets.bottom`
+ * @param onKeyboardHeightChange 键盘高度变化回调（像素），父层用此值做 bottom padding 避免遮挡
  */
 @Composable
-fun LlmChatInput(
+internal fun LlmChatInput(
     controller: LlmChatController,
     style: LlmChatViewStyle = LlmChatViewStyle.Default,
     strings: LlmChatViewStrings = LlmChatViewStrings.Default,
     safeAreaBottom: Float = 0f,
     modifier: Modifier = Modifier,
-    onPreviewImage: ((LlmAttachment) -> Unit)? = null
+    onPreviewImage: ((LlmAttachment) -> Unit)? = null,
+    onKeyboardHeightChange: ((Float) -> Unit)? = null
 ) {
     val attachmentSources = controller.availableAttachmentSources
     val hasAttachmentPicker = attachmentSources.isNotEmpty()
-    val hasVoice = controller.isSpeechAvailable
+    val hasVoice = controller.speechRecognizer != null
     var showAttachmentSources by remember(controller.attachmentPicker) { mutableStateOf(false) }
 
     Column(
@@ -70,11 +68,6 @@ fun LlmChatInput(
                 bottom = (8f + safeAreaBottom).dp
             )
     ) {
-        if (controller.editState is LlmChatEditState.Editing) {
-            LlmEditingHint(controller = controller, style = style, strings = strings)
-            Spacer(Modifier.height(8.dp))
-        }
-
         if (controller.pendingAttachments.isNotEmpty()) {
             LlmAttachmentRow(
                 attachments = controller.pendingAttachments,
@@ -83,6 +76,11 @@ fun LlmChatInput(
                 onRemove = { controller.removePendingAttachment(it) },
                 onPreviewImage = onPreviewImage
             )
+            Spacer(Modifier.height(8.dp))
+        }
+
+        if (controller.isListening) {
+            LlmListeningHint(style = style, strings = strings, controller = controller)
             Spacer(Modifier.height(8.dp))
         }
 
@@ -99,30 +97,33 @@ fun LlmChatInput(
             Spacer(Modifier.height(8.dp))
         }
 
-        if (controller.isListening) {
-            LlmListeningHint(style = style, strings = strings, controller = controller)
-            Spacer(Modifier.height(8.dp))
-        }
-
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (hasAttachmentPicker) {
+                val hasPhotoLibrary = LlmAttachmentSource.PHOTO_LIBRARY in attachmentSources
                 LlmIconButton(
-                    glyph = "\uD83D\uDCC1",
+                    iconName = if (hasPhotoLibrary) {
+                        "kuikly_chat_ic_image"
+                    } else {
+                        "kuikly_chat_ic_upload"
+                    },
                     tint = Color(style.mutedColor),
                     onClick = {
-                        if (attachmentSources.size == 1) {
-                            controller.pickAttachment(attachmentSources.single())
-                        } else {
-                            showAttachmentSources = !showAttachmentSources
+                        when {
+                            hasPhotoLibrary -> controller.pickAttachment(LlmAttachmentSource.PHOTO_LIBRARY)
+                            attachmentSources.size == 1 -> controller.pickAttachment(attachmentSources.single())
+                            else -> showAttachmentSources = !showAttachmentSources
                         }
                     }
                 )
-                Spacer(Modifier.width(4.dp))
+                Spacer(Modifier.width(8.dp))
             }
 
             if (hasVoice) {
                 LlmIconButton(
-                    glyph = "\uD83C\uDFA4",
+                    iconName = "kuikly_chat_ic_mic",
                     tint = if (controller.isListening) {
                         Color(style.sendButtonColor)
                     } else {
@@ -136,7 +137,7 @@ fun LlmChatInput(
                         }
                     }
                 )
-                Spacer(Modifier.width(4.dp))
+                Spacer(Modifier.width(8.dp))
             }
 
             if (style.designSystem == LlmChatDesignSystem.CUPERTINO) {
@@ -144,6 +145,7 @@ fun LlmChatInput(
                     controller = controller,
                     style = style,
                     strings = strings,
+                    onKeyboardHeightChange = onKeyboardHeightChange,
                     modifier = Modifier.weight(1f)
                 )
             } else {
@@ -174,6 +176,13 @@ fun LlmChatInput(
                     ),
                     modifier = Modifier
                         .weight(1f)
+                        .then(
+                            if (onKeyboardHeightChange != null) {
+                                Modifier.keyboardHeightChange { onKeyboardHeightChange(it.height) }
+                            } else {
+                                Modifier
+                            }
+                        )
                         .border(
                             1.dp,
                             Color(style.composerBorderColor),
@@ -185,204 +194,5 @@ fun LlmChatInput(
             Spacer(Modifier.width(8.dp))
             LlmSendButton(controller = controller, style = style, strings = strings)
         }
-    }
-}
-
-@Composable
-private fun LlmAttachmentSourceMenu(
-    sources: List<LlmAttachmentSource>,
-    style: LlmChatViewStyle,
-    strings: LlmChatViewStrings,
-    onSelect: (LlmAttachmentSource) -> Unit
-) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        sources.forEachIndexed { index, source ->
-            if (index > 0) Spacer(Modifier.width(8.dp))
-            Text(
-                text = when (source) {
-                    LlmAttachmentSource.PHOTO_LIBRARY -> strings.photoLibraryLabel
-                    LlmAttachmentSource.CAMERA -> strings.cameraLabel
-                    LlmAttachmentSource.FILE -> strings.fileLabel
-                },
-                fontSize = 12.sp,
-                color = Color(style.suggestionTextColor),
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(style.suggestionBackgroundColor))
-                    .border(1.dp, Color(style.suggestionBorderColor), RoundedCornerShape(8.dp))
-                    .clickable { onSelect(source) }
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-            )
-        }
-    }
-}
-
-/**
- * 发送 / 停止按钮。
- *
- * 生成中变成"停止"而不是禁用发送——用户最需要的操作是打断一个跑偏的回答，
- * 把按钮变灰会让人只能等它说完。
- */
-@Composable
-private fun LlmSendButton(
-    controller: LlmChatController,
-    style: LlmChatViewStyle,
-    strings: LlmChatViewStrings
-) {
-    val generating = controller.isGenerating
-    val enabled = generating || controller.canSend
-    val background = when {
-        generating -> Color(style.stopButtonColor)
-        controller.canSend -> Color(style.sendButtonColor)
-        else -> Color(style.sendButtonDisabledColor)
-    }
-
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(style.composerRadius.dp))
-            .background(background)
-            .then(
-                if (enabled) {
-                    Modifier.clickable {
-                        if (generating) controller.stop() else controller.send()
-                    }
-                } else {
-                    Modifier
-                }
-            )
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = when {
-                generating -> strings.stopLabel
-                controller.editState is LlmChatEditState.Editing -> strings.editSubmitLabel
-                else -> strings.sendLabel
-            },
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
-        )
-    }
-}
-
-@Composable
-private fun CupertinoInputField(
-    controller: LlmChatController,
-    style: LlmChatViewStyle,
-    strings: LlmChatViewStrings,
-    modifier: Modifier
-) {
-    BasicTextField(
-        value = controller.inputText,
-        onValueChange = controller::onInputChange,
-        textStyle = TextStyle(
-            fontSize = style.fontSize.sp,
-            color = Color(style.composerTextColor)
-        ),
-        cursorBrush = SolidColor(Color(style.sendButtonColor)),
-        maxLines = 5,
-        modifier = modifier
-            .background(Color(style.composerBackgroundColor), RoundedCornerShape(style.composerRadius.dp))
-            .border(1.dp, Color(style.composerBorderColor), RoundedCornerShape(style.composerRadius.dp))
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        decorationBox = { innerTextField ->
-            Box {
-                if (controller.inputText.isEmpty()) {
-                    Text(
-                        text = strings.inputPlaceholder,
-                        fontSize = style.fontSize.sp,
-                        color = Color(style.composerPlaceholderColor)
-                    )
-                }
-                innerTextField()
-            }
-        }
-    )
-}
-
-@Composable
-private fun LlmEditingHint(
-    controller: LlmChatController,
-    style: LlmChatViewStyle,
-    strings: LlmChatViewStrings
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(style.suggestionBackgroundColor), RoundedCornerShape(8.dp))
-            .padding(horizontal = 10.dp, vertical = 7.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = strings.editingLabel,
-            fontSize = 12.sp,
-            color = Color(style.suggestionTextColor),
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = strings.editCancelLabel,
-            fontSize = 12.sp,
-            color = Color(style.suggestionTextColor),
-            modifier = Modifier.clickable { controller.cancelEdit() }
-        )
-    }
-}
-
-/**
- * 录音中提示条，带取消入口——ASR 识别错了得能退出去，而不是只能等它结束。
- */
-@Composable
-private fun LlmListeningHint(
-    style: LlmChatViewStyle,
-    strings: LlmChatViewStrings,
-    controller: LlmChatController
-) {
-    val shape = RoundedCornerShape(8.dp)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(Color(style.suggestionBackgroundColor))
-            .padding(horizontal = 10.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = "\uD83C\uDFA4", fontSize = 13.sp)
-        Spacer(Modifier.width(6.dp))
-        Text(
-            text = strings.listeningLabel,
-            fontSize = 12.sp,
-            color = Color(style.suggestionTextColor),
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = "\u00D7",
-            fontSize = 15.sp,
-            color = Color(style.mutedColor),
-            modifier = Modifier.clickable { controller.cancelListening() }
-        )
-    }
-}
-
-/**
- * 输入区左侧的图标按钮。
- *
- * 用 emoji 字形而不是 SVG：`agentcard_compose/LucideSvgIcon` 依赖资源打包，
- * 而输入区需要在没有资源注册的宿主里也能直接用。
- */
-@Composable
-private fun LlmIconButton(
-    glyph: String,
-    tint: Color,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .clip(RoundedCornerShape(18.dp))
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = glyph, fontSize = 16.sp, color = tint)
     }
 }

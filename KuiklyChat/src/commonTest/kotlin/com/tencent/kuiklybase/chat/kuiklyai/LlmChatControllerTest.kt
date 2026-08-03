@@ -11,13 +11,13 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageState
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatEditState
-import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatUiEvent
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -158,7 +158,7 @@ class LlmChatControllerTest {
     }
 
     @Test
-    fun copyUsesHostClipboardAndEmitsOneShotEvent() = runTest {
+    fun copyUsesHostClipboardAndKeepsVisualFeedbackOnly() = runTest {
         val clipboard = RecordingClipboard()
         val controller = LlmChatController(
             provider = EchoLlmProvider(delayMillis = 0L),
@@ -174,9 +174,14 @@ class LlmChatControllerTest {
         runCurrent()
 
         assertEquals("copy me", clipboard.text)
-        assertEquals(LlmChatUiEvent.TextCopied(message.id), controller.transientEvent)
-        controller.consumeTransientEvent()
         assertEquals(null, controller.transientEvent)
+        assertEquals(message.id, controller.copiedMessageId)
+        advanceTimeBy(2_999)
+        runCurrent()
+        assertEquals(message.id, controller.copiedMessageId)
+        advanceTimeBy(1)
+        runCurrent()
+        assertEquals(null, controller.copiedMessageId)
         controller.dispose()
     }
 

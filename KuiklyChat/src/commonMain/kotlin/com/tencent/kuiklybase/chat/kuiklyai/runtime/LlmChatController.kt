@@ -24,7 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /** UI state holder between [LlmProvider] and Compose. */
-class LlmChatController(
+class LlmChatController internal constructor(
     private val provider: LlmProvider,
     private val scope: CoroutineScope,
     val attachmentPicker: LlmAttachmentPicker? = null,
@@ -68,6 +68,8 @@ class LlmChatController(
     var transientEvent by mutableStateOf<LlmChatUiEvent?>(null)
         private set
 
+    val copiedMessageId: String? get() = copyFeedback.copiedMessageId
+
     /** 能否发送：有内容且当前不在生成中 */
     val canSend: Boolean
         get() = !isGenerating &&
@@ -81,7 +83,7 @@ class LlmChatController(
             .orEmpty()
 
     private var streamJob: Job? = null
-    private var clipboardJob: Job? = null
+    private val copyFeedback = LlmCopyFeedbackController(scope, clipboard) { transientEvent = it }
     private var speechSession: LlmSpeechSession? = null
     private val historySubscription: LlmSubscription
 
@@ -135,27 +137,7 @@ class LlmChatController(
 
     /** Copy a message's raw text through the injected host clipboard. */
     fun copyMessage(message: LlmChatMessage) {
-        val target = clipboard ?: return
-        if (message.text.isEmpty()) return
-        clipboardJob?.cancel()
-        val job = scope.launch {
-            try {
-                target.copyText(
-                    label = if (message.isUser) "User message" else "AI response",
-                    text = message.text
-                )
-                transientEvent = LlmChatUiEvent.TextCopied(message.id)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                transientEvent = LlmChatUiEvent.PlatformOperationFailed(
-                    e.message ?: "Unable to copy text"
-                )
-            } finally {
-                if (clipboardJob === coroutineContext[Job]) clipboardJob = null
-            }
-        }
-        clipboardJob = job
+        copyFeedback.copy(message)
     }
 
     private fun dispatchSend(text: String, attachments: List<LlmAttachment>) {
@@ -329,7 +311,13 @@ class LlmChatController(
     /** Start voice input and keep the final result in the composer. */
     fun startListening() {
         val recognizer = speechRecognizer ?: return
-        if (!isSpeechAvailable || isListening || isGenerating) return
+        if (isListening || isGenerating) return
+        if (!isSpeechAvailable) {
+            transientEvent = LlmChatUiEvent.PlatformOperationFailed(
+                "当前设备不支持语音输入，请接入第三方语音识别 SDK（如科大讯飞、百度语音等）"
+            )
+            return
+        }
 
         val textBeforeListening = inputText
         isListening = true
@@ -391,8 +379,7 @@ class LlmChatController(
     /** 页面销毁时调用，释放监听与进行中的请求。 */
     fun dispose() {
         stop()
-        clipboardJob?.cancel()
-        clipboardJob = null
+        copyFeedback.dispose()
         cancelListening()
         historySubscription.cancel()
     }

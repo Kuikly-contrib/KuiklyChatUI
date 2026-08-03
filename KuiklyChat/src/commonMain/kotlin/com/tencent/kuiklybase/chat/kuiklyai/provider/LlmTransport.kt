@@ -85,7 +85,7 @@ fun LlmTransport.streamAsFlow(request: LlmHttpRequest): Flow<String> = callbackF
  *
  * 注意：这个类**有内部状态**，每次请求都要新建一个实例。
  */
-class SseDecoder(
+internal class SseDecoder(
     /** 结束标记，收到后 [decode] 不再吐出任何内容 */
     private val doneMarker: String = "[DONE]"
 ) {

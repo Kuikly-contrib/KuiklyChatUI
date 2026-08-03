@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.ComposeContainer
+import com.tencent.kuikly.compose.foundation.Image
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Box
@@ -21,11 +22,17 @@ import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.setContent
 import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
+import com.tencent.kuikly.compose.resources.DrawableResource
+import com.tencent.kuikly.compose.resources.InternalResourceApi
+import com.tencent.kuikly.compose.resources.painterResource
 import com.tencent.kuikly.compose.ui.graphics.Color
+import com.tencent.kuikly.compose.ui.graphics.ColorFilter
 import com.tencent.kuikly.compose.ui.text.font.FontWeight
+import com.tencent.kuikly.compose.ui.unit.Dp
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
+import com.tencent.kuikly.core.base.attr.ImageUri
 import com.tencent.kuikly.core.module.RouterModule
 import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
@@ -150,7 +157,7 @@ private fun DemoNavigationBar(
                 .clickable { onBack() },
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "\u2190", fontSize = 21.sp, color = Color(0xFF26332F))
+            ChevronLeftIcon()
         }
         Text(
             text = "KuiklyAI",
@@ -159,28 +166,25 @@ private fun DemoNavigationBar(
             color = Color(0xFF17211E),
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = if (designSystem == LlmChatDesignSystem.MATERIAL) "Material" else "Cupertino",
-            fontSize = 11.sp,
-            color = Color(0xFF176B5B),
-            modifier = Modifier.clickable {
-                onDesignSystemChange(
-                    if (designSystem == LlmChatDesignSystem.MATERIAL) {
-                        LlmChatDesignSystem.CUPERTINO
-                    } else {
-                        LlmChatDesignSystem.MATERIAL
-                    }
-                )
-            }
-        )
-        Text(
-            text = "清空",
-            fontSize = 13.sp,
-            color = Color(0xFF176B5B),
-            modifier = Modifier.clickable { controller.clear() }
-        )
         Spacer(Modifier.width(16.dp))
     }
+}
+
+@OptIn(InternalResourceApi::class)
+@Composable
+private fun ChevronLeftIcon(
+    size: Dp = 24.dp,
+    color: Color = Color(0xFF26332F),
+) {
+    val drawable = remember {
+        DrawableResource(ImageUri.commonAssets("kuikly_chat_ic_chevron_left.svg").toUrl(""))
+    }
+    Image(
+        painter = painterResource(drawable),
+        contentDescription = "chevron-left",
+        modifier = Modifier.size(size),
+        colorFilter = ColorFilter.tint(color),
+    )
 }
 
 private val DemoSuggestions = listOf(

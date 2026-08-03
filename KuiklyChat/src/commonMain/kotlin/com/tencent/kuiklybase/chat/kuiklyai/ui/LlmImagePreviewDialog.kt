@@ -29,7 +29,7 @@ import com.tencent.kuikly.compose.ui.window.Dialog
 import com.tencent.kuikly.compose.ui.window.DialogProperties
 
 /** Pure zoom/pan state so gesture math can be tested without Compose. */
-data class LlmImageTransformState(
+internal data class LlmImageTransformState(
     val scale: Float = 1f,
     val offsetX: Float = 0f,
     val offsetY: Float = 0f
@@ -68,7 +68,7 @@ data class LlmImageTransformState(
 }
 
 @Composable
-fun LlmImagePreviewDialog(
+internal fun LlmImagePreviewDialog(
     attachment: LlmAttachment,
     onDismiss: () -> Unit
 ) {
@@ -134,10 +134,20 @@ fun LlmImagePreviewDialog(
     }
 }
 
-internal fun imageSource(attachment: LlmAttachment): String? = when {
-    attachment.url.isNotEmpty() -> attachment.url
-    attachment.bytesBase64.isNotEmpty() -> {
-        "data:${attachment.mimeType.ifEmpty { "image/png" }};base64,${attachment.bytesBase64}"
+internal fun imageSource(attachment: LlmAttachment): String? = imageSource(attachment, preferThumbnail = false)
+
+internal fun thumbnailSource(attachment: LlmAttachment): String? =
+    imageSource(attachment, preferThumbnail = true)
+
+private fun imageSource(attachment: LlmAttachment, preferThumbnail: Boolean): String? {
+    if (preferThumbnail && attachment.thumbnailBase64.isNotEmpty()) {
+        return "data:image/jpeg;base64,${attachment.thumbnailBase64}"
     }
-    else -> null
+    return when {
+        attachment.url.isNotEmpty() -> attachment.url
+        attachment.bytesBase64.isNotEmpty() -> {
+            "data:${attachment.mimeType.ifEmpty { "image/png" }};base64,${attachment.bytesBase64}"
+        }
+        else -> null
+    }
 }

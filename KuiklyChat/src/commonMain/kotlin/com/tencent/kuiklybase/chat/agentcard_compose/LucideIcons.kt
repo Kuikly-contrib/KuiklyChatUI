@@ -9,7 +9,7 @@ import com.tencent.kuikly.compose.ui.unit.dp
  * 统一的 Lucide 矢量图标集合。
  *
  * 实现方式：
- *   - SVG 资源放在宿主工程 `shared/src/commonMain/assets/common/ic_<name>.svg`
+ *   - 内置 SVG 资源放在组件模块 `KuiklyChat/src/commonMain/assets/common/ic_<name>.svg`
  *   - 通过 [LucideSvgIcon] + `ImageUri.commonAssets` 加载
  *   - 原生端需在 `KuiklyRenderComponentExpandHandler` 中识别 `.svg` 后缀
  *     （macApp 使用 NSImage，macOS 10.13+ 原生支持 SVG）
