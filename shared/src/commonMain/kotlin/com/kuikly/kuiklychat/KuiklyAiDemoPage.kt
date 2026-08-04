@@ -38,9 +38,9 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
-import com.tencent.kuiklybase.chat.kuiklyai.ui.KuiklyAiChatView
-import com.tencent.kuiklybase.chat.kuiklyai.ui.LlmChatDesignSystem
-import com.tencent.kuiklybase.chat.kuiklyai.ui.LlmChatViewStyle
+import com.tencent.kuiklybase.chat.legacy.ai.KuiklyAiChatView
+import com.tencent.kuiklybase.chat.legacy.ai.LlmChatDesignSystem
+import com.tencent.kuiklybase.chat.legacy.ai.LlmChatViewStyle
 
 /**
  * KuiklyAI 零后端 Demo。

@@ -18,14 +18,14 @@ check_internal() {
   fi
 }
 
-check_internal "ui/LlmChatInput.kt" "fun[[:space:]]+LlmChatInput[[:space:]]*\\(" "LlmChatInput"
-check_internal "ui/LlmMessageList.kt" "fun[[:space:]]+LlmMessageList[[:space:]]*\\(" "LlmMessageList"
-check_internal "ui/LlmWelcomeSection.kt" "fun[[:space:]]+LlmWelcomeSection[[:space:]]*\\(" "LlmWelcomeSection"
-check_internal "ui/LlmAttachmentRow.kt" "fun[[:space:]]+LlmAttachmentRow[[:space:]]*\\(" "LlmAttachmentRow"
-check_internal "ui/LlmMessageBubbles.kt" "fun[[:space:]]+LlmUserBubble[[:space:]]*\\(" "LlmUserBubble"
-check_internal "ui/LlmMessageBubbles.kt" "fun[[:space:]]+LlmResponseBubble[[:space:]]*\\(" "LlmResponseBubble"
-check_internal "ui/LlmImagePreviewDialog.kt" "fun[[:space:]]+LlmImagePreviewDialog[[:space:]]*\\(" "LlmImagePreviewDialog"
-check_internal "ui/LlmImagePreviewDialog.kt" "data[[:space:]]+class[[:space:]]+LlmImageTransformState[[:space:]]*\\(" "LlmImageTransformState"
+check_internal "../legacy/ai/LlmChatInput.kt" "fun[[:space:]]+LlmChatInput[[:space:]]*\\(" "LlmChatInput"
+check_internal "../legacy/ai/LlmMessageList.kt" "fun[[:space:]]+LlmMessageList[[:space:]]*\\(" "LlmMessageList"
+check_internal "../legacy/ai/LlmWelcomeSection.kt" "fun[[:space:]]+LlmWelcomeSection[[:space:]]*\\(" "LlmWelcomeSection"
+check_internal "../legacy/ai/LlmAttachmentRow.kt" "fun[[:space:]]+LlmAttachmentRow[[:space:]]*\\(" "LlmAttachmentRow"
+check_internal "../legacy/ai/LlmMessageBubbles.kt" "fun[[:space:]]+LlmUserBubble[[:space:]]*\\(" "LlmUserBubble"
+check_internal "../legacy/ai/LlmMessageBubbles.kt" "fun[[:space:]]+LlmResponseBubble[[:space:]]*\\(" "LlmResponseBubble"
+check_internal "../legacy/ai/LlmImagePreviewDialog.kt" "fun[[:space:]]+LlmImagePreviewDialog[[:space:]]*\\(" "LlmImagePreviewDialog"
+check_internal "../legacy/ai/LlmImagePreviewDialog.kt" "data[[:space:]]+class[[:space:]]+LlmImageTransformState[[:space:]]*\\(" "LlmImageTransformState"
 check_internal "provider/LlmTransport.kt" "class[[:space:]]+SseDecoder[[:space:]]*\\(" "SseDecoder"
 check_internal "provider/BaseLlmProvider.kt" "class[[:space:]]+LlmIdGenerator[[:space:]]*\\(" "LlmIdGenerator"
 

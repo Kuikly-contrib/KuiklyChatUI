@@ -25,15 +25,15 @@ if grep -rn --include='*.kt' -E '^[[:space:]]*import[[:space:]]+(android\.|java\
 fi
 
 # 规则2：agui 不得依赖任何 UI 包
-if grep -rn --include='*.kt' -E "import[[:space:]]+com\.tencent\.kuiklybase\.chat\.(bubble|session|channel|composer|navigation|indicator|ai|widget|agentcard|agentcard_compose)" "$CHAT_ROOT/agui"; then
+if grep -rn --include='*.kt' -E "import[[:space:]]+com\.tencent\.kuiklybase\.chat\.(bubble|session|channel|legacy|navigation|indicator|ai|widget|agentcard|compose)" "$CHAT_ROOT/agui"; then
   err "agui 层直接依赖了 UI 包。" \
       "协议层只产出 ChatMessage / AgentCard 模型，UI 通过模型解耦。" \
       "docs/architecture/boundaries.md"
 fi
 
-# 规则3：agentcard(Kuikly DSL) 不得依赖 agentcard_compose(Compose DSL)
-if grep -rn --include='*.kt' -E "import[[:space:]]+com\.tencent\.kuiklybase\.chat\.agentcard_compose" "$CHAT_ROOT/agentcard"; then
-  err "agentcard 直接依赖了 agentcard_compose。" \
+# 规则3：agentcard(Kuikly DSL) 不得依赖 compose/agentcard(Compose DSL)
+if grep -rn --include='*.kt' -E "import[[:space:]]+com\.tencent\.kuiklybase\.chat\.compose\.agentcard" "$CHAT_ROOT/agentcard"; then
+  err "agentcard 直接依赖了 compose/agentcard。" \
       "两套渲染层互不依赖；共享类型抽到 model/ 或共享数据类。" \
       "docs/architecture/boundaries.md"
 fi
@@ -47,10 +47,10 @@ fi
 
 # 规则6：kuiklyai 的 provider/history 层不得依赖任何 UI 包。
 # LlmProvider 是对外扩展点，第三方要能在不碰 Compose 的前提下实现它。
-if grep -rn --include='*.kt' -E "import[[:space:]]+(com\.tencent\.kuikly\.compose|com\.tencent\.kuiklybase\.chat\.(bubble|session|channel|composer|navigation|indicator|widget|agentcard|agentcard_compose|kuiklyai\.(ui|runtime)))" \
+if grep -rn --include='*.kt' -E "import[[:space:]]+(com\.tencent\.kuikly\.compose|com\.tencent\.kuiklybase\.chat\.(bubble|session|channel|legacy|navigation|indicator|widget|agentcard|compose|kuiklyai\.runtime))" \
   "$CHAT_ROOT/kuiklyai/provider" "$CHAT_ROOT/kuiklyai/history" 2>/dev/null; then
   err "kuiklyai 的 provider/history 层依赖了 UI 包。" \
-      "provider 层只产出 LlmChatMessage；渲染由 kuiklyai/ui 负责，两者通过模型解耦。" \
+      "provider 层只产出 LlmChatMessage；渲染由 legacy/ai 负责，两者通过模型解耦。" \
       "docs/design/feature-kuiklyai-toolkit.md"
 fi
 

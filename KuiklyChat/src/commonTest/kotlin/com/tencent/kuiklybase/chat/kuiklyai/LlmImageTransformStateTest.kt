@@ -1,6 +1,6 @@
 package com.tencent.kuiklybase.chat.kuiklyai
 
-import com.tencent.kuiklybase.chat.kuiklyai.ui.LlmImageTransformState
+import com.tencent.kuiklybase.chat.legacy.ai.LlmImageTransformState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

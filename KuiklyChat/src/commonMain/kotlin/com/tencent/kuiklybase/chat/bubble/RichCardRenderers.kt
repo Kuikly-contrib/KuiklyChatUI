@@ -22,7 +22,7 @@ import com.tencent.kuiklybase.chat.session.ChatSessionConfig
 //   checklist        ChecklistCardRenderer.kt
 //
 // 新增卡片类型时：建一个 XxxCardRenderer.kt，并在下面的列表里注册；
-// 同时别忘了在 agentcard_compose/ 补上语义对齐的 Compose 实现（见 AGENTS.md 硬性规则 2）。
+// 同时别忘了在 compose/agentcard/ 补上语义对齐的 Compose 实现（见 AGENTS.md 硬性规则 2）。
 
 /**
  * 返回一组 AG-UI 富卡片渲染器，可直接追加到 [ChatSessionConfig.messageRenderers]。

@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-07-27
+last_updated: 2026-08-03
 status: active
 owner: @kuikly-chat-team
 ---
@@ -12,9 +12,10 @@ Status: ✅ Implemented
 
 ## 范围
 - 数据模型 `AgentCard`（sealed 子类）与构造器 `RichCardPayload`。
-- 双渲染层：`agentcard/`（Kuikly DSL 的 `AgentCardList`）与 `agentcard_compose/`（Compose 的 `ComposeAgentCardList`）。
+- 双渲染层：`agentcard/`（共享模型 + Kuikly DSL 的 `AgentCardList`）与 `compose/agentcard/`（Compose 的 `ComposeAgentCardList`）。
 - `AgUiCardSession`：AG-UI 事件流自动映射为 `AgentCard` 列表。
 - 主题：`AgentCardTheme` / `ComposeCardTheme`。
+- 新 Compose Chat UI 接入：`AgentCardComposeBridge` 将强类型卡片包装为 `MessagePart.AgentCardContent`，由 `MessageRendererRegistry` 调用现有 `ComposeRenderCard`。
 
 ## 新增卡片（三步 + 注册）
 1. `RichMessageKind` 增加常量；2. `RichCardPayload` 增加构造器；3. 实现 `MessageRendererFactory`；4. 注册到 `agUiRichRenderers()`（双渲染层都要）。

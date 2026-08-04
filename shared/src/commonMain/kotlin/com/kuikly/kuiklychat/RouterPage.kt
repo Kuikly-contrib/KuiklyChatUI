@@ -371,6 +371,43 @@ internal class RouterPage : BasePager() {
             }
 
 
+            // Compose 聊天ui sdk Demo 入口
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(260f, 48f)
+                        borderRadius(24f)
+                        backgroundLinearGradient(
+                            Direction.TO_RIGHT,
+                            ColorStop(Color(0xFF6366F1), 0f),
+                            ColorStop(Color(0xFFE11D48), 1f)
+                        )
+                        allCenter()
+                        boxShadow(BoxShadow(0f, 4f, 12f, Color(0x336366F1)))
+                    }
+                    Text {
+                        attr {
+                            text("Compose 聊天ui sdk Demo")
+                            fontSize(18f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("compose_chat_sdk_demo")
+                        }
+                    }
+                }
+            }
+
+
 
         }
 

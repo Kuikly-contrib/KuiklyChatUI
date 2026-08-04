@@ -1984,7 +1984,7 @@ KuiklyAI 面向人机对话场景。宿主只需传入一个 `LlmProvider`，即
 ```kotlin
 import androidx.compose.runtime.remember
 import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
-import com.tencent.kuiklybase.chat.kuiklyai.ui.KuiklyAiChatView
+import com.tencent.kuiklybase.chat.legacy.ai.KuiklyAiChatView
 
 @Composable
 fun AiPage() {

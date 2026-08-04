@@ -9,11 +9,12 @@ KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组
 | 了解模块构成、目录职责、使用方式 | `README.md` |
 | 了解 AG-UI 协议与接入流程 | `AGUI_INTEGRATION_GUIDE.md` |
 | 新增/修改消息卡片（Kuikly DSL 渲染层） | `KuiklyChat/src/commonMain/.../chat/agentcard/` |
-| 新增/修改消息卡片（Compose DSL 渲染层） | `KuiklyChat/src/commonMain/.../chat/agentcard_compose/` |
+| 新增/修改 Compose Chat SDK | `KuiklyChat/src/commonMain/.../chat/compose/`（core/ui/adapter/agentcard） |
+| 新增/修改消息卡片（Compose DSL 渲染层） | `KuiklyChat/src/commonMain/.../chat/compose/agentcard/` |
 | 处理 AG-UI 事件解析、会话编排 | `KuiklyChat/src/commonMain/.../chat/agui/` |
 | 数据模型、主题、组件工厂、仓库 | `KuiklyChat/src/commonMain/.../chat/model/` |
 | 会话页与配置（ChatSession） | `KuiklyChat/src/commonMain/.../chat/session/` |
-| 气泡、频道、输入区、指示器、导航 | `.../chat/bubble/` `channel/` `composer/` `indicator/` `navigation/` |
+| 气泡、频道、输入区、指示器、导航 | `.../chat/bubble/` `channel/` `legacy/composer/` `indicator/` `navigation/` |
 | 构建/版本/发布到 Maven | `build.gradle.kts`、`buildSrc/`、`publish-maven.sh` |
 | 各端宿主 App 集成示例 | `androidApp/` `iosApp/` `ohosApp/` `shared/` |
 | 主观约定如何机械落地 | `docs/conventions/mechanical-rules.md` |
@@ -26,13 +27,13 @@ KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组
 
 ## 架构要点
 - 核心库 `:KuiklyChat` 是 KMP library（js/android/ios/macos），通过 `:shared`、`:androidApp`、`:h5App`、`:miniApp` 及各端 App 复用。
-- 消息卡片有**两套并行渲染层**：`agentcard/`（传统 Kuikly DSL）与 `agentcard_compose/`（Compose DSL），语义必须对齐。
+- 消息卡片有**两套并行渲染层**：`agentcard/`（传统 Kuikly DSL）与 `compose/agentcard/`（Compose DSL），语义必须对齐。
 - 数据流：`agui/`（事件解析）→ 卡片映射 → `session/` 会话渲染；后端协议细节只存在于 `agui/`，不向下游 UI 泄漏。
 
 ## 硬性规则（必须遵守）
 1. `commonMain` 必须平台无关；平台相关逻辑只能放在 `androidMain` / `iosMain` / `macosMain`。
-2. 新增消息卡片须**同时在 `agentcard/` 与 `agentcard_compose/` 实现**，并在对应映射器/工厂注册，缺一不可。
-3. 所有后端协议对接走 `agui/` 包，禁止在 `bubble/`、`session/` 等 UI 层直接耦合 AG-UI 协议细节。
+2. 新增消息卡片须**同时在 `agentcard/` 与 `compose/agentcard/` 实现**，并在对应映射器/工厂注册，缺一不可。
+3. 所有后端协议对接走 `agui/` 或 `compose/adapter/` 边界，禁止在 `bubble/`、`session/`、`compose/ui/` 等 UI 层直接耦合 AG-UI 协议细节。
 4. 单文件 ≤ 400 行；超大文件优先拆分为职责单一的子文件，而非继续堆砌。存量超标文件登记在 `scripts/file-size-baseline.txt`（仅告警），**新增超标文件直接阻断**。
 5. 使用结构化日志，调试遗留的裸 `println` / `console.log` 不得合入。
 6. 以上规则由 `scripts/check-layer-deps.sh` 强制校验（零依赖，本地与 CI 同一条命令），违规阻断合入。
@@ -52,7 +53,7 @@ KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组
 bash scripts/check-layer-deps.sh                      # 架构 + 文件大小，~0.5s
 ./gradlew :KuiklyChat:compileDebugKotlinAndroid \
           :KuiklyChat:compileDebugUnitTestKotlinAndroid
-./gradlew :KuiklyChat:testDebugUnitTest               # 81 个用例，报告见 build/reports/tests/
+./gradlew :KuiklyChat:testDebugUnitTest               # 174 个用例，报告见 build/reports/tests/
 ```
 
 - 本模块**没有 `jvm()` target**（只有 android / js / iosX64 / iosArm64 / iosSimulatorArm64 / macosX64 / macosArm64），

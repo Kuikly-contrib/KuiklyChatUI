@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-07-27
+last_updated: 2026-08-03
 status: active
 owner: @kuikly-chat-team
 ---
@@ -10,6 +10,9 @@ owner: @kuikly-chat-team
 
 - [ ] 更多富卡片类型（如思维导图、时序图）
 - [ ] Compose 渲染层与 Kuikly DSL 渲染层的性能对比与对齐
+- [ ] Compose Chat UI 的真实 AG-UI 后端端到端联调
+- [ ] Compose Chat UI 跨端（Android / iOS / 鸿蒙）视觉与交互验收
+- [ ] Compose Chat UI 消息列表锚点、重组性能与滚动体验优化
 - [ ] 主题系统支持运行时换肤（多套预设）
 - [ ] AG-UI 断线自动重连与补偿策略增强
 - [ ] 各端宿主示例补齐（小程序 / H5 深度联调）
@@ -48,5 +51,5 @@ owner: @kuikly-chat-team
 - [ ] `bubble/ChatMessageOptionsView.kt`（504 行）
 - [ ] `agui/AgUiEventParserTest.kt`（501 行，测试）
 - [ ] `model/ChatPreviewData.kt`（496 行）——同样是单个 `object`，约束同 `RichCardPayload`。
-- [ ] `agentcard_compose/ToolCallCard.kt`（419 行，仅超 19 行）——纯函数辅助已拆到
+- [ ] `compose/agentcard/ToolCallCard.kt`（419 行，仅超 19 行）——纯函数辅助已拆到
       `ToolCallCardHelpers.kt`，剩下是单个 Composable，继续拆需要把行头/展开区抽成子 Composable。

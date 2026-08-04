@@ -6,7 +6,7 @@ import com.tencent.kuikly.core.directives.vforLazy
 import com.tencent.kuikly.core.layout.FlexDirection
 import com.tencent.kuikly.core.reactive.collection.ObservableList
 import com.tencent.kuikly.core.views.*
-import com.tencent.kuiklybase.chat.composer.*
+import com.tencent.kuiklybase.chat.legacy.composer.*
 import com.tencent.kuiklybase.chat.indicator.*
 import com.tencent.kuiklybase.chat.model.*
 import com.tencent.kuiklybase.chat.navigation.*

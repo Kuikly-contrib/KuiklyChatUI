@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-07-27
+last_updated: 2026-08-03
 status: active
 owner: @kuikly-chat-team
 ---
@@ -15,7 +15,7 @@ owner: @kuikly-chat-team
 | 团队口头约定 | 机械规则 | 落地方式 | 状态 |
 |------------|---------|---------|------|
 | 分层依赖方向 | `agui` 不依赖 UI 包 | `check-layer-deps.sh` 规则 2 | ✅ 脚本已强制 |
-| 双渲染层解耦 | `agentcard` 不依赖 `agentcard_compose` | `check-layer-deps.sh` 规则 3 | ✅ 脚本已强制 |
+| 双渲染层解耦 | `agentcard` 不依赖 `compose/agentcard` | `check-layer-deps.sh` 规则 3 | ✅ 脚本已强制 |
 | 平台隔离 | `commonMain` 不引 `android./java./javax./platform./kotlinx.cinterop` | `check-layer-deps.sh` 规则 1 | ✅ 脚本已强制 |
 | 日志要规范 | 禁止裸 `println` | `check-layer-deps.sh` 规则 4 | ✅ 脚本已强制 |
 | 文件要短 | 单文件 ≤ 400 行 | `check-layer-deps.sh` 规则 5 + `scripts/file-size-baseline.txt` | ✅ 脚本已强制（存量豁免，新增阻断） |
