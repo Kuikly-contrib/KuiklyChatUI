@@ -142,17 +142,40 @@ internal fun ChatMessageList(
                             )
                             val customRenderer = rendererRegistry.rendererFor(message)
                             if (customRenderer != null) {
-                                customRenderer.Render(message, group, theme, Modifier.fillMaxWidth())
+                                val rendererContent: @Composable () -> Unit = {
+                                    customRenderer.Render(
+                                        message,
+                                        group,
+                                        theme,
+                                        Modifier.fillMaxWidth()
+                                    )
+                                }
+                                if (slots.messageRowContent != null) {
+                                    slots.messageRowContent.invoke(message, group, rendererContent)
+                                } else {
+                                    ChatMessageRow(
+                                        message = message,
+                                        groupStatus = group,
+                                        controller = controller,
+                                        theme = theme,
+                                        strings = strings,
+                                        config = config,
+                                        slots = slots,
+                                        callbacks = callbacks,
+                                        content = rendererContent
+                                    )
+                                }
                             } else if (slots.messageContent != null) {
                                 slots.messageContent.invoke(message, group)
                             } else {
-                                DefaultChatMessageItem(
+                                DefaultChatMessageRow(
                                     message = message,
                                     groupStatus = group,
                                     controller = controller,
                                     theme = theme,
                                     strings = strings,
                                     config = config,
+                                    slots = slots,
                                     callbacks = callbacks
                                 )
                             }

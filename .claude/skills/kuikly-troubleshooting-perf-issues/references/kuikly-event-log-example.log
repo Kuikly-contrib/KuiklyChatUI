@@ -1,0 +1,1871 @@
+--- begin of kuikly page event report ---
+pageName:AppTabPage pageId:1
+timestamp:1769763596937 CreateStart
+    timestamp:1769763596937 ViewWillInit viewName:KRView viewClassName:AppTabPage ref:24
+        timestamp:1769763596937 BuildStart
+        timestamp:1769763596938 ViewDidInit viewName:KRView viewClassName:AppTabPage ref:24
+        timestamp:1769763596938 CallModuleStart moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596938 CallModuleEnd moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596939 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+        timestamp:1769763596939 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:2
+        timestamp:1769763596940 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:2
+        timestamp:1769763596940 CallModuleStart moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleEnd moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleStart moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleEnd moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleStart moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleEnd moduleName:KRSharedPreferencesModule method:getItem sync:true callbackRef:0
+        timestamp:1769763596940 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:3
+        timestamp:1769763596940 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:3
+        timestamp:1769763596941 ViewWillInit viewName:KRView viewClassName:DivView ref:25
+        timestamp:1769763596941 ViewDidInit viewName:KRView viewClassName:DivView ref:25
+        timestamp:1769763596943 ViewWillInit viewName:KRListView viewClassName:PageListView ref:26
+            timestamp:1769763596947 ViewWillInit viewName:KRScrollContentView viewClassName:PageListContentView ref:28
+            timestamp:1769763596947 ViewDidInit viewName:KRScrollContentView viewClassName:PageListContentView ref:28
+            timestamp:1769763596947 ViewWillInit viewName:KRView viewClassName:AppHomePageView ref:27
+            timestamp:1769763596947 ViewDidInit viewName:KRView viewClassName:AppHomePageView ref:27
+            timestamp:1769763596947 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:5
+            timestamp:1769763596947 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:5
+            timestamp:1769763596947 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:6
+            timestamp:1769763596947 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:6
+            timestamp:1769763596949 ViewWillInit viewName:KRListView viewClassName:TabsView ref:29
+                timestamp:1769763596949 ViewWillInit viewName:KRScrollContentView viewClassName:ListContentView ref:31
+                timestamp:1769763596949 ViewDidInit viewName:KRScrollContentView viewClassName:ListContentView ref:31
+                timestamp:1769763596950 ViewWillInit viewName:KRView viewClassName:TabItemView ref:30
+                    timestamp:1769763596950 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:32
+                    timestamp:1769763596950 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:32
+                timestamp:1769763596950 ViewDidInit viewName:KRView viewClassName:TabItemView ref:30
+                timestamp:1769763596950 ViewWillInit viewName:KRView viewClassName:TabItemView ref:33
+                    timestamp:1769763596950 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:34
+                    timestamp:1769763596950 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:34
+                timestamp:1769763596950 ViewDidInit viewName:KRView viewClassName:TabItemView ref:33
+            timestamp:1769763596950 ViewDidInit viewName:KRListView viewClassName:TabsView ref:29
+            timestamp:1769763596950 ViewWillInit viewName:KRView viewClassName:DivView ref:35
+                timestamp:1769763596951 ViewWillInit viewName:KRView viewClassName:DivView ref:36
+                timestamp:1769763596951 ViewDidInit viewName:KRView viewClassName:DivView ref:36
+            timestamp:1769763596951 ViewDidInit viewName:KRView viewClassName:DivView ref:35
+            timestamp:1769763596951 ViewWillInit viewName:KRView viewClassName:DivView ref:37
+                timestamp:1769763596951 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:38
+                timestamp:1769763596951 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:38
+            timestamp:1769763596951 ViewDidInit viewName:KRView viewClassName:DivView ref:37
+            timestamp:1769763596951 ViewWillInit viewName:KRListView viewClassName:PageListView ref:39
+                timestamp:1769763596954 ViewWillInit viewName:KRScrollContentView viewClassName:PageListContentView ref:41
+                timestamp:1769763596954 ViewDidInit viewName:KRScrollContentView viewClassName:PageListContentView ref:41
+                timestamp:1769763596954 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:40
+                timestamp:1769763596954 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:40
+                timestamp:1769763596954 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:7
+                timestamp:1769763596954 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:7
+                timestamp:1769763596954 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:8
+                timestamp:1769763596954 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:8
+                timestamp:1769763596955 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:43
+                timestamp:1769763596956 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:43
+                timestamp:1769763596956 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:42
+                timestamp:1769763596956 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:42
+                timestamp:1769763596957 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:44
+                timestamp:1769763596957 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:44
+                timestamp:1769763596958 ViewWillInit viewName:KRView viewClassName:AppTrendingPageView ref:45
+                timestamp:1769763596958 ViewDidInit viewName:KRView viewClassName:AppTrendingPageView ref:45
+                timestamp:1769763596958 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:9
+                timestamp:1769763596958 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:9
+                timestamp:1769763596958 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:10
+                timestamp:1769763596958 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:10
+                timestamp:1769763596958 ViewWillInit viewName:KRListView viewClassName:TabsView ref:46
+                    timestamp:1769763596958 ViewWillInit viewName:KRScrollContentView viewClassName:ListContentView ref:48
+                    timestamp:1769763596958 ViewDidInit viewName:KRScrollContentView viewClassName:ListContentView ref:48
+                    timestamp:1769763596959 ViewWillInit viewName:KRView viewClassName:TabItemView ref:47
+                        timestamp:1769763596959 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:49
+                        timestamp:1769763596959 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:49
+                    timestamp:1769763596959 ViewDidInit viewName:KRView viewClassName:TabItemView ref:47
+                    timestamp:1769763596959 ViewWillInit viewName:KRView viewClassName:TabItemView ref:50
+                        timestamp:1769763596959 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:51
+                        timestamp:1769763596959 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:51
+                    timestamp:1769763596959 ViewDidInit viewName:KRView viewClassName:TabItemView ref:50
+                    timestamp:1769763596959 ViewWillInit viewName:KRView viewClassName:TabItemView ref:52
+                        timestamp:1769763596959 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:53
+                        timestamp:1769763596960 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:53
+                    timestamp:1769763596960 ViewDidInit viewName:KRView viewClassName:TabItemView ref:52
+                    timestamp:1769763596960 ViewWillInit viewName:KRView viewClassName:TabItemView ref:54
+                        timestamp:1769763596960 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:55
+                        timestamp:1769763596960 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:55
+                    timestamp:1769763596960 ViewDidInit viewName:KRView viewClassName:TabItemView ref:54
+                    timestamp:1769763596960 ViewWillInit viewName:KRView viewClassName:TabItemView ref:56
+                        timestamp:1769763596960 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:57
+                        timestamp:1769763596961 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:57
+                    timestamp:1769763596961 ViewDidInit viewName:KRView viewClassName:TabItemView ref:56
+                    timestamp:1769763596961 ViewWillInit viewName:KRView viewClassName:TabItemView ref:58
+                        timestamp:1769763596961 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:59
+                        timestamp:1769763596961 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:59
+                    timestamp:1769763596961 ViewDidInit viewName:KRView viewClassName:TabItemView ref:58
+                    timestamp:1769763596961 ViewWillInit viewName:KRView viewClassName:TabItemView ref:60
+                        timestamp:1769763596961 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:61
+                        timestamp:1769763596961 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:61
+                    timestamp:1769763596961 ViewDidInit viewName:KRView viewClassName:TabItemView ref:60
+                timestamp:1769763596961 ViewDidInit viewName:KRListView viewClassName:TabsView ref:46
+                timestamp:1769763596961 ViewWillInit viewName:KRView viewClassName:DivView ref:62
+                    timestamp:1769763596961 ViewWillInit viewName:KRView viewClassName:DivView ref:63
+                    timestamp:1769763596961 ViewDidInit viewName:KRView viewClassName:DivView ref:63
+                timestamp:1769763596961 ViewDidInit viewName:KRView viewClassName:DivView ref:62
+                timestamp:1769763596961 ViewWillInit viewName:KRListView viewClassName:PageListView ref:64
+                    timestamp:1769763596962 ViewWillInit viewName:KRScrollContentView viewClassName:PageListContentView ref:66
+                    timestamp:1769763596962 ViewDidInit viewName:KRScrollContentView viewClassName:PageListContentView ref:66
+                    timestamp:1769763596962 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:65
+                    timestamp:1769763596962 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:65
+                    timestamp:1769763596962 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:11
+                    timestamp:1769763596962 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:11
+                    timestamp:1769763596962 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:12
+                    timestamp:1769763596962 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:12
+                    timestamp:1769763596962 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:68
+                    timestamp:1769763596963 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:68
+                    timestamp:1769763596963 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:67
+                    timestamp:1769763596963 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:67
+                    timestamp:1769763596963 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:69
+                    timestamp:1769763596963 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:69
+                    timestamp:1769763596963 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:70
+                    timestamp:1769763596963 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:70
+                    timestamp:1769763596963 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:13
+                    timestamp:1769763596963 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:13
+                    timestamp:1769763596963 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:14
+                    timestamp:1769763596963 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:14
+                    timestamp:1769763596963 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:72
+                    timestamp:1769763596963 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:72
+                    timestamp:1769763596963 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:71
+                    timestamp:1769763596963 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:71
+                    timestamp:1769763596963 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:73
+                    timestamp:1769763596963 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:73
+                    timestamp:1769763596963 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:74
+                    timestamp:1769763596963 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:74
+                    timestamp:1769763596963 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:15
+                    timestamp:1769763596963 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:15
+                    timestamp:1769763596963 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:16
+                    timestamp:1769763596963 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:16
+                    timestamp:1769763596964 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:76
+                    timestamp:1769763596964 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:76
+                    timestamp:1769763596964 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:75
+                    timestamp:1769763596964 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:75
+                    timestamp:1769763596964 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:77
+                    timestamp:1769763596964 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:77
+                    timestamp:1769763596964 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:78
+                    timestamp:1769763596964 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:78
+                    timestamp:1769763596964 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:17
+                    timestamp:1769763596964 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:17
+                    timestamp:1769763596964 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:18
+                    timestamp:1769763596964 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:18
+                    timestamp:1769763596964 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:80
+                    timestamp:1769763596964 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:80
+                    timestamp:1769763596965 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:79
+                    timestamp:1769763596965 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:79
+                    timestamp:1769763596965 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:81
+                    timestamp:1769763596965 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:81
+                    timestamp:1769763596965 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:82
+                    timestamp:1769763596965 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:82
+                    timestamp:1769763596965 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:19
+                    timestamp:1769763596965 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:19
+                    timestamp:1769763596965 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:20
+                    timestamp:1769763596965 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:20
+                    timestamp:1769763596965 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:84
+                    timestamp:1769763596965 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:84
+                    timestamp:1769763596965 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:83
+                    timestamp:1769763596965 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:83
+                    timestamp:1769763596965 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:85
+                    timestamp:1769763596965 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:85
+                    timestamp:1769763596965 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:86
+                    timestamp:1769763596965 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:86
+                    timestamp:1769763596965 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:21
+                    timestamp:1769763596965 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:21
+                    timestamp:1769763596965 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:22
+                    timestamp:1769763596965 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:22
+                    timestamp:1769763596966 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:88
+                    timestamp:1769763596966 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:88
+                    timestamp:1769763596966 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:87
+                    timestamp:1769763596966 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:87
+                    timestamp:1769763596966 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:89
+                    timestamp:1769763596966 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:89
+                    timestamp:1769763596966 ViewWillInit viewName:KRView viewClassName:AppFeedListPageView ref:90
+                    timestamp:1769763596966 ViewDidInit viewName:KRView viewClassName:AppFeedListPageView ref:90
+                    timestamp:1769763596966 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:23
+                    timestamp:1769763596966 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:23
+                    timestamp:1769763596966 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:24
+                    timestamp:1769763596966 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:24
+                    timestamp:1769763596966 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:92
+                    timestamp:1769763596967 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:92
+                    timestamp:1769763596967 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:91
+                    timestamp:1769763596967 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:91
+                    timestamp:1769763596967 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:93
+                    timestamp:1769763596967 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:93
+                timestamp:1769763596967 ViewDidInit viewName:KRListView viewClassName:PageListView ref:64
+            timestamp:1769763596967 ViewDidInit viewName:KRListView viewClassName:PageListView ref:39
+            timestamp:1769763596967 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+            timestamp:1769763596968 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+            timestamp:1769763596968 CallModuleStart moduleName:HRBridgeModule method:readAssetFile sync:true callbackRef:25
+            timestamp:1769763596969 CallModuleEnd moduleName:HRBridgeModule method:readAssetFile sync:true callbackRef:25
+            timestamp:1769763596969 ViewWillInit viewName:KRView viewClassName:AppEmptyPageView ref:94
+            timestamp:1769763596969 ViewDidInit viewName:KRView viewClassName:AppEmptyPageView ref:94
+            timestamp:1769763596969 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:26
+            timestamp:1769763596969 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:26
+            timestamp:1769763596970 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:95
+            timestamp:1769763596970 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:95
+            timestamp:1769763596970 ViewWillInit viewName:KRView viewClassName:AppEmptyPageView ref:96
+            timestamp:1769763596970 ViewDidInit viewName:KRView viewClassName:AppEmptyPageView ref:96
+            timestamp:1769763596970 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:27
+            timestamp:1769763596970 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:27
+            timestamp:1769763596970 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:97
+            timestamp:1769763596971 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:97
+            timestamp:1769763596971 ViewWillInit viewName:KRView viewClassName:AppEmptyPageView ref:98
+            timestamp:1769763596971 ViewDidInit viewName:KRView viewClassName:AppEmptyPageView ref:98
+            timestamp:1769763596971 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:28
+            timestamp:1769763596971 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:28
+            timestamp:1769763596971 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:99
+            timestamp:1769763596971 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:99
+            timestamp:1769763596971 ViewWillInit viewName:KRView viewClassName:AppEmptyPageView ref:100
+            timestamp:1769763596971 ViewDidInit viewName:KRView viewClassName:AppEmptyPageView ref:100
+            timestamp:1769763596971 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:29
+            timestamp:1769763596971 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:29
+            timestamp:1769763596971 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:101
+            timestamp:1769763596971 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:101
+        timestamp:1769763596971 ViewDidInit viewName:KRListView viewClassName:PageListView ref:26
+        timestamp:1769763596971 ViewWillInit viewName:KRView viewClassName:DivView ref:102
+            timestamp:1769763596971 ViewWillInit viewName:KRView viewClassName:DivView ref:103
+                timestamp:1769763596971 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:104
+                timestamp:1769763596972 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:104
+                timestamp:1769763596972 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:105
+                timestamp:1769763596972 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:105
+            timestamp:1769763596972 ViewDidInit viewName:KRView viewClassName:DivView ref:103
+            timestamp:1769763596972 ViewWillInit viewName:KRView viewClassName:DivView ref:106
+                timestamp:1769763596972 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:107
+                timestamp:1769763596972 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:107
+                timestamp:1769763596972 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:108
+                timestamp:1769763596973 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:108
+            timestamp:1769763596973 ViewDidInit viewName:KRView viewClassName:DivView ref:106
+            timestamp:1769763596973 ViewWillInit viewName:KRView viewClassName:DivView ref:109
+                timestamp:1769763596973 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:110
+                timestamp:1769763596973 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:110
+                timestamp:1769763596973 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:111
+                timestamp:1769763596973 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:111
+            timestamp:1769763596973 ViewDidInit viewName:KRView viewClassName:DivView ref:109
+            timestamp:1769763596973 ViewWillInit viewName:KRView viewClassName:DivView ref:112
+                timestamp:1769763596973 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:113
+                timestamp:1769763596973 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:113
+                timestamp:1769763596973 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:114
+                timestamp:1769763596973 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:114
+            timestamp:1769763596973 ViewDidInit viewName:KRView viewClassName:DivView ref:112
+            timestamp:1769763596973 ViewWillInit viewName:KRView viewClassName:DivView ref:115
+                timestamp:1769763596973 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:116
+                timestamp:1769763596973 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:116
+                timestamp:1769763596973 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:117
+                timestamp:1769763596973 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:117
+            timestamp:1769763596973 ViewDidInit viewName:KRView viewClassName:DivView ref:115
+        timestamp:1769763596973 ViewDidInit viewName:KRView viewClassName:DivView ref:102
+    timestamp:1769763596974 BuildEnd numNodes:0
+    timestamp:1769763596975 LayoutStart
+        timestamp:1769763596980 FireObserverFnStart propertyKey:25_tabHeaderWidth observerCount:1
+        timestamp:1769763596980 FireObserverFnEnd propertyKey:25_tabHeaderWidth observerCount:1
+        timestamp:1769763596982 FireObserverFnStart propertyKey:29_selected observerCount:1
+        timestamp:1769763596982 FireObserverFnEnd propertyKey:29_selected observerCount:1
+        timestamp:1769763596985 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+        timestamp:1769763596985 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+        timestamp:1769763596985 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+        timestamp:1769763596986 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763596986 LayoutEnd numNodes:30
+timestamp:1769763596986 CreateEnd
+timestamp:1769763596986 LayoutStart
+timestamp:1769763596986 LayoutEnd numNodes:30
+timestamp:1769763596987 ModuleCallbackStart moduleName:HRBridgeModule method:readAssetFile sync:true callbackRef:25
+    timestamp:1769763596992 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763596993 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597017 FireObserverFnStart propertyKey:31_feeds observerCount:1
+    timestamp:1769763597017 FireObserverFnEnd propertyKey:31_feeds observerCount:1
+    timestamp:1769763597017 FireObserverFnStart propertyKey:31_feeds observerCount:1
+        timestamp:1769763597017 ViewWillInit viewName:KRListView viewClassName:ListView ref:118
+            timestamp:1769763597018 ViewWillInit viewName:KRScrollContentView viewClassName:ListContentView ref:120
+            timestamp:1769763597018 ViewDidInit viewName:KRScrollContentView viewClassName:ListContentView ref:120
+            timestamp:1769763597018 ViewWillInit viewName:KRView viewClassName:RefreshView ref:119
+                timestamp:1769763597018 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:121
+                timestamp:1769763597018 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:121
+            timestamp:1769763597018 ViewDidInit viewName:KRView viewClassName:RefreshView ref:119
+            timestamp:1769763597019 ViewWillInit viewName:KRView viewClassName:LoopDirectivesView ref:122
+                timestamp:1769763597023 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:123
+                timestamp:1769763597023 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:123
+                timestamp:1769763597023 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:31
+                timestamp:1769763597023 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:31
+                timestamp:1769763597026 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:124
+                timestamp:1769763597026 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:124
+                timestamp:1769763597027 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:32
+                timestamp:1769763597027 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:32
+                timestamp:1769763597027 ViewWillInit viewName:KRView viewClassName:DivView ref:125
+                    timestamp:1769763597028 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:126
+                    timestamp:1769763597028 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:126
+                    timestamp:1769763597029 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:127
+                    timestamp:1769763597029 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:127
+                timestamp:1769763597029 ViewDidInit viewName:KRView viewClassName:DivView ref:125
+                timestamp:1769763597029 ViewWillInit viewName:KRView viewClassName:DivView ref:128
+                    timestamp:1769763597030 ViewWillInit viewName:KRView viewClassName:DivView ref:129
+                        timestamp:1769763597030 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:130
+                        timestamp:1769763597048 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:130
+                        timestamp:1769763597048 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:131
+                        timestamp:1769763597048 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:131
+                    timestamp:1769763597048 ViewDidInit viewName:KRView viewClassName:DivView ref:129
+                    timestamp:1769763597048 ViewWillInit viewName:KRView viewClassName:DivView ref:132
+                        timestamp:1769763597049 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:133
+                        timestamp:1769763597049 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:133
+                        timestamp:1769763597050 ViewWillInit viewName:KRView viewClassName:DivView ref:135
+                            timestamp:1769763597050 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:136
+                            timestamp:1769763597051 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:136
+                            timestamp:1769763597052 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:137
+                            timestamp:1769763597053 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:137
+                            timestamp:1769763597054 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:138
+                            timestamp:1769763597054 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:138
+                        timestamp:1769763597054 ViewDidInit viewName:KRView viewClassName:DivView ref:135
+                        timestamp:1769763597054 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:134
+                        timestamp:1769763597054 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:134
+                    timestamp:1769763597054 ViewDidInit viewName:KRView viewClassName:DivView ref:132
+                timestamp:1769763597054 ViewDidInit viewName:KRView viewClassName:DivView ref:128
+                timestamp:1769763597054 ViewWillInit viewName:KRView viewClassName:DivView ref:139
+                    timestamp:1769763597054 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:140
+                    timestamp:1769763597054 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:140
+                timestamp:1769763597054 ViewDidInit viewName:KRView viewClassName:DivView ref:139
+                timestamp:1769763597056 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:141
+                timestamp:1769763597056 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:141
+                timestamp:1769763597056 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:33
+                timestamp:1769763597056 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:33
+                timestamp:1769763597056 ViewWillInit viewName:KRView viewClassName:DivView ref:142
+                    timestamp:1769763597057 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:143
+                    timestamp:1769763597057 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:143
+                    timestamp:1769763597060 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:144
+                    timestamp:1769763597062 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:144
+                timestamp:1769763597062 ViewDidInit viewName:KRView viewClassName:DivView ref:142
+                timestamp:1769763597062 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:145
+                timestamp:1769763597062 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:145
+                timestamp:1769763597062 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:146
+                timestamp:1769763597063 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:146
+                timestamp:1769763597063 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:147
+                timestamp:1769763597063 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:147
+                timestamp:1769763597064 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:34
+                timestamp:1769763597064 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:34
+                timestamp:1769763597064 ViewWillInit viewName:KRView viewClassName:DivView ref:148
+                timestamp:1769763597064 ViewDidInit viewName:KRView viewClassName:DivView ref:148
+                timestamp:1769763597065 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:149
+                timestamp:1769763597065 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:149
+                timestamp:1769763597065 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:35
+                timestamp:1769763597065 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:35
+                timestamp:1769763597065 ViewWillInit viewName:KRView viewClassName:DivView ref:150
+                    timestamp:1769763597065 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:151
+                    timestamp:1769763597066 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:151
+                    timestamp:1769763597066 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:152
+                    timestamp:1769763597066 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:152
+                timestamp:1769763597066 ViewDidInit viewName:KRView viewClassName:DivView ref:150
+                timestamp:1769763597066 ViewWillInit viewName:KRView viewClassName:DivView ref:153
+                    timestamp:1769763597066 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:154
+                    timestamp:1769763597066 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:154
+                    timestamp:1769763597066 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:155
+                    timestamp:1769763597067 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:155
+                timestamp:1769763597067 ViewDidInit viewName:KRView viewClassName:DivView ref:153
+                timestamp:1769763597067 ViewWillInit viewName:KRView viewClassName:DivView ref:156
+                    timestamp:1769763597067 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:157
+                    timestamp:1769763597067 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:157
+                    timestamp:1769763597067 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:158
+                    timestamp:1769763597067 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:158
+                    timestamp:1769763597067 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:159
+                    timestamp:1769763597068 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:159
+                timestamp:1769763597068 ViewDidInit viewName:KRView viewClassName:DivView ref:156
+                timestamp:1769763597068 ViewWillInit viewName:KRView viewClassName:DivView ref:160
+                timestamp:1769763597068 ViewDidInit viewName:KRView viewClassName:DivView ref:160
+                timestamp:1769763597068 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:161
+                timestamp:1769763597068 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:161
+                timestamp:1769763597068 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:36
+                timestamp:1769763597068 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:36
+                timestamp:1769763597069 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:162
+                timestamp:1769763597069 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:162
+                timestamp:1769763597069 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:37
+                timestamp:1769763597069 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:37
+                timestamp:1769763597069 ViewWillInit viewName:KRView viewClassName:DivView ref:163
+                    timestamp:1769763597069 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:164
+                    timestamp:1769763597069 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:164
+                    timestamp:1769763597069 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:165
+                    timestamp:1769763597069 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:165
+                timestamp:1769763597069 ViewDidInit viewName:KRView viewClassName:DivView ref:163
+                timestamp:1769763597069 ViewWillInit viewName:KRView viewClassName:DivView ref:166
+                    timestamp:1769763597069 ViewWillInit viewName:KRView viewClassName:DivView ref:167
+                        timestamp:1769763597069 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:168
+                        timestamp:1769763597070 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:168
+                        timestamp:1769763597070 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:169
+                        timestamp:1769763597070 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:169
+                    timestamp:1769763597070 ViewDidInit viewName:KRView viewClassName:DivView ref:167
+                    timestamp:1769763597070 ViewWillInit viewName:KRView viewClassName:DivView ref:170
+                        timestamp:1769763597070 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:171
+                        timestamp:1769763597070 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:171
+                        timestamp:1769763597070 ViewWillInit viewName:KRView viewClassName:DivView ref:173
+                            timestamp:1769763597070 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:174
+                            timestamp:1769763597070 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:174
+                            timestamp:1769763597070 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:175
+                            timestamp:1769763597070 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:175
+                            timestamp:1769763597070 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:176
+                            timestamp:1769763597070 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:176
+                        timestamp:1769763597070 ViewDidInit viewName:KRView viewClassName:DivView ref:173
+                        timestamp:1769763597070 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:172
+                        timestamp:1769763597070 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:172
+                    timestamp:1769763597070 ViewDidInit viewName:KRView viewClassName:DivView ref:170
+                timestamp:1769763597070 ViewDidInit viewName:KRView viewClassName:DivView ref:166
+                timestamp:1769763597070 ViewWillInit viewName:KRView viewClassName:DivView ref:177
+                    timestamp:1769763597071 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:178
+                    timestamp:1769763597071 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:178
+                timestamp:1769763597071 ViewDidInit viewName:KRView viewClassName:DivView ref:177
+                timestamp:1769763597071 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:179
+                timestamp:1769763597071 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:179
+                timestamp:1769763597071 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:38
+                timestamp:1769763597071 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:38
+                timestamp:1769763597071 ViewWillInit viewName:KRView viewClassName:DivView ref:180
+                    timestamp:1769763597071 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:181
+                    timestamp:1769763597071 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:181
+                    timestamp:1769763597071 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:182
+                    timestamp:1769763597071 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:182
+                timestamp:1769763597071 ViewDidInit viewName:KRView viewClassName:DivView ref:180
+                timestamp:1769763597071 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:183
+                timestamp:1769763597071 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:183
+                timestamp:1769763597071 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:184
+                timestamp:1769763597071 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:184
+                timestamp:1769763597072 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:185
+                timestamp:1769763597072 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:185
+                timestamp:1769763597072 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:186
+                timestamp:1769763597072 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:186
+                timestamp:1769763597072 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:187
+                timestamp:1769763597072 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:187
+                timestamp:1769763597072 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:188
+                timestamp:1769763597072 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:188
+                timestamp:1769763597072 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:189
+                timestamp:1769763597072 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:189
+                timestamp:1769763597072 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:39
+                timestamp:1769763597072 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:39
+                timestamp:1769763597072 ViewWillInit viewName:KRView viewClassName:DivView ref:190
+                timestamp:1769763597073 ViewDidInit viewName:KRView viewClassName:DivView ref:190
+                timestamp:1769763597073 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:191
+                timestamp:1769763597073 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:191
+                timestamp:1769763597073 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:40
+                timestamp:1769763597073 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:40
+                timestamp:1769763597073 ViewWillInit viewName:KRView viewClassName:DivView ref:192
+                    timestamp:1769763597073 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:193
+                    timestamp:1769763597073 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:193
+                    timestamp:1769763597073 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:194
+                    timestamp:1769763597074 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:194
+                timestamp:1769763597074 ViewDidInit viewName:KRView viewClassName:DivView ref:192
+                timestamp:1769763597074 ViewWillInit viewName:KRView viewClassName:DivView ref:195
+                    timestamp:1769763597074 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:196
+                    timestamp:1769763597074 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:196
+                    timestamp:1769763597074 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:197
+                    timestamp:1769763597074 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:197
+                timestamp:1769763597074 ViewDidInit viewName:KRView viewClassName:DivView ref:195
+                timestamp:1769763597074 ViewWillInit viewName:KRView viewClassName:DivView ref:198
+                    timestamp:1769763597074 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:199
+                    timestamp:1769763597074 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:199
+                    timestamp:1769763597074 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:200
+                    timestamp:1769763597074 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:200
+                    timestamp:1769763597074 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:201
+                    timestamp:1769763597074 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:201
+                timestamp:1769763597075 ViewDidInit viewName:KRView viewClassName:DivView ref:198
+                timestamp:1769763597075 ViewWillInit viewName:KRView viewClassName:DivView ref:202
+                timestamp:1769763597075 ViewDidInit viewName:KRView viewClassName:DivView ref:202
+                timestamp:1769763597075 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:203
+                timestamp:1769763597075 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:203
+                timestamp:1769763597075 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:41
+                timestamp:1769763597075 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:41
+                timestamp:1769763597075 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:204
+                timestamp:1769763597075 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:204
+                timestamp:1769763597075 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:42
+                timestamp:1769763597075 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:42
+                timestamp:1769763597075 ViewWillInit viewName:KRView viewClassName:DivView ref:205
+                    timestamp:1769763597075 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:206
+                    timestamp:1769763597075 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:206
+                    timestamp:1769763597075 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:207
+                    timestamp:1769763597075 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:207
+                timestamp:1769763597075 ViewDidInit viewName:KRView viewClassName:DivView ref:205
+                timestamp:1769763597075 ViewWillInit viewName:KRView viewClassName:DivView ref:208
+                    timestamp:1769763597075 ViewWillInit viewName:KRView viewClassName:DivView ref:209
+                        timestamp:1769763597075 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:210
+                        timestamp:1769763597076 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:210
+                        timestamp:1769763597076 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:212
+                        timestamp:1769763597076 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:212
+                        timestamp:1769763597076 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:211
+                        timestamp:1769763597076 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:211
+                    timestamp:1769763597076 ViewDidInit viewName:KRView viewClassName:DivView ref:209
+                    timestamp:1769763597076 ViewWillInit viewName:KRView viewClassName:DivView ref:213
+                        timestamp:1769763597076 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:214
+                        timestamp:1769763597077 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:214
+                        timestamp:1769763597077 ViewWillInit viewName:KRView viewClassName:DivView ref:216
+                            timestamp:1769763597077 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:217
+                            timestamp:1769763597077 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:217
+                            timestamp:1769763597077 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:218
+                            timestamp:1769763597077 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:218
+                            timestamp:1769763597077 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:219
+                            timestamp:1769763597078 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:219
+                        timestamp:1769763597078 ViewDidInit viewName:KRView viewClassName:DivView ref:216
+                        timestamp:1769763597078 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:215
+                        timestamp:1769763597078 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:215
+                    timestamp:1769763597078 ViewDidInit viewName:KRView viewClassName:DivView ref:213
+                timestamp:1769763597078 ViewDidInit viewName:KRView viewClassName:DivView ref:208
+                timestamp:1769763597078 ViewWillInit viewName:KRView viewClassName:DivView ref:220
+                    timestamp:1769763597078 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:221
+                    timestamp:1769763597078 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:221
+                timestamp:1769763597078 ViewDidInit viewName:KRView viewClassName:DivView ref:220
+                timestamp:1769763597078 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:222
+                timestamp:1769763597078 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:222
+                timestamp:1769763597078 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:43
+                timestamp:1769763597078 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:43
+                timestamp:1769763597078 ViewWillInit viewName:KRView viewClassName:DivView ref:223
+                    timestamp:1769763597078 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:224
+                    timestamp:1769763597078 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:224
+                    timestamp:1769763597078 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:225
+                    timestamp:1769763597079 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:225
+                timestamp:1769763597080 ViewDidInit viewName:KRView viewClassName:DivView ref:223
+                timestamp:1769763597080 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:226
+                timestamp:1769763597080 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:226
+                timestamp:1769763597080 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:227
+                timestamp:1769763597080 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:227
+                timestamp:1769763597081 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:228
+                timestamp:1769763597081 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:228
+                timestamp:1769763597081 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:44
+                timestamp:1769763597081 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:44
+                timestamp:1769763597081 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:229
+                timestamp:1769763597081 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:229
+                timestamp:1769763597081 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:45
+                timestamp:1769763597081 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:45
+                timestamp:1769763597081 ViewWillInit viewName:KRView viewClassName:DivView ref:230
+                    timestamp:1769763597081 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:231
+                    timestamp:1769763597081 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:231
+                    timestamp:1769763597082 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:232
+                    timestamp:1769763597083 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:232
+                timestamp:1769763597083 ViewDidInit viewName:KRView viewClassName:DivView ref:230
+                timestamp:1769763597084 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:233
+                timestamp:1769763597084 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:233
+                timestamp:1769763597084 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:234
+                timestamp:1769763597084 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:234
+                timestamp:1769763597084 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:235
+                timestamp:1769763597084 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:235
+                timestamp:1769763597084 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:236
+                timestamp:1769763597084 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:236
+                timestamp:1769763597084 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:237
+                timestamp:1769763597084 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:237
+                timestamp:1769763597084 ViewWillInit viewName:KRView viewClassName:DivView ref:238
+                timestamp:1769763597085 ViewDidInit viewName:KRView viewClassName:DivView ref:238
+                timestamp:1769763597085 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:239
+                timestamp:1769763597085 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:239
+                timestamp:1769763597086 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:46
+                timestamp:1769763597086 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:46
+                timestamp:1769763597086 ViewWillInit viewName:KRView viewClassName:DivView ref:240
+                    timestamp:1769763597086 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:241
+                    timestamp:1769763597086 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:241
+                    timestamp:1769763597086 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:242
+                    timestamp:1769763597087 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:242
+                timestamp:1769763597087 ViewDidInit viewName:KRView viewClassName:DivView ref:240
+                timestamp:1769763597087 ViewWillInit viewName:KRView viewClassName:DivView ref:243
+                    timestamp:1769763597087 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:244
+                    timestamp:1769763597087 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:244
+                    timestamp:1769763597087 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:245
+                    timestamp:1769763597088 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:245
+                timestamp:1769763597088 ViewDidInit viewName:KRView viewClassName:DivView ref:243
+                timestamp:1769763597088 ViewWillInit viewName:KRView viewClassName:DivView ref:246
+                    timestamp:1769763597088 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:247
+                    timestamp:1769763597088 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:247
+                    timestamp:1769763597088 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:248
+                    timestamp:1769763597088 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:248
+                    timestamp:1769763597088 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:249
+                    timestamp:1769763597088 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:249
+                timestamp:1769763597088 ViewDidInit viewName:KRView viewClassName:DivView ref:246
+                timestamp:1769763597088 ViewWillInit viewName:KRView viewClassName:DivView ref:250
+                timestamp:1769763597088 ViewDidInit viewName:KRView viewClassName:DivView ref:250
+                timestamp:1769763597089 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:251
+                timestamp:1769763597089 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:251
+                timestamp:1769763597089 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:47
+                timestamp:1769763597089 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:47
+                timestamp:1769763597090 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:252
+                timestamp:1769763597090 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:252
+                timestamp:1769763597090 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:48
+                timestamp:1769763597090 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:48
+                timestamp:1769763597090 ViewWillInit viewName:KRView viewClassName:DivView ref:253
+                    timestamp:1769763597090 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:254
+                    timestamp:1769763597090 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:254
+                    timestamp:1769763597090 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:255
+                    timestamp:1769763597090 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:255
+                timestamp:1769763597090 ViewDidInit viewName:KRView viewClassName:DivView ref:253
+                timestamp:1769763597090 ViewWillInit viewName:KRView viewClassName:DivView ref:256
+                    timestamp:1769763597090 ViewWillInit viewName:KRView viewClassName:DivView ref:257
+                        timestamp:1769763597090 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:258
+                        timestamp:1769763597090 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:258
+                        timestamp:1769763597090 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:259
+                        timestamp:1769763597090 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:259
+                    timestamp:1769763597090 ViewDidInit viewName:KRView viewClassName:DivView ref:257
+                    timestamp:1769763597090 ViewWillInit viewName:KRView viewClassName:DivView ref:260
+                        timestamp:1769763597090 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:261
+                        timestamp:1769763597090 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:261
+                        timestamp:1769763597091 ViewWillInit viewName:KRView viewClassName:DivView ref:263
+                            timestamp:1769763597091 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:264
+                            timestamp:1769763597091 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:264
+                            timestamp:1769763597091 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:265
+                            timestamp:1769763597091 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:265
+                            timestamp:1769763597091 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:266
+                            timestamp:1769763597091 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:266
+                        timestamp:1769763597091 ViewDidInit viewName:KRView viewClassName:DivView ref:263
+                        timestamp:1769763597091 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:262
+                        timestamp:1769763597091 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:262
+                    timestamp:1769763597091 ViewDidInit viewName:KRView viewClassName:DivView ref:260
+                timestamp:1769763597091 ViewDidInit viewName:KRView viewClassName:DivView ref:256
+                timestamp:1769763597091 ViewWillInit viewName:KRView viewClassName:DivView ref:267
+                    timestamp:1769763597091 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:268
+                    timestamp:1769763597091 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:268
+                timestamp:1769763597091 ViewDidInit viewName:KRView viewClassName:DivView ref:267
+                timestamp:1769763597091 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:269
+                timestamp:1769763597091 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:269
+                timestamp:1769763597091 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:49
+                timestamp:1769763597091 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:49
+                timestamp:1769763597091 ViewWillInit viewName:KRView viewClassName:DivView ref:270
+                    timestamp:1769763597091 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:271
+                    timestamp:1769763597092 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:271
+                    timestamp:1769763597092 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:272
+                    timestamp:1769763597092 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:272
+                timestamp:1769763597092 ViewDidInit viewName:KRView viewClassName:DivView ref:270
+                timestamp:1769763597092 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:273
+                timestamp:1769763597092 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:273
+                timestamp:1769763597092 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:274
+                timestamp:1769763597092 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:274
+                timestamp:1769763597093 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:275
+                timestamp:1769763597093 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:275
+                timestamp:1769763597093 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:50
+                timestamp:1769763597093 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:50
+                timestamp:1769763597093 ViewWillInit viewName:KRView viewClassName:DivView ref:276
+                timestamp:1769763597093 ViewDidInit viewName:KRView viewClassName:DivView ref:276
+                timestamp:1769763597093 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:277
+                timestamp:1769763597093 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:277
+                timestamp:1769763597093 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:51
+                timestamp:1769763597093 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:51
+                timestamp:1769763597093 ViewWillInit viewName:KRView viewClassName:DivView ref:278
+                    timestamp:1769763597093 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:279
+                    timestamp:1769763597093 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:279
+                    timestamp:1769763597093 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:280
+                    timestamp:1769763597093 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:280
+                timestamp:1769763597093 ViewDidInit viewName:KRView viewClassName:DivView ref:278
+                timestamp:1769763597093 ViewWillInit viewName:KRView viewClassName:DivView ref:281
+                    timestamp:1769763597093 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:282
+                    timestamp:1769763597094 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:282
+                    timestamp:1769763597094 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:283
+                    timestamp:1769763597094 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:283
+                timestamp:1769763597094 ViewDidInit viewName:KRView viewClassName:DivView ref:281
+                timestamp:1769763597094 ViewWillInit viewName:KRView viewClassName:DivView ref:284
+                    timestamp:1769763597094 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:285
+                    timestamp:1769763597094 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:285
+                    timestamp:1769763597094 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:286
+                    timestamp:1769763597095 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:286
+                    timestamp:1769763597095 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:287
+                    timestamp:1769763597095 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:287
+                timestamp:1769763597095 ViewDidInit viewName:KRView viewClassName:DivView ref:284
+                timestamp:1769763597095 ViewWillInit viewName:KRView viewClassName:DivView ref:288
+                timestamp:1769763597095 ViewDidInit viewName:KRView viewClassName:DivView ref:288
+            timestamp:1769763597095 ViewDidInit viewName:KRView viewClassName:LoopDirectivesView ref:122
+            timestamp:1769763597095 ViewWillInit viewName:KRView viewClassName:FooterRefreshView ref:290
+                timestamp:1769763597096 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:291
+                timestamp:1769763597096 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:291
+            timestamp:1769763597096 ViewDidInit viewName:KRView viewClassName:FooterRefreshView ref:290
+            timestamp:1769763597096 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:289
+            timestamp:1769763597096 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:289
+        timestamp:1769763597096 ViewDidInit viewName:KRListView viewClassName:ListView ref:118
+    timestamp:1769763597097 FireObserverFnEnd propertyKey:31_feeds observerCount:3
+timestamp:1769763597097 ModuleCallbackEnd moduleName:HRBridgeModule method:readAssetFile sync:true callbackRef:25
+timestamp:1769763597097 CallModuleStart moduleName:KRPerformanceModule method:onPageCreateFinish sync:false callbackRef:0
+timestamp:1769763597097 CallModuleEnd moduleName:KRPerformanceModule method:onPageCreateFinish sync:false callbackRef:0
+timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:292
+timestamp:1769763597098 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:292
+timestamp:1769763597098 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:52
+timestamp:1769763597098 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:52
+timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:293
+timestamp:1769763597098 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:293
+timestamp:1769763597098 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:53
+timestamp:1769763597098 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:53
+timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:DivView ref:294
+    timestamp:1769763597098 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:295
+    timestamp:1769763597098 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:295
+    timestamp:1769763597098 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:296
+    timestamp:1769763597098 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:296
+timestamp:1769763597098 ViewDidInit viewName:KRView viewClassName:DivView ref:294
+timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:DivView ref:297
+    timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:DivView ref:298
+        timestamp:1769763597098 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:299
+        timestamp:1769763597098 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:299
+        timestamp:1769763597098 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:300
+        timestamp:1769763597098 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:300
+    timestamp:1769763597098 ViewDidInit viewName:KRView viewClassName:DivView ref:298
+    timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:DivView ref:301
+        timestamp:1769763597098 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:302
+        timestamp:1769763597098 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:302
+        timestamp:1769763597098 ViewWillInit viewName:KRView viewClassName:DivView ref:304
+            timestamp:1769763597098 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:305
+            timestamp:1769763597098 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:305
+            timestamp:1769763597098 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:306
+            timestamp:1769763597099 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:306
+            timestamp:1769763597099 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:307
+            timestamp:1769763597099 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:307
+        timestamp:1769763597099 ViewDidInit viewName:KRView viewClassName:DivView ref:304
+        timestamp:1769763597099 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:303
+        timestamp:1769763597099 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:303
+    timestamp:1769763597099 ViewDidInit viewName:KRView viewClassName:DivView ref:301
+timestamp:1769763597099 ViewDidInit viewName:KRView viewClassName:DivView ref:297
+timestamp:1769763597099 ViewWillInit viewName:KRView viewClassName:DivView ref:308
+    timestamp:1769763597099 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:309
+    timestamp:1769763597099 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:309
+timestamp:1769763597099 ViewDidInit viewName:KRView viewClassName:DivView ref:308
+timestamp:1769763597099 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:310
+timestamp:1769763597100 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:310
+timestamp:1769763597100 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:54
+timestamp:1769763597100 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:54
+timestamp:1769763597100 ViewWillInit viewName:KRView viewClassName:DivView ref:311
+    timestamp:1769763597100 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:312
+    timestamp:1769763597100 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:312
+    timestamp:1769763597100 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:313
+    timestamp:1769763597101 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:313
+timestamp:1769763597101 ViewDidInit viewName:KRView viewClassName:DivView ref:311
+timestamp:1769763597101 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:314
+timestamp:1769763597101 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:314
+timestamp:1769763597101 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:315
+timestamp:1769763597101 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:315
+timestamp:1769763597101 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:316
+timestamp:1769763597101 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:316
+timestamp:1769763597101 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:55
+timestamp:1769763597101 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:55
+timestamp:1769763597101 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:317
+timestamp:1769763597101 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:317
+timestamp:1769763597101 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:56
+timestamp:1769763597101 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:56
+timestamp:1769763597101 ViewWillInit viewName:KRView viewClassName:DivView ref:318
+    timestamp:1769763597101 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:319
+    timestamp:1769763597101 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:319
+    timestamp:1769763597101 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:320
+    timestamp:1769763597102 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:320
+timestamp:1769763597102 ViewDidInit viewName:KRView viewClassName:DivView ref:318
+timestamp:1769763597102 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:321
+timestamp:1769763597102 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:321
+timestamp:1769763597102 ViewWillInit viewName:KRView viewClassName:DivView ref:322
+    timestamp:1769763597102 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:323
+    timestamp:1769763597102 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:323
+timestamp:1769763597102 ViewDidInit viewName:KRView viewClassName:DivView ref:322
+timestamp:1769763597102 ViewWillInit viewName:KRView viewClassName:DivView ref:324
+timestamp:1769763597102 ViewDidInit viewName:KRView viewClassName:DivView ref:324
+timestamp:1769763597102 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:325
+timestamp:1769763597102 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:325
+timestamp:1769763597102 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:57
+timestamp:1769763597102 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:57
+timestamp:1769763597102 ViewWillInit viewName:KRView viewClassName:DivView ref:326
+    timestamp:1769763597102 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:327
+    timestamp:1769763597102 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:327
+    timestamp:1769763597102 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:328
+    timestamp:1769763597103 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:328
+timestamp:1769763597103 ViewDidInit viewName:KRView viewClassName:DivView ref:326
+timestamp:1769763597103 ViewWillInit viewName:KRView viewClassName:DivView ref:329
+    timestamp:1769763597103 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:330
+    timestamp:1769763597103 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:330
+    timestamp:1769763597103 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:331
+    timestamp:1769763597103 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:331
+timestamp:1769763597103 ViewDidInit viewName:KRView viewClassName:DivView ref:329
+timestamp:1769763597103 ViewWillInit viewName:KRView viewClassName:DivView ref:332
+    timestamp:1769763597103 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:333
+    timestamp:1769763597103 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:333
+    timestamp:1769763597103 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:334
+    timestamp:1769763597103 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:334
+    timestamp:1769763597103 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:335
+    timestamp:1769763597103 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:335
+timestamp:1769763597103 ViewDidInit viewName:KRView viewClassName:DivView ref:332
+timestamp:1769763597103 ViewWillInit viewName:KRView viewClassName:DivView ref:336
+timestamp:1769763597103 ViewDidInit viewName:KRView viewClassName:DivView ref:336
+timestamp:1769763597103 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:337
+timestamp:1769763597103 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:337
+timestamp:1769763597104 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:58
+timestamp:1769763597104 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:58
+timestamp:1769763597104 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:338
+timestamp:1769763597104 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:338
+timestamp:1769763597104 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:59
+timestamp:1769763597104 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:59
+timestamp:1769763597104 ViewWillInit viewName:KRView viewClassName:DivView ref:339
+    timestamp:1769763597104 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:340
+    timestamp:1769763597104 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:340
+    timestamp:1769763597104 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:341
+    timestamp:1769763597104 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:341
+timestamp:1769763597104 ViewDidInit viewName:KRView viewClassName:DivView ref:339
+timestamp:1769763597104 ViewWillInit viewName:KRView viewClassName:DivView ref:342
+    timestamp:1769763597104 ViewWillInit viewName:KRView viewClassName:DivView ref:343
+        timestamp:1769763597104 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:344
+        timestamp:1769763597104 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:344
+        timestamp:1769763597104 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:345
+        timestamp:1769763597104 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:345
+    timestamp:1769763597104 ViewDidInit viewName:KRView viewClassName:DivView ref:343
+    timestamp:1769763597104 ViewWillInit viewName:KRView viewClassName:DivView ref:346
+        timestamp:1769763597105 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:347
+        timestamp:1769763597105 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:347
+        timestamp:1769763597105 ViewWillInit viewName:KRView viewClassName:DivView ref:349
+            timestamp:1769763597105 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:350
+            timestamp:1769763597105 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:350
+            timestamp:1769763597105 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:351
+            timestamp:1769763597105 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:351
+            timestamp:1769763597105 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:352
+            timestamp:1769763597106 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:352
+        timestamp:1769763597106 ViewDidInit viewName:KRView viewClassName:DivView ref:349
+        timestamp:1769763597106 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:348
+        timestamp:1769763597106 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:348
+    timestamp:1769763597106 ViewDidInit viewName:KRView viewClassName:DivView ref:346
+timestamp:1769763597106 ViewDidInit viewName:KRView viewClassName:DivView ref:342
+timestamp:1769763597106 ViewWillInit viewName:KRView viewClassName:DivView ref:353
+    timestamp:1769763597106 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:354
+    timestamp:1769763597106 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:354
+timestamp:1769763597106 ViewDidInit viewName:KRView viewClassName:DivView ref:353
+timestamp:1769763597106 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:355
+timestamp:1769763597106 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:355
+timestamp:1769763597106 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:60
+timestamp:1769763597106 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:60
+timestamp:1769763597106 ViewWillInit viewName:KRView viewClassName:DivView ref:356
+    timestamp:1769763597106 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:357
+    timestamp:1769763597106 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:357
+    timestamp:1769763597106 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:358
+    timestamp:1769763597107 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:358
+timestamp:1769763597107 ViewDidInit viewName:KRView viewClassName:DivView ref:356
+timestamp:1769763597107 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:359
+timestamp:1769763597107 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:359
+timestamp:1769763597107 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:360
+timestamp:1769763597107 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:360
+timestamp:1769763597107 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:361
+timestamp:1769763597107 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:361
+timestamp:1769763597107 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:61
+timestamp:1769763597107 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:61
+timestamp:1769763597107 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:362
+timestamp:1769763597107 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:362
+timestamp:1769763597107 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:62
+timestamp:1769763597107 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:62
+timestamp:1769763597108 ViewWillInit viewName:KRView viewClassName:DivView ref:363
+    timestamp:1769763597108 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:364
+    timestamp:1769763597108 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:364
+    timestamp:1769763597108 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:365
+    timestamp:1769763597108 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:365
+timestamp:1769763597108 ViewDidInit viewName:KRView viewClassName:DivView ref:363
+timestamp:1769763597109 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:366
+timestamp:1769763597109 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:366
+timestamp:1769763597109 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:367
+timestamp:1769763597109 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:367
+timestamp:1769763597109 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:368
+timestamp:1769763597109 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:368
+timestamp:1769763597109 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:369
+timestamp:1769763597109 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:369
+timestamp:1769763597109 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:370
+timestamp:1769763597109 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:370
+timestamp:1769763597109 ViewWillInit viewName:KRView viewClassName:DivView ref:371
+timestamp:1769763597109 ViewDidInit viewName:KRView viewClassName:DivView ref:371
+timestamp:1769763597109 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:372
+timestamp:1769763597109 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:372
+timestamp:1769763597109 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:63
+timestamp:1769763597109 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:63
+timestamp:1769763597109 ViewWillInit viewName:KRView viewClassName:DivView ref:373
+    timestamp:1769763597109 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:374
+    timestamp:1769763597109 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:374
+    timestamp:1769763597109 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:375
+    timestamp:1769763597109 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:375
+timestamp:1769763597109 ViewDidInit viewName:KRView viewClassName:DivView ref:373
+timestamp:1769763597109 ViewWillInit viewName:KRView viewClassName:DivView ref:376
+    timestamp:1769763597109 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:377
+    timestamp:1769763597110 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:377
+    timestamp:1769763597110 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:378
+    timestamp:1769763597110 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:378
+timestamp:1769763597110 ViewDidInit viewName:KRView viewClassName:DivView ref:376
+timestamp:1769763597110 ViewWillInit viewName:KRView viewClassName:DivView ref:379
+    timestamp:1769763597110 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:380
+    timestamp:1769763597110 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:380
+    timestamp:1769763597110 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:381
+    timestamp:1769763597110 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:381
+    timestamp:1769763597110 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:382
+    timestamp:1769763597110 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:382
+timestamp:1769763597110 ViewDidInit viewName:KRView viewClassName:DivView ref:379
+timestamp:1769763597110 ViewWillInit viewName:KRView viewClassName:DivView ref:383
+timestamp:1769763597110 ViewDidInit viewName:KRView viewClassName:DivView ref:383
+timestamp:1769763597110 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:384
+timestamp:1769763597111 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:384
+timestamp:1769763597111 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:64
+timestamp:1769763597111 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:64
+timestamp:1769763597111 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:385
+timestamp:1769763597111 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:385
+timestamp:1769763597111 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:65
+timestamp:1769763597111 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:65
+timestamp:1769763597111 ViewWillInit viewName:KRView viewClassName:DivView ref:386
+    timestamp:1769763597111 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:387
+    timestamp:1769763597111 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:387
+    timestamp:1769763597111 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:388
+    timestamp:1769763597111 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:388
+timestamp:1769763597111 ViewDidInit viewName:KRView viewClassName:DivView ref:386
+timestamp:1769763597111 ViewWillInit viewName:KRView viewClassName:DivView ref:389
+    timestamp:1769763597111 ViewWillInit viewName:KRView viewClassName:DivView ref:390
+        timestamp:1769763597111 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:391
+        timestamp:1769763597111 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:391
+        timestamp:1769763597111 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:392
+        timestamp:1769763597111 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:392
+    timestamp:1769763597111 ViewDidInit viewName:KRView viewClassName:DivView ref:390
+    timestamp:1769763597111 ViewWillInit viewName:KRView viewClassName:DivView ref:393
+        timestamp:1769763597112 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:394
+        timestamp:1769763597112 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:394
+        timestamp:1769763597112 ViewWillInit viewName:KRView viewClassName:DivView ref:396
+            timestamp:1769763597112 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:397
+            timestamp:1769763597112 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:397
+            timestamp:1769763597112 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:398
+            timestamp:1769763597112 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:398
+            timestamp:1769763597112 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:399
+            timestamp:1769763597112 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:399
+        timestamp:1769763597112 ViewDidInit viewName:KRView viewClassName:DivView ref:396
+        timestamp:1769763597112 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:395
+        timestamp:1769763597112 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:395
+    timestamp:1769763597112 ViewDidInit viewName:KRView viewClassName:DivView ref:393
+timestamp:1769763597112 ViewDidInit viewName:KRView viewClassName:DivView ref:389
+timestamp:1769763597112 ViewWillInit viewName:KRView viewClassName:DivView ref:400
+    timestamp:1769763597112 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:401
+    timestamp:1769763597113 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:401
+timestamp:1769763597113 ViewDidInit viewName:KRView viewClassName:DivView ref:400
+timestamp:1769763597113 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:402
+timestamp:1769763597113 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:402
+timestamp:1769763597113 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:66
+timestamp:1769763597113 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:66
+timestamp:1769763597113 ViewWillInit viewName:KRView viewClassName:DivView ref:403
+    timestamp:1769763597113 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:404
+    timestamp:1769763597113 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:404
+    timestamp:1769763597113 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:405
+    timestamp:1769763597113 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:405
+timestamp:1769763597113 ViewDidInit viewName:KRView viewClassName:DivView ref:403
+timestamp:1769763597113 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:406
+timestamp:1769763597113 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:406
+timestamp:1769763597113 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:407
+timestamp:1769763597113 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:407
+timestamp:1769763597113 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:408
+timestamp:1769763597113 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:408
+timestamp:1769763597113 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:409
+timestamp:1769763597118 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:409
+timestamp:1769763597118 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:410
+timestamp:1769763597118 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:410
+timestamp:1769763597119 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:67
+timestamp:1769763597119 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:67
+timestamp:1769763597119 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:411
+timestamp:1769763597119 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:411
+timestamp:1769763597119 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:68
+timestamp:1769763597119 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:68
+timestamp:1769763597119 ViewWillInit viewName:KRView viewClassName:DivView ref:412
+    timestamp:1769763597119 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:413
+    timestamp:1769763597120 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:413
+    timestamp:1769763597120 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:414
+    timestamp:1769763597122 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:414
+timestamp:1769763597122 ViewDidInit viewName:KRView viewClassName:DivView ref:412
+timestamp:1769763597122 ViewWillInit viewName:KRView viewClassName:DivView ref:415
+timestamp:1769763597122 ViewDidInit viewName:KRView viewClassName:DivView ref:415
+timestamp:1769763597122 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:416
+timestamp:1769763597122 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:416
+timestamp:1769763597122 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:69
+timestamp:1769763597122 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:69
+timestamp:1769763597122 ViewWillInit viewName:KRView viewClassName:DivView ref:417
+    timestamp:1769763597122 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:418
+    timestamp:1769763597122 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:418
+    timestamp:1769763597122 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:419
+    timestamp:1769763597122 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:419
+timestamp:1769763597122 ViewDidInit viewName:KRView viewClassName:DivView ref:417
+timestamp:1769763597122 ViewWillInit viewName:KRView viewClassName:DivView ref:420
+    timestamp:1769763597122 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:421
+    timestamp:1769763597122 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:421
+    timestamp:1769763597122 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:422
+    timestamp:1769763597122 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:422
+timestamp:1769763597122 ViewDidInit viewName:KRView viewClassName:DivView ref:420
+timestamp:1769763597122 ViewWillInit viewName:KRView viewClassName:DivView ref:423
+    timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:424
+    timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:424
+    timestamp:1769763597123 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:425
+    timestamp:1769763597123 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:425
+    timestamp:1769763597123 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:426
+    timestamp:1769763597123 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:426
+timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:DivView ref:423
+timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:DivView ref:427
+timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:DivView ref:427
+timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:428
+timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:428
+timestamp:1769763597123 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:70
+timestamp:1769763597123 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:70
+timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:429
+timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:429
+timestamp:1769763597123 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:71
+timestamp:1769763597123 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:71
+timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:DivView ref:430
+    timestamp:1769763597123 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:431
+    timestamp:1769763597123 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:431
+    timestamp:1769763597123 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:432
+    timestamp:1769763597123 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:432
+timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:DivView ref:430
+timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:DivView ref:433
+    timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:DivView ref:434
+        timestamp:1769763597123 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:435
+        timestamp:1769763597123 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:435
+        timestamp:1769763597123 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:436
+        timestamp:1769763597123 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:436
+    timestamp:1769763597123 ViewDidInit viewName:KRView viewClassName:DivView ref:434
+    timestamp:1769763597123 ViewWillInit viewName:KRView viewClassName:DivView ref:437
+        timestamp:1769763597123 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:438
+        timestamp:1769763597123 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:438
+        timestamp:1769763597124 ViewWillInit viewName:KRView viewClassName:DivView ref:440
+            timestamp:1769763597124 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:441
+            timestamp:1769763597124 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:441
+            timestamp:1769763597124 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:442
+            timestamp:1769763597124 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:442
+            timestamp:1769763597124 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:443
+            timestamp:1769763597124 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:443
+        timestamp:1769763597124 ViewDidInit viewName:KRView viewClassName:DivView ref:440
+        timestamp:1769763597124 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:439
+        timestamp:1769763597124 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:439
+    timestamp:1769763597124 ViewDidInit viewName:KRView viewClassName:DivView ref:437
+timestamp:1769763597124 ViewDidInit viewName:KRView viewClassName:DivView ref:433
+timestamp:1769763597124 ViewWillInit viewName:KRView viewClassName:DivView ref:444
+    timestamp:1769763597124 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:445
+    timestamp:1769763597124 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:445
+timestamp:1769763597124 ViewDidInit viewName:KRView viewClassName:DivView ref:444
+timestamp:1769763597124 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:446
+timestamp:1769763597124 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:446
+timestamp:1769763597124 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:72
+timestamp:1769763597124 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:72
+timestamp:1769763597124 ViewWillInit viewName:KRView viewClassName:DivView ref:447
+    timestamp:1769763597124 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:448
+    timestamp:1769763597124 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:448
+    timestamp:1769763597125 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:449
+    timestamp:1769763597125 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:449
+timestamp:1769763597125 ViewDidInit viewName:KRView viewClassName:DivView ref:447
+timestamp:1769763597125 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:450
+timestamp:1769763597125 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:450
+timestamp:1769763597125 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:451
+timestamp:1769763597125 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:451
+timestamp:1769763597125 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:452
+timestamp:1769763597125 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:452
+timestamp:1769763597125 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:73
+timestamp:1769763597125 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:73
+timestamp:1769763597125 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:453
+timestamp:1769763597125 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:453
+timestamp:1769763597125 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:74
+timestamp:1769763597125 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:74
+timestamp:1769763597125 ViewWillInit viewName:KRView viewClassName:DivView ref:454
+    timestamp:1769763597125 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:455
+    timestamp:1769763597125 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:455
+    timestamp:1769763597125 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:456
+    timestamp:1769763597126 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:456
+timestamp:1769763597126 ViewDidInit viewName:KRView viewClassName:DivView ref:454
+timestamp:1769763597126 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:457
+timestamp:1769763597126 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:457
+timestamp:1769763597126 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:458
+timestamp:1769763597126 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:458
+timestamp:1769763597126 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:459
+timestamp:1769763597126 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:459
+timestamp:1769763597126 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:460
+timestamp:1769763597126 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:460
+timestamp:1769763597126 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:461
+timestamp:1769763597126 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:461
+timestamp:1769763597126 ViewWillInit viewName:KRView viewClassName:DivView ref:462
+timestamp:1769763597127 ViewDidInit viewName:KRView viewClassName:DivView ref:462
+timestamp:1769763597127 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:463
+timestamp:1769763597127 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:463
+timestamp:1769763597127 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:75
+timestamp:1769763597127 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:75
+timestamp:1769763597127 ViewWillInit viewName:KRView viewClassName:DivView ref:464
+    timestamp:1769763597127 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:465
+    timestamp:1769763597127 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:465
+    timestamp:1769763597127 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:466
+    timestamp:1769763597127 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:466
+timestamp:1769763597127 ViewDidInit viewName:KRView viewClassName:DivView ref:464
+timestamp:1769763597127 ViewWillInit viewName:KRView viewClassName:DivView ref:467
+    timestamp:1769763597127 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:468
+    timestamp:1769763597127 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:468
+    timestamp:1769763597127 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:469
+    timestamp:1769763597127 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:469
+timestamp:1769763597127 ViewDidInit viewName:KRView viewClassName:DivView ref:467
+timestamp:1769763597127 ViewWillInit viewName:KRView viewClassName:DivView ref:470
+    timestamp:1769763597127 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:471
+    timestamp:1769763597127 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:471
+    timestamp:1769763597127 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:472
+    timestamp:1769763597127 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:472
+    timestamp:1769763597127 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:473
+    timestamp:1769763597128 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:473
+timestamp:1769763597128 ViewDidInit viewName:KRView viewClassName:DivView ref:470
+timestamp:1769763597128 ViewWillInit viewName:KRView viewClassName:DivView ref:474
+timestamp:1769763597128 ViewDidInit viewName:KRView viewClassName:DivView ref:474
+timestamp:1769763597128 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:475
+timestamp:1769763597128 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:475
+timestamp:1769763597128 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:76
+timestamp:1769763597128 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:76
+timestamp:1769763597128 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:476
+timestamp:1769763597128 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:476
+timestamp:1769763597128 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:77
+timestamp:1769763597128 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:77
+timestamp:1769763597128 ViewWillInit viewName:KRView viewClassName:DivView ref:477
+    timestamp:1769763597128 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:478
+    timestamp:1769763597128 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:478
+    timestamp:1769763597128 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:479
+    timestamp:1769763597128 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:479
+timestamp:1769763597128 ViewDidInit viewName:KRView viewClassName:DivView ref:477
+timestamp:1769763597128 ViewWillInit viewName:KRView viewClassName:DivView ref:480
+    timestamp:1769763597128 ViewWillInit viewName:KRView viewClassName:DivView ref:481
+        timestamp:1769763597128 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:482
+        timestamp:1769763597128 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:482
+        timestamp:1769763597129 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:483
+        timestamp:1769763597129 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:483
+    timestamp:1769763597129 ViewDidInit viewName:KRView viewClassName:DivView ref:481
+    timestamp:1769763597129 ViewWillInit viewName:KRView viewClassName:DivView ref:484
+        timestamp:1769763597129 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:485
+        timestamp:1769763597129 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:485
+        timestamp:1769763597129 ViewWillInit viewName:KRView viewClassName:DivView ref:487
+            timestamp:1769763597129 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:488
+            timestamp:1769763597129 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:488
+            timestamp:1769763597129 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:489
+            timestamp:1769763597129 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:489
+            timestamp:1769763597129 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:490
+            timestamp:1769763597129 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:490
+        timestamp:1769763597129 ViewDidInit viewName:KRView viewClassName:DivView ref:487
+        timestamp:1769763597129 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:486
+        timestamp:1769763597129 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:486
+    timestamp:1769763597129 ViewDidInit viewName:KRView viewClassName:DivView ref:484
+timestamp:1769763597129 ViewDidInit viewName:KRView viewClassName:DivView ref:480
+timestamp:1769763597129 ViewWillInit viewName:KRView viewClassName:DivView ref:491
+    timestamp:1769763597129 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:492
+    timestamp:1769763597130 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:492
+timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:DivView ref:491
+timestamp:1769763597130 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:493
+timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:493
+timestamp:1769763597130 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:78
+timestamp:1769763597130 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:78
+timestamp:1769763597130 ViewWillInit viewName:KRView viewClassName:DivView ref:494
+    timestamp:1769763597130 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:495
+    timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:495
+    timestamp:1769763597130 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:496
+    timestamp:1769763597130 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:496
+timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:DivView ref:494
+timestamp:1769763597130 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:497
+timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:497
+timestamp:1769763597130 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:498
+timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:498
+timestamp:1769763597130 ViewWillInit viewName:KRView viewClassName:DivView ref:499
+    timestamp:1769763597130 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:500
+    timestamp:1769763597130 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:500
+timestamp:1769763597130 ViewDidInit viewName:KRView viewClassName:DivView ref:499
+timestamp:1769763597131 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:501
+timestamp:1769763597131 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:501
+timestamp:1769763597131 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:79
+timestamp:1769763597131 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:79
+timestamp:1769763597131 ViewWillInit viewName:KRView viewClassName:DivView ref:502
+timestamp:1769763597131 ViewDidInit viewName:KRView viewClassName:DivView ref:502
+timestamp:1769763597131 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:503
+timestamp:1769763597131 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:503
+timestamp:1769763597131 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:80
+timestamp:1769763597131 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:80
+timestamp:1769763597131 ViewWillInit viewName:KRView viewClassName:DivView ref:504
+    timestamp:1769763597131 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:505
+    timestamp:1769763597131 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:505
+    timestamp:1769763597131 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:506
+    timestamp:1769763597131 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:506
+timestamp:1769763597131 ViewDidInit viewName:KRView viewClassName:DivView ref:504
+timestamp:1769763597131 ViewWillInit viewName:KRView viewClassName:DivView ref:507
+    timestamp:1769763597131 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:508
+    timestamp:1769763597131 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:508
+    timestamp:1769763597132 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:509
+    timestamp:1769763597132 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:509
+timestamp:1769763597132 ViewDidInit viewName:KRView viewClassName:DivView ref:507
+timestamp:1769763597132 ViewWillInit viewName:KRView viewClassName:DivView ref:510
+    timestamp:1769763597132 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:511
+    timestamp:1769763597132 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:511
+    timestamp:1769763597132 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:512
+    timestamp:1769763597132 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:512
+    timestamp:1769763597132 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:513
+    timestamp:1769763597132 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:513
+timestamp:1769763597132 ViewDidInit viewName:KRView viewClassName:DivView ref:510
+timestamp:1769763597132 ViewWillInit viewName:KRView viewClassName:DivView ref:514
+timestamp:1769763597133 ViewDidInit viewName:KRView viewClassName:DivView ref:514
+timestamp:1769763597133 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:515
+timestamp:1769763597133 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:515
+timestamp:1769763597133 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:81
+timestamp:1769763597133 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:81
+timestamp:1769763597133 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:516
+timestamp:1769763597133 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:516
+timestamp:1769763597133 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:82
+timestamp:1769763597133 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:82
+timestamp:1769763597133 ViewWillInit viewName:KRView viewClassName:DivView ref:517
+    timestamp:1769763597133 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:518
+    timestamp:1769763597133 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:518
+    timestamp:1769763597133 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:519
+    timestamp:1769763597133 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:519
+timestamp:1769763597133 ViewDidInit viewName:KRView viewClassName:DivView ref:517
+timestamp:1769763597133 ViewWillInit viewName:KRView viewClassName:DivView ref:520
+    timestamp:1769763597133 ViewWillInit viewName:KRView viewClassName:DivView ref:521
+        timestamp:1769763597133 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:522
+        timestamp:1769763597134 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:522
+        timestamp:1769763597134 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:523
+        timestamp:1769763597134 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:523
+    timestamp:1769763597134 ViewDidInit viewName:KRView viewClassName:DivView ref:521
+    timestamp:1769763597134 ViewWillInit viewName:KRView viewClassName:DivView ref:524
+        timestamp:1769763597134 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:525
+        timestamp:1769763597134 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:525
+        timestamp:1769763597134 ViewWillInit viewName:KRView viewClassName:DivView ref:527
+            timestamp:1769763597134 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:528
+            timestamp:1769763597134 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:528
+            timestamp:1769763597134 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:529
+            timestamp:1769763597134 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:529
+            timestamp:1769763597134 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:530
+            timestamp:1769763597134 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:530
+        timestamp:1769763597134 ViewDidInit viewName:KRView viewClassName:DivView ref:527
+        timestamp:1769763597134 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:526
+        timestamp:1769763597134 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:526
+    timestamp:1769763597134 ViewDidInit viewName:KRView viewClassName:DivView ref:524
+timestamp:1769763597134 ViewDidInit viewName:KRView viewClassName:DivView ref:520
+timestamp:1769763597134 ViewWillInit viewName:KRView viewClassName:DivView ref:531
+    timestamp:1769763597134 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:532
+    timestamp:1769763597135 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:532
+timestamp:1769763597135 ViewDidInit viewName:KRView viewClassName:DivView ref:531
+timestamp:1769763597135 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:533
+timestamp:1769763597135 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:533
+timestamp:1769763597135 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:83
+timestamp:1769763597135 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:83
+timestamp:1769763597135 ViewWillInit viewName:KRView viewClassName:DivView ref:534
+    timestamp:1769763597135 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:535
+    timestamp:1769763597135 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:535
+    timestamp:1769763597135 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:536
+    timestamp:1769763597136 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:536
+timestamp:1769763597136 ViewDidInit viewName:KRView viewClassName:DivView ref:534
+timestamp:1769763597136 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:537
+timestamp:1769763597136 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:537
+timestamp:1769763597137 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:538
+timestamp:1769763597137 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:538
+timestamp:1769763597137 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:539
+timestamp:1769763597137 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:539
+timestamp:1769763597137 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:84
+timestamp:1769763597137 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:84
+timestamp:1769763597137 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:540
+timestamp:1769763597137 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:540
+timestamp:1769763597137 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:85
+timestamp:1769763597137 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:85
+timestamp:1769763597137 ViewWillInit viewName:KRView viewClassName:DivView ref:541
+    timestamp:1769763597137 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:542
+    timestamp:1769763597137 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:542
+    timestamp:1769763597137 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:543
+    timestamp:1769763597138 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:543
+timestamp:1769763597138 ViewDidInit viewName:KRView viewClassName:DivView ref:541
+timestamp:1769763597138 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:544
+timestamp:1769763597138 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:544
+timestamp:1769763597139 ViewWillInit viewName:KRView viewClassName:DivView ref:545
+    timestamp:1769763597139 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:546
+    timestamp:1769763597139 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:546
+timestamp:1769763597139 ViewDidInit viewName:KRView viewClassName:DivView ref:545
+timestamp:1769763597139 ViewWillInit viewName:KRView viewClassName:DivView ref:547
+timestamp:1769763597139 ViewDidInit viewName:KRView viewClassName:DivView ref:547
+timestamp:1769763597139 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:548
+timestamp:1769763597139 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:548
+timestamp:1769763597139 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:86
+timestamp:1769763597139 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:86
+timestamp:1769763597139 ViewWillInit viewName:KRView viewClassName:DivView ref:549
+    timestamp:1769763597139 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:550
+    timestamp:1769763597139 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:550
+    timestamp:1769763597139 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:551
+    timestamp:1769763597139 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:551
+timestamp:1769763597139 ViewDidInit viewName:KRView viewClassName:DivView ref:549
+timestamp:1769763597139 ViewWillInit viewName:KRView viewClassName:DivView ref:552
+    timestamp:1769763597140 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:553
+    timestamp:1769763597140 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:553
+    timestamp:1769763597140 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:554
+    timestamp:1769763597140 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:554
+timestamp:1769763597140 ViewDidInit viewName:KRView viewClassName:DivView ref:552
+timestamp:1769763597140 ViewWillInit viewName:KRView viewClassName:DivView ref:555
+    timestamp:1769763597140 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:556
+    timestamp:1769763597140 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:556
+    timestamp:1769763597140 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:557
+    timestamp:1769763597140 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:557
+    timestamp:1769763597140 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:558
+    timestamp:1769763597141 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:558
+timestamp:1769763597141 ViewDidInit viewName:KRView viewClassName:DivView ref:555
+timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:DivView ref:559
+timestamp:1769763597141 ViewDidInit viewName:KRView viewClassName:DivView ref:559
+timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:560
+timestamp:1769763597141 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:560
+timestamp:1769763597141 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:87
+timestamp:1769763597141 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:87
+timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:561
+timestamp:1769763597141 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:561
+timestamp:1769763597141 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:88
+timestamp:1769763597141 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:88
+timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:DivView ref:562
+    timestamp:1769763597141 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:563
+    timestamp:1769763597141 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:563
+    timestamp:1769763597141 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:564
+    timestamp:1769763597141 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:564
+timestamp:1769763597141 ViewDidInit viewName:KRView viewClassName:DivView ref:562
+timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:DivView ref:565
+    timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:DivView ref:566
+        timestamp:1769763597141 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:567
+        timestamp:1769763597141 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:567
+        timestamp:1769763597141 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:568
+        timestamp:1769763597141 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:568
+    timestamp:1769763597141 ViewDidInit viewName:KRView viewClassName:DivView ref:566
+    timestamp:1769763597141 ViewWillInit viewName:KRView viewClassName:DivView ref:569
+        timestamp:1769763597141 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:570
+        timestamp:1769763597141 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:570
+        timestamp:1769763597142 ViewWillInit viewName:KRView viewClassName:DivView ref:572
+            timestamp:1769763597142 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:573
+            timestamp:1769763597142 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:573
+            timestamp:1769763597142 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:574
+            timestamp:1769763597143 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:574
+            timestamp:1769763597143 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:575
+            timestamp:1769763597143 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:575
+        timestamp:1769763597143 ViewDidInit viewName:KRView viewClassName:DivView ref:572
+        timestamp:1769763597143 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:571
+        timestamp:1769763597143 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:571
+    timestamp:1769763597143 ViewDidInit viewName:KRView viewClassName:DivView ref:569
+timestamp:1769763597143 ViewDidInit viewName:KRView viewClassName:DivView ref:565
+timestamp:1769763597143 ViewWillInit viewName:KRView viewClassName:DivView ref:576
+    timestamp:1769763597143 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:577
+    timestamp:1769763597143 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:577
+timestamp:1769763597143 ViewDidInit viewName:KRView viewClassName:DivView ref:576
+timestamp:1769763597143 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:578
+timestamp:1769763597143 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:578
+timestamp:1769763597144 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:89
+timestamp:1769763597144 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:89
+timestamp:1769763597144 ViewWillInit viewName:KRView viewClassName:DivView ref:579
+    timestamp:1769763597144 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:580
+    timestamp:1769763597145 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:580
+    timestamp:1769763597145 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:581
+    timestamp:1769763597145 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:581
+timestamp:1769763597145 ViewDidInit viewName:KRView viewClassName:DivView ref:579
+timestamp:1769763597145 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:582
+timestamp:1769763597145 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:582
+timestamp:1769763597145 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:583
+timestamp:1769763597145 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:583
+timestamp:1769763597145 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:584
+timestamp:1769763597145 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:584
+timestamp:1769763597145 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:90
+timestamp:1769763597145 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:90
+timestamp:1769763597145 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:585
+timestamp:1769763597145 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:585
+timestamp:1769763597146 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:91
+timestamp:1769763597146 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:91
+timestamp:1769763597146 ViewWillInit viewName:KRView viewClassName:DivView ref:586
+    timestamp:1769763597146 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:587
+    timestamp:1769763597146 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:587
+    timestamp:1769763597146 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:588
+    timestamp:1769763597147 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:588
+timestamp:1769763597147 ViewDidInit viewName:KRView viewClassName:DivView ref:586
+timestamp:1769763597147 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:589
+timestamp:1769763597147 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:589
+timestamp:1769763597147 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:590
+timestamp:1769763597147 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:590
+timestamp:1769763597147 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:591
+timestamp:1769763597147 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:591
+timestamp:1769763597147 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:592
+timestamp:1769763597147 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:592
+timestamp:1769763597147 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:593
+timestamp:1769763597148 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:593
+timestamp:1769763597148 ViewWillInit viewName:KRView viewClassName:DivView ref:594
+timestamp:1769763597148 ViewDidInit viewName:KRView viewClassName:DivView ref:594
+timestamp:1769763597148 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:595
+timestamp:1769763597148 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:595
+timestamp:1769763597148 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:92
+timestamp:1769763597148 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:92
+timestamp:1769763597148 ViewWillInit viewName:KRView viewClassName:DivView ref:596
+    timestamp:1769763597148 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:597
+    timestamp:1769763597148 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:597
+    timestamp:1769763597148 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:598
+    timestamp:1769763597148 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:598
+timestamp:1769763597148 ViewDidInit viewName:KRView viewClassName:DivView ref:596
+timestamp:1769763597148 ViewWillInit viewName:KRView viewClassName:DivView ref:599
+    timestamp:1769763597148 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:600
+    timestamp:1769763597148 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:600
+    timestamp:1769763597148 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:601
+    timestamp:1769763597148 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:601
+timestamp:1769763597148 ViewDidInit viewName:KRView viewClassName:DivView ref:599
+timestamp:1769763597149 ViewWillInit viewName:KRView viewClassName:DivView ref:602
+    timestamp:1769763597149 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:603
+    timestamp:1769763597149 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:603
+    timestamp:1769763597149 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:604
+    timestamp:1769763597149 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:604
+    timestamp:1769763597149 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:605
+    timestamp:1769763597149 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:605
+timestamp:1769763597149 ViewDidInit viewName:KRView viewClassName:DivView ref:602
+timestamp:1769763597149 ViewWillInit viewName:KRView viewClassName:DivView ref:606
+timestamp:1769763597149 ViewDidInit viewName:KRView viewClassName:DivView ref:606
+timestamp:1769763597149 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:607
+timestamp:1769763597149 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:607
+timestamp:1769763597149 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:93
+timestamp:1769763597149 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:93
+timestamp:1769763597149 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:608
+timestamp:1769763597149 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:608
+timestamp:1769763597150 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:94
+timestamp:1769763597150 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:94
+timestamp:1769763597150 ViewWillInit viewName:KRView viewClassName:DivView ref:609
+    timestamp:1769763597150 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:610
+    timestamp:1769763597150 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:610
+    timestamp:1769763597150 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:611
+    timestamp:1769763597150 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:611
+timestamp:1769763597150 ViewDidInit viewName:KRView viewClassName:DivView ref:609
+timestamp:1769763597150 ViewWillInit viewName:KRView viewClassName:DivView ref:612
+    timestamp:1769763597150 ViewWillInit viewName:KRView viewClassName:DivView ref:613
+        timestamp:1769763597150 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:614
+        timestamp:1769763597150 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:614
+        timestamp:1769763597150 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:615
+        timestamp:1769763597150 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:615
+    timestamp:1769763597150 ViewDidInit viewName:KRView viewClassName:DivView ref:613
+    timestamp:1769763597150 ViewWillInit viewName:KRView viewClassName:DivView ref:616
+        timestamp:1769763597151 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:617
+        timestamp:1769763597151 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:617
+        timestamp:1769763597151 ViewWillInit viewName:KRView viewClassName:DivView ref:619
+            timestamp:1769763597151 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:620
+            timestamp:1769763597153 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:620
+            timestamp:1769763597153 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:621
+            timestamp:1769763597154 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:621
+            timestamp:1769763597154 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:622
+            timestamp:1769763597154 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:622
+        timestamp:1769763597154 ViewDidInit viewName:KRView viewClassName:DivView ref:619
+        timestamp:1769763597154 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:618
+        timestamp:1769763597154 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:618
+    timestamp:1769763597154 ViewDidInit viewName:KRView viewClassName:DivView ref:616
+timestamp:1769763597154 ViewDidInit viewName:KRView viewClassName:DivView ref:612
+timestamp:1769763597154 ViewWillInit viewName:KRView viewClassName:DivView ref:623
+    timestamp:1769763597154 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:624
+    timestamp:1769763597154 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:624
+timestamp:1769763597154 ViewDidInit viewName:KRView viewClassName:DivView ref:623
+timestamp:1769763597154 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:625
+timestamp:1769763597154 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:625
+timestamp:1769763597154 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:95
+timestamp:1769763597154 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:95
+timestamp:1769763597154 ViewWillInit viewName:KRView viewClassName:DivView ref:626
+    timestamp:1769763597154 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:627
+    timestamp:1769763597154 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:627
+    timestamp:1769763597154 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:628
+    timestamp:1769763597155 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:628
+timestamp:1769763597155 ViewDidInit viewName:KRView viewClassName:DivView ref:626
+timestamp:1769763597155 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:629
+timestamp:1769763597155 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:629
+timestamp:1769763597155 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:630
+timestamp:1769763597155 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:630
+timestamp:1769763597155 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:631
+timestamp:1769763597156 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:631
+timestamp:1769763597156 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:632
+timestamp:1769763597156 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:632
+timestamp:1769763597156 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:633
+timestamp:1769763597157 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:633
+timestamp:1769763597157 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:634
+timestamp:1769763597157 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:634
+timestamp:1769763597157 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:635
+timestamp:1769763597157 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:635
+timestamp:1769763597157 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:96
+timestamp:1769763597157 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:96
+timestamp:1769763597157 ViewWillInit viewName:KRView viewClassName:DivView ref:636
+timestamp:1769763597157 ViewDidInit viewName:KRView viewClassName:DivView ref:636
+timestamp:1769763597157 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:637
+timestamp:1769763597157 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:637
+timestamp:1769763597157 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:97
+timestamp:1769763597157 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:97
+timestamp:1769763597157 ViewWillInit viewName:KRView viewClassName:DivView ref:638
+    timestamp:1769763597157 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:639
+    timestamp:1769763597157 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:639
+    timestamp:1769763597158 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:640
+    timestamp:1769763597158 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:640
+timestamp:1769763597158 ViewDidInit viewName:KRView viewClassName:DivView ref:638
+timestamp:1769763597158 ViewWillInit viewName:KRView viewClassName:DivView ref:641
+    timestamp:1769763597158 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:642
+    timestamp:1769763597158 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:642
+    timestamp:1769763597158 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:643
+    timestamp:1769763597158 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:643
+timestamp:1769763597158 ViewDidInit viewName:KRView viewClassName:DivView ref:641
+timestamp:1769763597158 ViewWillInit viewName:KRView viewClassName:DivView ref:644
+    timestamp:1769763597158 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:645
+    timestamp:1769763597158 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:645
+    timestamp:1769763597158 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:646
+    timestamp:1769763597159 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:646
+    timestamp:1769763597159 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:647
+    timestamp:1769763597159 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:647
+timestamp:1769763597159 ViewDidInit viewName:KRView viewClassName:DivView ref:644
+timestamp:1769763597159 ViewWillInit viewName:KRView viewClassName:DivView ref:648
+timestamp:1769763597159 ViewDidInit viewName:KRView viewClassName:DivView ref:648
+timestamp:1769763597159 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:649
+timestamp:1769763597159 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:649
+timestamp:1769763597159 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:98
+timestamp:1769763597159 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:98
+timestamp:1769763597159 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:650
+timestamp:1769763597159 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:650
+timestamp:1769763597159 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:99
+timestamp:1769763597159 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:99
+timestamp:1769763597159 ViewWillInit viewName:KRView viewClassName:DivView ref:651
+    timestamp:1769763597159 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:652
+    timestamp:1769763597159 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:652
+    timestamp:1769763597159 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:653
+    timestamp:1769763597159 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:653
+timestamp:1769763597159 ViewDidInit viewName:KRView viewClassName:DivView ref:651
+timestamp:1769763597159 ViewWillInit viewName:KRView viewClassName:DivView ref:654
+    timestamp:1769763597159 ViewWillInit viewName:KRView viewClassName:DivView ref:655
+        timestamp:1769763597159 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:656
+        timestamp:1769763597160 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:656
+        timestamp:1769763597160 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:657
+        timestamp:1769763597160 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:657
+    timestamp:1769763597160 ViewDidInit viewName:KRView viewClassName:DivView ref:655
+    timestamp:1769763597160 ViewWillInit viewName:KRView viewClassName:DivView ref:658
+        timestamp:1769763597160 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:659
+        timestamp:1769763597160 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:659
+        timestamp:1769763597160 ViewWillInit viewName:KRView viewClassName:DivView ref:661
+            timestamp:1769763597160 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:662
+            timestamp:1769763597160 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:662
+            timestamp:1769763597160 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:663
+            timestamp:1769763597161 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:663
+            timestamp:1769763597161 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:664
+            timestamp:1769763597161 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:664
+        timestamp:1769763597161 ViewDidInit viewName:KRView viewClassName:DivView ref:661
+        timestamp:1769763597161 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:660
+        timestamp:1769763597161 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:660
+    timestamp:1769763597161 ViewDidInit viewName:KRView viewClassName:DivView ref:658
+timestamp:1769763597161 ViewDidInit viewName:KRView viewClassName:DivView ref:654
+timestamp:1769763597161 ViewWillInit viewName:KRView viewClassName:DivView ref:665
+    timestamp:1769763597161 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:666
+    timestamp:1769763597161 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:666
+timestamp:1769763597161 ViewDidInit viewName:KRView viewClassName:DivView ref:665
+timestamp:1769763597161 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:667
+timestamp:1769763597161 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:667
+timestamp:1769763597161 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:100
+timestamp:1769763597161 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:100
+timestamp:1769763597162 ViewWillInit viewName:KRView viewClassName:DivView ref:668
+    timestamp:1769763597162 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:669
+    timestamp:1769763597162 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:669
+    timestamp:1769763597162 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:670
+    timestamp:1769763597162 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:670
+timestamp:1769763597162 ViewDidInit viewName:KRView viewClassName:DivView ref:668
+timestamp:1769763597162 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:671
+timestamp:1769763597162 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:671
+timestamp:1769763597162 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:672
+timestamp:1769763597162 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:672
+timestamp:1769763597162 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:673
+timestamp:1769763597162 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:673
+timestamp:1769763597163 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:674
+timestamp:1769763597163 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:674
+timestamp:1769763597163 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:675
+timestamp:1769763597163 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:675
+timestamp:1769763597163 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:676
+timestamp:1769763597163 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:676
+timestamp:1769763597163 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:677
+timestamp:1769763597163 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:677
+timestamp:1769763597163 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:101
+timestamp:1769763597164 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:101
+timestamp:1769763597164 ViewWillInit viewName:KRView viewClassName:DivView ref:678
+timestamp:1769763597164 ViewDidInit viewName:KRView viewClassName:DivView ref:678
+timestamp:1769763597164 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:679
+timestamp:1769763597164 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:679
+timestamp:1769763597164 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:102
+timestamp:1769763597164 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:102
+timestamp:1769763597164 ViewWillInit viewName:KRView viewClassName:DivView ref:680
+    timestamp:1769763597164 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:681
+    timestamp:1769763597164 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:681
+    timestamp:1769763597165 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:682
+    timestamp:1769763597165 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:682
+timestamp:1769763597165 ViewDidInit viewName:KRView viewClassName:DivView ref:680
+timestamp:1769763597165 ViewWillInit viewName:KRView viewClassName:DivView ref:683
+    timestamp:1769763597165 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:684
+    timestamp:1769763597165 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:684
+    timestamp:1769763597165 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:685
+    timestamp:1769763597165 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:685
+timestamp:1769763597165 ViewDidInit viewName:KRView viewClassName:DivView ref:683
+timestamp:1769763597165 ViewWillInit viewName:KRView viewClassName:DivView ref:686
+    timestamp:1769763597165 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:687
+    timestamp:1769763597165 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:687
+    timestamp:1769763597165 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:688
+    timestamp:1769763597165 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:688
+    timestamp:1769763597165 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:689
+    timestamp:1769763597166 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:689
+timestamp:1769763597166 ViewDidInit viewName:KRView viewClassName:DivView ref:686
+timestamp:1769763597166 ViewWillInit viewName:KRView viewClassName:DivView ref:690
+timestamp:1769763597166 ViewDidInit viewName:KRView viewClassName:DivView ref:690
+timestamp:1769763597166 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:691
+timestamp:1769763597166 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:691
+timestamp:1769763597166 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:103
+timestamp:1769763597166 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:103
+timestamp:1769763597166 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:692
+timestamp:1769763597166 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:692
+timestamp:1769763597166 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:104
+timestamp:1769763597166 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:104
+timestamp:1769763597166 ViewWillInit viewName:KRView viewClassName:DivView ref:693
+    timestamp:1769763597166 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:694
+    timestamp:1769763597166 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:694
+    timestamp:1769763597166 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:695
+    timestamp:1769763597166 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:695
+timestamp:1769763597166 ViewDidInit viewName:KRView viewClassName:DivView ref:693
+timestamp:1769763597166 ViewWillInit viewName:KRView viewClassName:DivView ref:696
+    timestamp:1769763597166 ViewWillInit viewName:KRView viewClassName:DivView ref:697
+        timestamp:1769763597166 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:698
+        timestamp:1769763597166 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:698
+        timestamp:1769763597167 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:700
+        timestamp:1769763597167 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:700
+        timestamp:1769763597167 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:699
+        timestamp:1769763597167 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:699
+    timestamp:1769763597167 ViewDidInit viewName:KRView viewClassName:DivView ref:697
+    timestamp:1769763597167 ViewWillInit viewName:KRView viewClassName:DivView ref:701
+        timestamp:1769763597167 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:702
+        timestamp:1769763597167 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:702
+        timestamp:1769763597167 ViewWillInit viewName:KRView viewClassName:DivView ref:704
+            timestamp:1769763597167 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:705
+            timestamp:1769763597167 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:705
+            timestamp:1769763597167 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:706
+            timestamp:1769763597167 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:706
+            timestamp:1769763597167 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:707
+            timestamp:1769763597167 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:707
+        timestamp:1769763597167 ViewDidInit viewName:KRView viewClassName:DivView ref:704
+        timestamp:1769763597167 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:703
+        timestamp:1769763597167 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:703
+    timestamp:1769763597167 ViewDidInit viewName:KRView viewClassName:DivView ref:701
+timestamp:1769763597167 ViewDidInit viewName:KRView viewClassName:DivView ref:696
+timestamp:1769763597168 ViewWillInit viewName:KRView viewClassName:DivView ref:708
+    timestamp:1769763597168 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:709
+    timestamp:1769763597168 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:709
+timestamp:1769763597168 ViewDidInit viewName:KRView viewClassName:DivView ref:708
+timestamp:1769763597168 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:710
+timestamp:1769763597168 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:710
+timestamp:1769763597171 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:105
+timestamp:1769763597171 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:105
+timestamp:1769763597171 ViewWillInit viewName:KRView viewClassName:DivView ref:711
+    timestamp:1769763597171 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:712
+    timestamp:1769763597171 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:712
+    timestamp:1769763597171 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:713
+    timestamp:1769763597172 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:713
+timestamp:1769763597172 ViewDidInit viewName:KRView viewClassName:DivView ref:711
+timestamp:1769763597172 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:714
+timestamp:1769763597172 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:714
+timestamp:1769763597172 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:715
+timestamp:1769763597172 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:715
+timestamp:1769763597172 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:716
+timestamp:1769763597172 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:716
+timestamp:1769763597172 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:106
+timestamp:1769763597172 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:106
+timestamp:1769763597172 ViewWillInit viewName:KRView viewClassName:DivView ref:717
+timestamp:1769763597172 ViewDidInit viewName:KRView viewClassName:DivView ref:717
+timestamp:1769763597172 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:718
+timestamp:1769763597172 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:718
+timestamp:1769763597172 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:107
+timestamp:1769763597172 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:107
+timestamp:1769763597172 ViewWillInit viewName:KRView viewClassName:DivView ref:719
+    timestamp:1769763597172 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:720
+    timestamp:1769763597172 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:720
+    timestamp:1769763597173 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:721
+    timestamp:1769763597173 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:721
+timestamp:1769763597173 ViewDidInit viewName:KRView viewClassName:DivView ref:719
+timestamp:1769763597173 ViewWillInit viewName:KRView viewClassName:DivView ref:722
+    timestamp:1769763597173 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:723
+    timestamp:1769763597173 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:723
+    timestamp:1769763597173 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:724
+    timestamp:1769763597173 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:724
+timestamp:1769763597173 ViewDidInit viewName:KRView viewClassName:DivView ref:722
+timestamp:1769763597173 ViewWillInit viewName:KRView viewClassName:DivView ref:725
+    timestamp:1769763597173 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:726
+    timestamp:1769763597173 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:726
+    timestamp:1769763597173 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:727
+    timestamp:1769763597173 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:727
+    timestamp:1769763597173 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:728
+    timestamp:1769763597174 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:728
+timestamp:1769763597174 ViewDidInit viewName:KRView viewClassName:DivView ref:725
+timestamp:1769763597174 ViewWillInit viewName:KRView viewClassName:DivView ref:729
+timestamp:1769763597175 ViewDidInit viewName:KRView viewClassName:DivView ref:729
+timestamp:1769763597175 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:730
+timestamp:1769763597175 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:730
+timestamp:1769763597175 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:108
+timestamp:1769763597175 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:108
+timestamp:1769763597175 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:731
+timestamp:1769763597175 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:731
+timestamp:1769763597175 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:109
+timestamp:1769763597175 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:109
+timestamp:1769763597175 ViewWillInit viewName:KRView viewClassName:DivView ref:732
+    timestamp:1769763597175 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:733
+    timestamp:1769763597175 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:733
+    timestamp:1769763597175 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:734
+    timestamp:1769763597175 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:734
+timestamp:1769763597175 ViewDidInit viewName:KRView viewClassName:DivView ref:732
+timestamp:1769763597175 ViewWillInit viewName:KRView viewClassName:DivView ref:735
+    timestamp:1769763597175 ViewWillInit viewName:KRView viewClassName:DivView ref:736
+        timestamp:1769763597175 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:737
+        timestamp:1769763597176 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:737
+        timestamp:1769763597176 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:738
+        timestamp:1769763597176 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:738
+    timestamp:1769763597176 ViewDidInit viewName:KRView viewClassName:DivView ref:736
+    timestamp:1769763597176 ViewWillInit viewName:KRView viewClassName:DivView ref:739
+        timestamp:1769763597176 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:740
+        timestamp:1769763597176 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:740
+        timestamp:1769763597176 ViewWillInit viewName:KRView viewClassName:DivView ref:742
+            timestamp:1769763597176 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:743
+            timestamp:1769763597177 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:743
+            timestamp:1769763597177 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:744
+            timestamp:1769763597177 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:744
+            timestamp:1769763597177 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:745
+            timestamp:1769763597177 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:745
+        timestamp:1769763597177 ViewDidInit viewName:KRView viewClassName:DivView ref:742
+        timestamp:1769763597177 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:741
+        timestamp:1769763597177 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:741
+    timestamp:1769763597177 ViewDidInit viewName:KRView viewClassName:DivView ref:739
+timestamp:1769763597177 ViewDidInit viewName:KRView viewClassName:DivView ref:735
+timestamp:1769763597177 ViewWillInit viewName:KRView viewClassName:DivView ref:746
+    timestamp:1769763597177 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:747
+    timestamp:1769763597178 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:747
+timestamp:1769763597178 ViewDidInit viewName:KRView viewClassName:DivView ref:746
+timestamp:1769763597178 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:748
+timestamp:1769763597178 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:748
+timestamp:1769763597178 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:110
+timestamp:1769763597178 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:110
+timestamp:1769763597178 ViewWillInit viewName:KRView viewClassName:DivView ref:749
+    timestamp:1769763597178 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:750
+    timestamp:1769763597178 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:750
+    timestamp:1769763597178 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:751
+    timestamp:1769763597179 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:751
+timestamp:1769763597179 ViewDidInit viewName:KRView viewClassName:DivView ref:749
+timestamp:1769763597179 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:752
+timestamp:1769763597179 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:752
+timestamp:1769763597179 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:753
+timestamp:1769763597179 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:753
+timestamp:1769763597180 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:754
+timestamp:1769763597180 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:754
+timestamp:1769763597180 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:111
+timestamp:1769763597180 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:111
+timestamp:1769763597180 ViewWillInit viewName:KRView viewClassName:DivView ref:755
+timestamp:1769763597181 ViewDidInit viewName:KRView viewClassName:DivView ref:755
+timestamp:1769763597181 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:756
+timestamp:1769763597181 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:756
+timestamp:1769763597181 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:112
+timestamp:1769763597181 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:112
+timestamp:1769763597181 ViewWillInit viewName:KRView viewClassName:DivView ref:757
+    timestamp:1769763597182 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:758
+    timestamp:1769763597183 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:758
+    timestamp:1769763597183 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:759
+    timestamp:1769763597185 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:759
+timestamp:1769763597185 ViewDidInit viewName:KRView viewClassName:DivView ref:757
+timestamp:1769763597185 ViewWillInit viewName:KRView viewClassName:DivView ref:760
+    timestamp:1769763597185 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:761
+    timestamp:1769763597186 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:761
+    timestamp:1769763597186 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:762
+    timestamp:1769763597187 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:762
+timestamp:1769763597187 ViewDidInit viewName:KRView viewClassName:DivView ref:760
+timestamp:1769763597187 ViewWillInit viewName:KRView viewClassName:DivView ref:763
+    timestamp:1769763597187 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:764
+    timestamp:1769763597187 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:764
+    timestamp:1769763597187 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:765
+    timestamp:1769763597188 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:765
+    timestamp:1769763597188 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:766
+    timestamp:1769763597188 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:766
+timestamp:1769763597188 ViewDidInit viewName:KRView viewClassName:DivView ref:763
+timestamp:1769763597188 ViewWillInit viewName:KRView viewClassName:DivView ref:767
+timestamp:1769763597188 ViewDidInit viewName:KRView viewClassName:DivView ref:767
+timestamp:1769763597188 ViewWillInit viewName:KRView viewClassName:AppFeedItemView ref:768
+timestamp:1769763597188 ViewDidInit viewName:KRView viewClassName:AppFeedItemView ref:768
+timestamp:1769763597188 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:113
+timestamp:1769763597188 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:113
+timestamp:1769763597188 ViewWillInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:769
+timestamp:1769763597188 ViewDidInit viewName:KRView viewClassName:AppFeedItemAuthorView ref:769
+timestamp:1769763597189 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:114
+timestamp:1769763597189 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:114
+timestamp:1769763597189 ViewWillInit viewName:KRView viewClassName:DivView ref:770
+    timestamp:1769763597189 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:771
+    timestamp:1769763597189 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:771
+    timestamp:1769763597189 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:772
+    timestamp:1769763597189 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:772
+timestamp:1769763597189 ViewDidInit viewName:KRView viewClassName:DivView ref:770
+timestamp:1769763597189 ViewWillInit viewName:KRView viewClassName:DivView ref:773
+    timestamp:1769763597189 ViewWillInit viewName:KRView viewClassName:DivView ref:774
+        timestamp:1769763597190 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:775
+        timestamp:1769763597190 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:775
+        timestamp:1769763597191 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:777
+        timestamp:1769763597191 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:777
+        timestamp:1769763597191 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:776
+        timestamp:1769763597191 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:776
+    timestamp:1769763597191 ViewDidInit viewName:KRView viewClassName:DivView ref:774
+    timestamp:1769763597191 ViewWillInit viewName:KRView viewClassName:DivView ref:778
+        timestamp:1769763597191 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:779
+        timestamp:1769763597191 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:779
+        timestamp:1769763597192 ViewWillInit viewName:KRView viewClassName:DivView ref:781
+            timestamp:1769763597192 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:782
+            timestamp:1769763597194 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:782
+            timestamp:1769763597194 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:783
+            timestamp:1769763597194 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:783
+            timestamp:1769763597194 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:784
+            timestamp:1769763597195 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:784
+        timestamp:1769763597195 ViewDidInit viewName:KRView viewClassName:DivView ref:781
+        timestamp:1769763597195 ViewWillInit viewName:ConditionView viewClassName:ConditionView ref:780
+        timestamp:1769763597195 ViewDidInit viewName:ConditionView viewClassName:ConditionView ref:780
+    timestamp:1769763597195 ViewDidInit viewName:KRView viewClassName:DivView ref:778
+timestamp:1769763597195 ViewDidInit viewName:KRView viewClassName:DivView ref:773
+timestamp:1769763597195 ViewWillInit viewName:KRView viewClassName:DivView ref:785
+    timestamp:1769763597195 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:786
+    timestamp:1769763597196 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:786
+timestamp:1769763597196 ViewDidInit viewName:KRView viewClassName:DivView ref:785
+timestamp:1769763597196 ViewWillInit viewName:KRView viewClassName:AppFeedContentView ref:787
+timestamp:1769763597196 ViewDidInit viewName:KRView viewClassName:AppFeedContentView ref:787
+timestamp:1769763597196 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:115
+timestamp:1769763597196 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:115
+timestamp:1769763597196 ViewWillInit viewName:KRView viewClassName:DivView ref:788
+    timestamp:1769763597196 ViewWillInit viewName:KRView viewClassName:ParsedTextView ref:789
+    timestamp:1769763597196 ViewDidInit viewName:KRView viewClassName:ParsedTextView ref:789
+    timestamp:1769763597196 ViewWillInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:790
+    timestamp:1769763597202 ViewDidInit viewName:KRRichTextView viewClassName:ExtRichTextView ref:790
+timestamp:1769763597202 ViewDidInit viewName:KRView viewClassName:DivView ref:788
+timestamp:1769763597202 ViewWillInit viewName:KRView viewClassName:AppFeedVideoView ref:791
+timestamp:1769763597202 ViewDidInit viewName:KRView viewClassName:AppFeedVideoView ref:791
+timestamp:1769763597202 ViewWillInit viewName:KRView viewClassName:AppNineGridView ref:792
+timestamp:1769763597202 ViewDidInit viewName:KRView viewClassName:AppNineGridView ref:792
+timestamp:1769763597202 ViewWillInit viewName:KRView viewClassName:AppForwardView ref:793
+timestamp:1769763597202 ViewDidInit viewName:KRView viewClassName:AppForwardView ref:793
+timestamp:1769763597202 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:116
+timestamp:1769763597202 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:116
+timestamp:1769763597202 ViewWillInit viewName:KRView viewClassName:DivView ref:794
+timestamp:1769763597202 ViewDidInit viewName:KRView viewClassName:DivView ref:794
+timestamp:1769763597202 ViewWillInit viewName:KRView viewClassName:AppFeedBottomView ref:795
+timestamp:1769763597203 ViewDidInit viewName:KRView viewClassName:AppFeedBottomView ref:795
+timestamp:1769763597204 CallModuleStart moduleName:KRNotifyModule method:addNotify sync:false callbackRef:117
+timestamp:1769763597204 CallModuleEnd moduleName:KRNotifyModule method:addNotify sync:false callbackRef:117
+timestamp:1769763597206 ViewWillInit viewName:KRView viewClassName:DivView ref:796
+    timestamp:1769763597206 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:797
+    timestamp:1769763597206 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:797
+    timestamp:1769763597207 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:798
+    timestamp:1769763597207 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:798
+timestamp:1769763597207 ViewDidInit viewName:KRView viewClassName:DivView ref:796
+timestamp:1769763597207 ViewWillInit viewName:KRView viewClassName:DivView ref:799
+    timestamp:1769763597207 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:800
+    timestamp:1769763597207 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:800
+    timestamp:1769763597207 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:801
+    timestamp:1769763597207 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:801
+timestamp:1769763597208 ViewDidInit viewName:KRView viewClassName:DivView ref:799
+timestamp:1769763597208 ViewWillInit viewName:KRView viewClassName:DivView ref:802
+    timestamp:1769763597208 ViewWillInit viewName:KRView viewClassName:BindDirectivesView ref:803
+    timestamp:1769763597208 ViewDidInit viewName:KRView viewClassName:BindDirectivesView ref:803
+    timestamp:1769763597208 ViewWillInit viewName:KRImageView viewClassName:ImageView ref:804
+    timestamp:1769763597208 ViewDidInit viewName:KRImageView viewClassName:ImageView ref:804
+    timestamp:1769763597208 ViewWillInit viewName:KRRichTextView viewClassName:ExtTextView ref:805
+    timestamp:1769763597208 ViewDidInit viewName:KRRichTextView viewClassName:ExtTextView ref:805
+timestamp:1769763597208 ViewDidInit viewName:KRView viewClassName:DivView ref:802
+timestamp:1769763597209 ViewWillInit viewName:KRView viewClassName:DivView ref:806
+timestamp:1769763597209 ViewDidInit viewName:KRView viewClassName:DivView ref:806
+timestamp:1769763597212 CallModuleStart moduleName:KRPerformanceModule method:getPerformanceData sync:false callbackRef:118
+timestamp:1769763597213 CallModuleEnd moduleName:KRPerformanceModule method:getPerformanceData sync:false callbackRef:118
+timestamp:1769763597213 LayoutStart
+    timestamp:1769763597314 FireObserverFnStart propertyKey:113_imageWidth observerCount:4
+    timestamp:1769763597314 FireObserverFnEnd propertyKey:113_imageWidth observerCount:4
+    timestamp:1769763597315 FireObserverFnStart propertyKey:127_imageWidth observerCount:4
+    timestamp:1769763597315 FireObserverFnEnd propertyKey:127_imageWidth observerCount:4
+    timestamp:1769763597323 FireObserverFnStart propertyKey:42_selected observerCount:1
+    timestamp:1769763597323 FireObserverFnEnd propertyKey:42_selected observerCount:1
+    timestamp:1769763597329 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597329 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597329 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597330 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+timestamp:1769763597330 LayoutEnd numNodes:118
+timestamp:1769763597330 LayoutStart
+    timestamp:1769763597419 FireObserverFnStart propertyKey:162_imageWidth observerCount:4
+    timestamp:1769763597419 FireObserverFnEnd propertyKey:162_imageWidth observerCount:4
+    timestamp:1769763597419 FireObserverFnStart propertyKey:170_imageWidth observerCount:2
+    timestamp:1769763597419 FireObserverFnEnd propertyKey:170_imageWidth observerCount:2
+    timestamp:1769763597421 FireObserverFnStart propertyKey:187_imageWidth observerCount:4
+    timestamp:1769763597421 FireObserverFnEnd propertyKey:187_imageWidth observerCount:4
+    timestamp:1769763597422 FireObserverFnStart propertyKey:222_imageWidth observerCount:4
+    timestamp:1769763597423 FireObserverFnEnd propertyKey:222_imageWidth observerCount:4
+    timestamp:1769763597423 FireObserverFnStart propertyKey:230_imageWidth observerCount:4
+    timestamp:1769763597424 FireObserverFnEnd propertyKey:230_imageWidth observerCount:4
+    timestamp:1769763597424 FireObserverFnStart propertyKey:239_imageWidth observerCount:4
+    timestamp:1769763597425 FireObserverFnEnd propertyKey:239_imageWidth observerCount:4
+    timestamp:1769763597441 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597442 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597442 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597445 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+timestamp:1769763597445 LayoutEnd numNodes:268
+timestamp:1769763597445 ModuleCallbackStart moduleName:KRPerformanceModule method:getPerformanceData sync:false callbackRef:118
+    timestamp:1769763597446 CallModuleStart moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+    timestamp:1769763597446 CallModuleEnd moduleName:KRLogModule method:logDebug sync:true callbackRef:0
+timestamp:1769763597446 ModuleCallbackEnd moduleName:KRPerformanceModule method:getPerformanceData sync:false callbackRef:118
+--- end of kuikly page event report ---

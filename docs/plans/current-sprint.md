@@ -19,8 +19,26 @@ owner: @kuikly-chat-team
 - ✅ `AgUiLlmProvider` + `ScriptedSseLlmTransport` 端到端集成测试（174 个 Android 单测）
 - ✅ JS 编译门禁（`KuiklyChat`、`shared`）
 - 📋 人工 UI 验收（见 `docs/plans/compose-ui-acceptance.md`）
+- 📋 **Compose UI 对齐 Flyer**（设计稿已拆分，见下表）
 - 📋 Phase 4：Markdown、图片/文件附件和 Composer 附件入口
 - 📋 真实生产 AG-UI 网络联调（宿主注入 `LlmTransport`）
+
+## Compose UI 对齐设计（Draft）
+
+| 优先级 | 文档 | 说明 |
+|--------|------|------|
+| P0 | [feature-compose-chat-avatar.md](feature-compose-chat-avatar.md) | 用户头像 |
+| P0 | [feature-compose-message-time-status.md](feature-compose-message-time-status.md) | 时间与发送状态 |
+| P0 | [feature-compose-message-row.md](feature-compose-message-row.md) | 消息行外壳布局 |
+| P0 | [feature-compose-bubble-grouping-shape.md](feature-compose-bubble-grouping-shape.md) | 分组气泡圆角 |
+| P1 | [feature-compose-list-chrome.md](feature-compose-list-chrome.md) | 日期分隔、FAB、LoadMore、正在输入 |
+| P1 | [feature-compose-text-markdown-renderer.md](feature-compose-text-markdown-renderer.md) | 文本 / Markdown |
+| P1 | [feature-compose-image-file-messages.md](feature-compose-image-file-messages.md) | 图片 / 文件 |
+| P1 | [feature-compose-resolve-user-cache.md](feature-compose-resolve-user-cache.md) | resolveUser + UserCache + 头像加载 |
+| P1 | [feature-compose-system-message.md](feature-compose-system-message.md) | 系统消息 |
+| P1 | [feature-compose-composer-enhancement.md](feature-compose-composer-enhancement.md) | 输入区增强 |
+| P2 | [feature-compose-theme-and-slots.md](feature-compose-theme-and-slots.md) | 主题分层与 Slots 对照 |
+
 
 ## 验收
 - Android 编译、`shared` Demo 编译、`testDebugUnitTest` 和 `check-layer-deps.sh` 全部通过。

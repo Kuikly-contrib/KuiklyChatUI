@@ -24,6 +24,7 @@ import com.tencent.kuiklybase.chat.compose.adapter.AgentCardComposeBridge
 import com.tencent.kuiklybase.chat.compose.adapter.rememberLlmChatUiController
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
+import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.ui.ChatScreen
 import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiScriptedScenarios
@@ -49,7 +50,11 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
                 onEvent = cardBridge.onEvent
             )
         }
-        val controller = rememberLlmChatUiController(provider)
+        val controller = rememberLlmChatUiController(
+            provider = provider,
+            currentUser = ChatUser(id = "user", name = "You"),
+            assistant = ChatUser(id = "assistant", name = "Assistant")
+        )
         val rendererRegistry = remember { com.tencent.kuiklybase.chat.compose.ui.defaultChatRendererRegistry() }
 
         DisposableEffect(controller, cardBridge) {

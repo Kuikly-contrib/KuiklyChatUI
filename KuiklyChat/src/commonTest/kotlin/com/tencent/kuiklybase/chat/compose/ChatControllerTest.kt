@@ -1,5 +1,6 @@
 package com.tencent.kuiklybase.chat.compose
 
+import com.tencent.kuiklybase.chat.compose.core.ChatClock
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatHistoryPage
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
@@ -204,6 +205,29 @@ class ChatControllerTest {
         controller.dispose()
         testScheduler.advanceUntilIdle()
         assertTrue(cancelled)
+    }
+
+    @Test
+    fun sendTextWritesCreatedAtFromClock() = runTest {
+        val clock = ChatClock { 1_704_000_000_000L }
+        val controller = ChatController(ChatUser("user"), backgroundScope, clock = clock)
+        assertTrue(controller.sendText("hello"))
+        assertEquals(1_704_000_000_000L, controller.state.messages.single().createdAt)
+    }
+
+    @Test
+    fun streamDeltaWritesAssistantCreatedAt() = runTest(StandardTestDispatcher()) {
+        val clock = ChatClock { 1_704_000_100_000L }
+        val sender = ChatMessageSender {
+            flow {
+                emit(ChatStreamEvent.TextDelta(messageId = "assistant-1", text = "hi"))
+                emit(ChatStreamEvent.Completed)
+            }
+        }
+        val controller = ChatController(ChatUser("user"), this, sender, clock = clock)
+        controller.sendText("question")
+        testScheduler.advanceUntilIdle()
+        assertEquals(1_704_000_100_000L, controller.state.messages.last().createdAt)
     }
 
     @Test

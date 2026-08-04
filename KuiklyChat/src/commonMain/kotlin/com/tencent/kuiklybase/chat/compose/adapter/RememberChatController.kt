@@ -27,7 +27,8 @@ fun rememberLlmChatUiController(
             scope = scope,
             sender = adapter.sender,
             historyLoader = historyLoader,
-            initialMessages = if (historyLoader == null) adapter.initialMessages else emptyList()
+            initialMessages = if (historyLoader == null) adapter.initialMessages else emptyList(),
+            assistantUser = assistant
         )
     }
     DisposableEffect(controller) {

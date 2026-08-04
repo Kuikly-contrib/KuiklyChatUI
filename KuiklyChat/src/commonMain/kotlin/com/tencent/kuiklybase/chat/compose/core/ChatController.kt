@@ -18,7 +18,9 @@ class ChatController(
     private val scope: CoroutineScope,
     private val sender: ChatMessageSender? = null,
     private val historyLoader: ChatHistoryLoader? = null,
-    initialMessages: List<ChatMessage> = emptyList()
+    initialMessages: List<ChatMessage> = emptyList(),
+    private val assistantUser: ChatUser = ChatUser("assistant", "Assistant"),
+    private val clock: ChatClock = ChatClock.System
 ) {
     var state by mutableStateOf(
         ChatState(
@@ -84,7 +86,8 @@ class ChatController(
             id = nextLocalId("user"),
             author = currentUser,
             parts = listOf(MessagePart.Text(text)),
-            status = MessageStatus.SENDING
+            status = MessageStatus.SENDING,
+            createdAt = clock.nowMillis()
         )
         lastUserPrompt = text
         pendingUserMessageId = message.id
@@ -269,9 +272,10 @@ class ChatController(
             ?: activeAssistantId?.let { id -> state.messages.firstOrNull { it.id == id } }
             ?: ChatMessage(
                 id = event.messageId ?: nextLocalId("assistant"),
-                author = ChatUser("assistant", "Assistant"),
+                author = assistantUser,
                 parts = emptyList(),
-                status = MessageStatus.STREAMING
+                status = MessageStatus.STREAMING,
+                createdAt = clock.nowMillis()
             )
         activeAssistantId = assistant.id
         val updated = assistant.copy(
