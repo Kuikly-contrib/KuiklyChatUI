@@ -2,11 +2,11 @@ package com.tencent.kuiklybase.chat.compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.tencent.kuikly.compose.foundation.ExperimentalFoundationApi
@@ -19,18 +19,21 @@ import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
 import com.tencent.kuikly.compose.foundation.layout.height
 import com.tencent.kuikly.compose.foundation.layout.padding
 import com.tencent.kuikly.compose.foundation.lazy.LazyColumn
-import com.tencent.kuikly.compose.foundation.lazy.LazyListState
-import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.unit.dp
+import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
+import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
+import com.tencent.kuiklybase.chat.compose.core.ChatUserResolver
+import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessageRendererRegistry
+import com.tencent.kuiklybase.chat.compose.core.UserCache
 import com.tencent.kuiklybase.chat.compose.core.groupStatus
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -45,15 +48,18 @@ internal fun ChatMessageList(
     slots: ChatSlots,
     callbacks: ChatCallbacks,
     rendererRegistry: MessageRendererRegistry,
+    userResolution: ChatUserResolutionConfig? = null,
+    userCache: UserCache? = null,
+    latestResolver: State<ChatUserResolver?>? = null,
+    resolverAvailable: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val state = controller.state
-    val convFingerprint = state.messages.firstOrNull()?.id ?: "empty"
     val listState = scrollState.listState
+    val lastMessage = state.messages.lastOrNull()
+    val tailSignature = lastMessage?.let { it.id to it.text.length }
 
-    val tailSignature = state.messages.size to (state.messages.lastOrNull()?.text?.length ?: 0)
-
-    LaunchedEffect(convFingerprint, tailSignature) {
+    LaunchedEffect(tailSignature) {
         scrollState.scrollToBottom(force = false)
     }
 
@@ -91,7 +97,8 @@ internal fun ChatMessageList(
     LaunchedEffect(listState, state.hasMoreEarlier, state.messages.size) {
         if (!state.hasMoreEarlier || state.isLoadingEarlier || state.isInitialLoading) return@LaunchedEffect
         snapshotFlow {
-            listState.firstVisibleItemScrollOffset <= config.loadEarlierThresholdPx
+            listState.firstVisibleItemIndex == 0 &&
+                listState.firstVisibleItemScrollOffset <= config.loadEarlierThresholdPx
         }
             .distinctUntilChanged()
             .collect { atTop ->
@@ -101,84 +108,43 @@ internal fun ChatMessageList(
             }
     }
 
+    val reserveSenderNameSpace = userResolution?.reserveSenderNameSpace == true
+
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
             item(key = "__chat_messages__") {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    when {
-                        state.isInitialLoading -> {
-                            slots.loadEarlierContent?.invoke(true) { } ?: LoadingEarlierHeader(strings, theme, true)
-                        }
-                        state.isLoadingEarlier -> {
-                            slots.loadEarlierContent?.invoke(true) { } ?: LoadingEarlierHeader(strings, theme, true)
-                        }
-                        state.hasMoreEarlier && state.messages.isNotEmpty() -> {
-                            slots.loadEarlierContent?.invoke(false) {
-                                controller.dispatch(ChatIntent.LoadEarlier)
-                            } ?: Text(
-                                text = strings.loadEarlier,
-                                color = Color(theme.accentColor),
-                                fontSize = theme.smallFontSize.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { controller.dispatch(ChatIntent.LoadEarlier) }
-                                    .padding(8.dp)
-                            )
-                        }
-                    }
+                    LoadEarlierSection(
+                        state = controller.state,
+                        slots = slots,
+                        strings = strings,
+                        theme = theme,
+                        onLoadEarlier = { controller.dispatch(ChatIntent.LoadEarlier) }
+                    )
 
                     if (state.messages.isEmpty() && !state.isInitialLoading) {
                         slots.emptyContent?.invoke() ?: EmptyChatContent(strings, theme)
                     }
 
-                    state.messages.forEachIndexed { index, message ->
-                        key(message.id) {
-                            val previous = state.messages.getOrNull(index - 1)
-                            val next = state.messages.getOrNull(index + 1)
-                            val group = message.groupStatus(
-                                previous = previous,
-                                next = next,
-                                groupingWindowMillis = config.groupingWindowMillis
+                    state.messages.forEachIndexed { index, rawMessage ->
+                        key(rawMessage.id) {
+                            ChatMessageListItem(
+                                rawMessage = rawMessage,
+                                index = index,
+                                messages = state.messages,
+                                controller = controller,
+                                theme = theme,
+                                strings = strings,
+                                config = config,
+                                slots = slots,
+                                callbacks = callbacks,
+                                rendererRegistry = rendererRegistry,
+                                userResolution = userResolution,
+                                userCache = userCache,
+                                latestResolver = latestResolver,
+                                resolverAvailable = resolverAvailable,
+                                reserveSenderNameSpace = reserveSenderNameSpace,
                             )
-                            val customRenderer = rendererRegistry.rendererFor(message)
-                            if (customRenderer != null) {
-                                val rendererContent: @Composable () -> Unit = {
-                                    customRenderer.Render(
-                                        message,
-                                        group,
-                                        theme,
-                                        Modifier.fillMaxWidth()
-                                    )
-                                }
-                                if (slots.messageRowContent != null) {
-                                    slots.messageRowContent.invoke(message, group, rendererContent)
-                                } else {
-                                    ChatMessageRow(
-                                        message = message,
-                                        groupStatus = group,
-                                        controller = controller,
-                                        theme = theme,
-                                        strings = strings,
-                                        config = config,
-                                        slots = slots,
-                                        callbacks = callbacks,
-                                        content = rendererContent
-                                    )
-                                }
-                            } else if (slots.messageContent != null) {
-                                slots.messageContent.invoke(message, group)
-                            } else {
-                                DefaultChatMessageRow(
-                                    message = message,
-                                    groupStatus = group,
-                                    controller = controller,
-                                    theme = theme,
-                                    strings = strings,
-                                    config = config,
-                                    slots = slots,
-                                    callbacks = callbacks
-                                )
-                            }
                         }
                     }
                     Spacer(Modifier.height(12.dp))
@@ -205,6 +171,120 @@ internal fun ChatMessageList(
                     )
             }
         }
+    }
+}
+
+@Composable
+private fun LoadEarlierSection(
+    state: com.tencent.kuiklybase.chat.compose.core.ChatState,
+    slots: ChatSlots,
+    strings: ChatStrings,
+    theme: ChatTheme,
+    onLoadEarlier: () -> Unit,
+) {
+    when {
+        state.isInitialLoading -> {
+            slots.loadEarlierContent?.invoke(true) { } ?: LoadingEarlierHeader(strings, theme, true)
+        }
+        state.isLoadingEarlier -> {
+            slots.loadEarlierContent?.invoke(true) { } ?: LoadingEarlierHeader(strings, theme, true)
+        }
+        state.hasMoreEarlier && state.messages.isNotEmpty() -> {
+            slots.loadEarlierContent?.invoke(false, onLoadEarlier)
+                ?: Text(
+                    text = strings.loadEarlier,
+                    color = Color(theme.accentColor),
+                    fontSize = theme.smallFontSize.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onLoadEarlier() }
+                        .padding(8.dp)
+                )
+        }
+    }
+}
+
+@Composable
+private fun ChatMessageListItem(
+    rawMessage: ChatMessage,
+    index: Int,
+    messages: List<ChatMessage>,
+    controller: ChatController,
+    theme: ChatTheme,
+    strings: ChatStrings,
+    config: ChatScreenConfig,
+    slots: ChatSlots,
+    callbacks: ChatCallbacks,
+    rendererRegistry: MessageRendererRegistry,
+    userResolution: ChatUserResolutionConfig?,
+    userCache: UserCache?,
+    latestResolver: State<ChatUserResolver?>?,
+    resolverAvailable: Boolean,
+    reserveSenderNameSpace: Boolean,
+) {
+    val message = if (
+        userResolution != null &&
+        userCache != null &&
+        latestResolver != null
+    ) {
+        rememberResolvedMessage(
+            message = rawMessage,
+            cache = userCache,
+            namespace = userResolution.cacheNamespace,
+            latestResolver = latestResolver,
+            resolverAvailable = resolverAvailable,
+        )
+    } else {
+        rawMessage
+    }
+
+    val previous = messages.getOrNull(index - 1)
+    val next = messages.getOrNull(index + 1)
+    val group = message.groupStatus(
+        previous = previous,
+        next = next,
+        groupingWindowMillis = config.groupingWindowMillis
+    )
+    val customRenderer = rendererRegistry.rendererFor(message)
+    if (customRenderer != null) {
+        val rendererContent: @Composable () -> Unit = {
+            customRenderer.Render(
+                message,
+                group,
+                theme,
+                Modifier.fillMaxWidth()
+            )
+        }
+        if (slots.messageRowContent != null) {
+            slots.messageRowContent.invoke(message, group, rendererContent)
+        } else {
+            ChatMessageRow(
+                message = message,
+                groupStatus = group,
+                controller = controller,
+                theme = theme,
+                strings = strings,
+                config = config,
+                slots = slots,
+                callbacks = callbacks,
+                content = rendererContent,
+                reserveSenderNameSpace = reserveSenderNameSpace,
+            )
+        }
+    } else if (slots.messageContent != null) {
+        slots.messageContent.invoke(message, group)
+    } else {
+        DefaultChatMessageRow(
+            message = message,
+            groupStatus = group,
+            controller = controller,
+            theme = theme,
+            strings = strings,
+            config = config,
+            slots = slots,
+            callbacks = callbacks,
+            reserveSenderNameSpace = reserveSenderNameSpace,
+        )
     }
 }
 

@@ -118,4 +118,18 @@ if [ "$ERRORS" -gt 0 ]; then
   exit 1
 fi
 
+# 规则9：compose/core 不得依赖 compose/ui
+if grep -rn --include='*.kt' -E "import[[:space:]]+com\.tencent\.kuiklybase\.chat\.compose\.ui" \
+  "$CHAT_ROOT/compose/core" 2>/dev/null; then
+  err "compose/core 依赖了 compose/ui。" \
+      "核心层只放模型与缓存；Composable 注入放在 compose/ui。" \
+      "docs/design/feature-compose-resolve-user-cache.md"
+fi
+
+if [ "$ERRORS" -gt 0 ]; then
+  echo ""
+  echo "发现 $ERRORS 个架构违规，请修复后重试。"
+  exit 1
+fi
+
 echo "✅ 架构依赖检查通过"

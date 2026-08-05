@@ -39,6 +39,10 @@ data class ChatCallbacks(
     val onTextChanged: ((String) -> Unit)? = null,
     val onCopyToClipboard: ((String) -> Unit)? = null,
     val onAvatarClick: ((ChatUser) -> Unit)? = null,
+    @Deprecated(
+        "Never wired; use ChatSlots.avatarContent until image-file media layer lands",
+        level = DeprecationLevel.WARNING,
+    )
     val onLoadAvatar: ((userId: String, avatarUri: String) -> Any?)? = null
 ) {
     companion object {

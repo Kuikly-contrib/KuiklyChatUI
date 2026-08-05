@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-04
+last_updated: 2026-08-05
 status: implemented
 owner: @kuikly-chat-team
 ---
@@ -42,19 +42,23 @@ data class ChatScreenConfig(
 ```kotlin
 data class ChatCallbacks(
     // ...
-    /** 宿主提供图片加载；返回 null 时显示首字母占位 */
-    val onLoadAvatar: ((userId: String, avatarUri: String) -> Any?)? = null,
     val onAvatarClick: ((ChatUser) -> Unit)? = null,
+    /** ⚠️ 已声明但从未接线，将由 feature-compose-resolve-user-cache.md 标记废弃并保留到下一个 major */
+    val onLoadAvatar: ((userId: String, avatarUri: String) -> Any?)? = null,
 )
 ```
 
-> `onLoadAvatar` 首期可用 Kuikly 图片组件能消费的 URL/资源 id；跨端缓存抽象后置到 `feature-compose-image-file-messages.md` 的媒体加载层。
+> **实现现状修正**：`onLoadAvatar` 仅在 `ChatSlots.kt` 中声明，`ChatAvatar` 从未消费它，因此内置图片加载路径**并未实现**。
+> 该字段在 `feature-compose-resolve-user-cache.md` 中先标 `@Deprecated`（`ChatCallbacks` 是对外发布的 data class，直接删会破坏 `copy()` / `componentN()` 的二进制兼容），保留到下一个 major 再移除；
+> 跨端图片加载与缓存统一由 `feature-compose-image-file-messages.md` 的媒体加载层落地。
+> **已知接线问题**：当前 `avatarContent != null` 时会在应用行间距与 `onAvatarClick` 之前提前返回；
+> `feature-compose-resolve-user-cache.md` 将把 slot 与默认内容统一包进可点击的头像外壳。
 
 ### 组件行为
 | 场景 | 行为 |
 |------|------|
-| 有 `avatar` URI 且加载成功 | 圆形裁剪图片 |
-| 无图 / 加载失败 | 圆形背景 + 昵称首字母（或默认图标） |
+| 默认（无论 `avatar` 是否有值） | 圆形背景 + 昵称首字母（`avatarInitial`）；**内置实现暂无图片路径** |
+| 需要展示真实头像图片 | 由宿主通过 `ChatSlots.avatarContent` 自行渲染；内置图片路径见 `feature-compose-image-file-messages.md` |
 | `hideAvatarWhenGrouped` 且 `MessageGroupStatus` 为 MIDDLE/LAST | 不渲染头像，保留占位宽度或折叠（可配置） |
 | 己方消息 | 头像在气泡右侧（由 `ChatMessageRow` 布局决定） |
 
@@ -67,7 +71,7 @@ data class ChatCallbacks(
 
 ## 依赖
 - `feature-kuikly-chat-ui-sdk-redesign`（✅ Core Phase 1–3 已完成）
-- `feature-compose-message-row.md`（📋 待审批）：头像需嵌入消息行布局
+- `feature-compose-message-row.md`（✅ 已实现）：头像需嵌入消息行布局
 
 ---
 > 参考：Flutter `Avatar`、`User.imageSource`、`ResolveUserCallback`

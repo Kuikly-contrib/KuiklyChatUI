@@ -13,7 +13,6 @@ import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.Dp
-import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
@@ -45,16 +44,12 @@ internal fun ChatAvatar(
     modifier: Modifier = Modifier,
     avatarContent: (@Composable (ChatUser, Dp) -> Unit)? = null
 ) {
-  if (avatarContent != null) {
-        avatarContent(user, size)
-        return
-    }
     val clickModifier = if (onClick != null) {
         Modifier.clickable { onClick() }
     } else {
         Modifier
     }
-    Box(
+  Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
@@ -62,11 +57,15 @@ internal fun ChatAvatar(
             .then(clickModifier),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = avatarInitial(user),
-            color = Color(theme.avatarForegroundColor),
-            fontSize = (size.value * 0.42f).sp,
-            fontWeight = FontWeight.SemiBold
-        )
+        if (avatarContent != null) {
+            avatarContent(user, size)
+        } else {
+            Text(
+                text = avatarInitial(user),
+                color = Color(theme.avatarForegroundColor),
+                fontSize = (size.value * 0.42f).sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }

@@ -25,6 +25,8 @@ import com.tencent.kuiklybase.chat.compose.adapter.rememberLlmChatUiController
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
+import com.tencent.kuiklybase.chat.compose.core.ChatUserResolver
+import com.tencent.kuiklybase.chat.compose.ui.ChatUserResolutionConfig
 import com.tencent.kuiklybase.chat.compose.ui.ChatScreen
 import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiScriptedScenarios
@@ -67,10 +69,25 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
             accentColor = 0xFF176B5B
         )
 
+        val userResolution = remember {
+            ChatUserResolutionConfig(
+                cacheNamespace = "compose_demo",
+                resolver = ChatUserResolver { userId ->
+                    when (userId) {
+                        "user" -> ChatUser(id = userId, name = "You")
+                        "assistant" -> ChatUser(id = userId, name = "Assistant")
+                        else -> ChatUser(id = userId, name = userId)
+                    }
+                },
+                reserveSenderNameSpace = true,
+            )
+        }
+
         Column(modifier = Modifier.fillMaxSize().background(Color(theme.backgroundColor))) {
             DemoHeader()
             ChatScreen(
                 controller = controller,
+                userResolution = userResolution,
                 theme = theme,
                 strings = ChatStrings.Default.copy(inputPlaceholder = "试试新的 Compose Chat UI"),
                 rendererRegistry = rendererRegistry,

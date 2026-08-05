@@ -31,7 +31,8 @@ internal fun ChatMessageRow(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    reserveSenderNameSpace: Boolean = false,
 ) {
     val isMine = message.author.id == controller.currentUser.id
     val showAvatar = shouldShowAvatar(groupStatus, config.showAvatar, config.hideAvatarWhenGrouped)
@@ -66,13 +67,22 @@ internal fun ChatMessageRow(
             modifier = Modifier.fillMaxWidth(0.82f),
             horizontalAlignment = if (isMine) Alignment.End else Alignment.Start
         ) {
-            if (showName && message.author.name.isNotEmpty()) {
-                Text(
-                    text = message.author.name,
-                    color = Color(theme.placeholderColor),
-                    fontSize = theme.smallFontSize.sp,
-                    modifier = Modifier.padding(bottom = 3.dp)
-                )
+            if (showName) {
+                if (message.author.name.isNotEmpty()) {
+                    Text(
+                        text = message.author.name,
+                        color = Color(theme.placeholderColor),
+                        fontSize = theme.smallFontSize.sp,
+                        modifier = Modifier.padding(bottom = 3.dp)
+                    )
+                } else if (reserveSenderNameSpace) {
+                    Text(
+                        text = "",
+                        color = Color(theme.placeholderColor),
+                        fontSize = theme.smallFontSize.sp,
+                        modifier = Modifier.padding(bottom = 3.dp)
+                    )
+                }
             }
 
             Row(
@@ -133,7 +143,8 @@ internal fun DefaultChatMessageRow(
     strings: ChatStrings,
     config: ChatScreenConfig,
     slots: ChatSlots,
-    callbacks: ChatCallbacks
+    callbacks: ChatCallbacks,
+    reserveSenderNameSpace: Boolean = false,
 ) {
     val rowContent: @Composable () -> Unit = {
         TextBubbleContent(
@@ -159,7 +170,8 @@ internal fun DefaultChatMessageRow(
             config = config,
             slots = slots,
             callbacks = callbacks,
-            content = rowContent
+            content = rowContent,
+            reserveSenderNameSpace = reserveSenderNameSpace,
         )
     }
 }
