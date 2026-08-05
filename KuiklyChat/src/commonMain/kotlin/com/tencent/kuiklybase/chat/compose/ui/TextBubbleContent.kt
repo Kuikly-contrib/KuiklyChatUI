@@ -72,6 +72,11 @@ internal fun TextBubbleContent(
                     color = Color(textColor),
                     fontSize = theme.fontSize.sp
                 )
+                is MessagePart.SystemNotice -> Text(
+                    text = part.text,
+                    color = Color(textColor),
+                    fontSize = theme.fontSize.sp
+                )
             }
         }
         if (showInsideTime) {

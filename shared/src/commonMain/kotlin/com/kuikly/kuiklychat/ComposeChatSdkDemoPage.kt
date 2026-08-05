@@ -2,6 +2,7 @@ package com.kuikly.kuiklychat
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import com.tencent.kuikly.compose.ComposeContainer
 import com.tencent.kuikly.compose.foundation.background
@@ -22,10 +23,14 @@ import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuiklybase.chat.agentcard.AgUiCardSession
 import com.tencent.kuiklybase.chat.compose.adapter.AgentCardComposeBridge
 import com.tencent.kuiklybase.chat.compose.adapter.rememberLlmChatUiController
+import com.tencent.kuiklybase.chat.compose.core.ChatIntent
+import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.ChatUserResolver
+import com.tencent.kuiklybase.chat.compose.core.MessagePart
+import com.tencent.kuiklybase.chat.compose.core.SYSTEM_CHAT_USER
 import com.tencent.kuiklybase.chat.compose.ui.ChatUserResolutionConfig
 import com.tencent.kuiklybase.chat.compose.ui.ChatScreen
 import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiLlmProvider
@@ -81,6 +86,41 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
                 },
                 reserveSenderNameSpace = true,
             )
+        }
+
+        LaunchedEffect(controller) {
+            if (!controller.state.messages.any { it.id.startsWith("demo-system") }) {
+                val user = ChatUser(id = "user", name = "You")
+                val assistant = ChatUser(id = "assistant", name = "Assistant")
+                listOf(
+                    ChatMessage(
+                        id = "demo-system-before",
+                        author = user,
+                        parts = listOf(MessagePart.Text("分组示例：第一条")),
+                        createdAt = 1L,
+                    ),
+                    ChatMessage(
+                        id = "demo-system-notice",
+                        author = SYSTEM_CHAT_USER,
+                        parts = listOf(MessagePart.SystemNotice("Alice 加入了会话")),
+                        createdAt = 2L,
+                    ),
+                    ChatMessage(
+                        id = "demo-system-after",
+                        author = user,
+                        parts = listOf(MessagePart.Text("分组示例：第二条（应与上条断开）")),
+                        createdAt = 3L,
+                    ),
+                    ChatMessage(
+                        id = "demo-system-assistant",
+                        author = assistant,
+                        parts = listOf(MessagePart.Text("助手普通消息")),
+                        createdAt = 4L,
+                    ),
+                ).forEach { message ->
+                    controller.dispatch(ChatIntent.UpsertMessage(message))
+                }
+            }
         }
 
         Column(modifier = Modifier.fillMaxSize().background(Color(theme.backgroundColor))) {

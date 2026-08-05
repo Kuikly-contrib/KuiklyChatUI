@@ -35,6 +35,7 @@ import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessageRendererRegistry
 import com.tencent.kuiklybase.chat.compose.core.UserCache
 import com.tencent.kuiklybase.chat.compose.core.groupStatus
+import com.tencent.kuiklybase.chat.compose.core.systemNoticeOrNull
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -222,31 +223,22 @@ private fun ChatMessageListItem(
     resolverAvailable: Boolean,
     reserveSenderNameSpace: Boolean,
 ) {
-    val message = if (
-        userResolution != null &&
-        userCache != null &&
-        latestResolver != null
-    ) {
-        rememberResolvedMessage(
-            message = rawMessage,
-            cache = userCache,
-            namespace = userResolution.cacheNamespace,
-            latestResolver = latestResolver,
-            resolverAvailable = resolverAvailable,
-        )
-    } else {
-        rawMessage
-    }
-
     val previous = messages.getOrNull(index - 1)
     val next = messages.getOrNull(index + 1)
-    val group = message.groupStatus(
+    val group = rawMessage.groupStatus(
         previous = previous,
         next = next,
         groupingWindowMillis = config.groupingWindowMillis
     )
-    val customRenderer = rendererRegistry.rendererFor(message)
+    val customRenderer = rendererRegistry.rendererFor(rawMessage)
     if (customRenderer != null) {
+        val message = resolveListMessage(
+            rawMessage = rawMessage,
+            userResolution = userResolution,
+            userCache = userCache,
+            latestResolver = latestResolver,
+            resolverAvailable = resolverAvailable,
+        )
         val rendererContent: @Composable () -> Unit = {
             customRenderer.Render(
                 message,
@@ -271,7 +263,32 @@ private fun ChatMessageListItem(
                 reserveSenderNameSpace = reserveSenderNameSpace,
             )
         }
-    } else if (slots.messageContent != null) {
+        return
+    }
+
+    val systemNotice = rawMessage.systemNoticeOrNull
+    if (systemNotice != null) {
+        if (slots.systemMessageContent != null) {
+            slots.systemMessageContent.invoke(rawMessage, systemNotice)
+        } else {
+            SystemMessageContent(
+                message = rawMessage,
+                notice = systemNotice,
+                theme = theme,
+            )
+        }
+        return
+    }
+
+    val message = resolveListMessage(
+        rawMessage = rawMessage,
+        userResolution = userResolution,
+        userCache = userCache,
+        latestResolver = latestResolver,
+        resolverAvailable = resolverAvailable,
+    )
+
+    if (slots.messageContent != null) {
         slots.messageContent.invoke(message, group)
     } else {
         DefaultChatMessageRow(
@@ -286,6 +303,30 @@ private fun ChatMessageListItem(
             reserveSenderNameSpace = reserveSenderNameSpace,
         )
     }
+}
+
+@Composable
+private fun resolveListMessage(
+    rawMessage: ChatMessage,
+    userResolution: ChatUserResolutionConfig?,
+    userCache: UserCache?,
+    latestResolver: State<ChatUserResolver?>?,
+    resolverAvailable: Boolean,
+): ChatMessage {
+    if (
+        userResolution != null &&
+        userCache != null &&
+        latestResolver != null
+    ) {
+        return rememberResolvedMessage(
+            message = rawMessage,
+            cache = userCache,
+            namespace = userResolution.cacheNamespace,
+            latestResolver = latestResolver,
+            resolverAvailable = resolverAvailable,
+        )
+    }
+    return rawMessage
 }
 
 @Composable

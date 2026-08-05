@@ -15,10 +15,13 @@ data class ChatTheme(
     val avatarBackgroundColor: Long = 0xFFCBD5E1,
     val avatarForegroundColor: Long = 0xFF334155,
     val timeTextColor: Long = 0xFF94A3B8,
+    val systemBackgroundColor: Long = 0xFFE2E8F0,
+    val systemTextColor: Long = 0xFF64748B,
     val fontSize: Float = 16f,
     val smallFontSize: Float = 12f,
     val bubbleRadius: Float = 18f,
     val bubbleRadiusSmall: Float = 4f,
+    val systemRadius: Float = 12f,
     val contentPadding: Float = 12f
 ) {
     companion object {

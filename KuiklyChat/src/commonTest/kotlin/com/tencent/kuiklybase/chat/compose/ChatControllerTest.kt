@@ -10,6 +10,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatStreamEvent
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
+import com.tencent.kuiklybase.chat.compose.core.SYSTEM_CHAT_USER
 import com.tencent.kuiklybase.chat.compose.core.groupStatus
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.flow
@@ -182,6 +183,22 @@ class ChatControllerTest {
         assertTrue(controller.sendText("hello"))
         assertEquals(1, controller.state.unreadCount)
         controller.dispatch(ChatIntent.SetListNearBottom(true))
+        assertEquals(0, controller.state.unreadCount)
+    }
+
+    @Test
+    fun systemNoticeUpsertDoesNotIncrementUnread() = runTest {
+        val controller = ChatController(ChatUser("user"), backgroundScope)
+        controller.dispatch(ChatIntent.SetListNearBottom(false))
+        controller.dispatch(
+            ChatIntent.UpsertMessage(
+                ChatMessage(
+                    id = "sys",
+                    author = SYSTEM_CHAT_USER,
+                    parts = listOf(MessagePart.SystemNotice("joined")),
+                )
+            )
+        )
         assertEquals(0, controller.state.unreadCount)
     }
 

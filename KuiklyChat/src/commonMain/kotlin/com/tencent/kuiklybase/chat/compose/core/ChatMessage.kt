@@ -32,6 +32,11 @@ sealed interface MessagePart {
         val type: String,
         val payload: Map<String, String> = emptyMap()
     ) : MessagePart
+
+    /** Visible centered notice (e.g. "user joined"), not a provider system prompt. */
+    data class SystemNotice(
+        val text: String,
+    ) : MessagePart
 }
 
 enum class TextFormat {
@@ -84,9 +89,22 @@ fun ChatMessage.groupStatus(
 }
 
 private fun ChatMessage.canGroupWith(other: ChatMessage, windowMillis: Long): Boolean {
+    if (containsSystemNotice || other.containsSystemNotice) return false
     return author.id == other.author.id &&
         (createdAt == 0L || other.createdAt == 0L ||
             kotlin.math.abs(createdAt - other.createdAt) <= windowMillis)
 }
 
 const val DEFAULT_GROUPING_WINDOW_MILLIS: Long = 5 * 60 * 1000L
+
+/** Stable author id for adapter-mapped UI system notices. */
+val SYSTEM_CHAT_USER = ChatUser(id = "__system__", name = "")
+
+val ChatMessage.systemNoticeOrNull: MessagePart.SystemNotice?
+    get() = parts.singleOrNull() as? MessagePart.SystemNotice
+
+val ChatMessage.containsSystemNotice: Boolean
+    get() = parts.any { it is MessagePart.SystemNotice }
+
+/** System notices are informational and should not bump unread badges. */
+fun ChatMessage.countsAsUnread(): Boolean = !containsSystemNotice

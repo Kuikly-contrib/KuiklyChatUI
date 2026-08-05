@@ -285,7 +285,7 @@ class ChatController(
         val isNewAssistant = state.messages.none { it.id == assistant.id }
         if (isNewAssistant) {
             state = state.copy(messages = state.messages + updated, lastMessageId = updated.id)
-            maybeIncrementUnread()
+            maybeIncrementUnread(updated)
         } else {
             updateMessage(updated)
         }
@@ -332,8 +332,9 @@ class ChatController(
         emit(ChatEffect.ShowError(message))
     }
 
-    private fun maybeIncrementUnread() {
+    private fun maybeIncrementUnread(message: ChatMessage? = null) {
         if (!isListNearBottom) {
+            if (message != null && !message.countsAsUnread()) return
             state = state.copy(unreadCount = state.unreadCount + 1)
         }
     }

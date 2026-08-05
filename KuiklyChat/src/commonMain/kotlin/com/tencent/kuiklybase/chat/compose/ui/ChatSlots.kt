@@ -6,6 +6,7 @@ import com.tencent.kuikly.compose.ui.unit.Dp
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
+import com.tencent.kuiklybase.chat.compose.core.MessagePart
 
 /** Replaceable content slots for the Compose Chat UI. */
 data class ChatSlots(
@@ -22,6 +23,12 @@ data class ChatSlots(
     val timeAndStatusContent: (@Composable (ChatMessage, Boolean) -> Unit)? = null,
     val loadEarlierContent: (@Composable (Boolean, () -> Unit) -> Unit)? = null,
     val scrollToBottomContent: (@Composable (Int, () -> Unit) -> Unit)? = null,
+    val systemMessageContent: (
+        @Composable (
+            ChatMessage,
+            MessagePart.SystemNotice,
+        ) -> Unit
+    )? = null,
     val errorBannerContent: (@Composable (String) -> Unit)? = null,
     val composerLeadingContent: (@Composable () -> Unit)? = null,
     val composerTrailingContent: (@Composable (Boolean, () -> Unit) -> Unit)? = null,
