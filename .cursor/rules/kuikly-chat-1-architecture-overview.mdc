@@ -1,0 +1,40 @@
+---
+description: KuiklyChat Compose SDK 架构总览（对齐 Flyer Chat monorepo 分层）
+globs:
+alwaysApply: true
+---
+# KuiklyChat - Project Architecture Overview
+
+Gradle 多模块结构，核心是可发布的 KMP 库 `:KuiklyChat`，由各端宿主复用：
+
+- `KuiklyChat/` — 核心 Chat UI 库（`commonMain` 必须平台无关）
+- `shared/` — Kuikly 宿主 Demo 页（含 `ComposeChatSdkDemoPage`）
+- `androidApp/`、`iosApp/`、`ohosApp/`、`h5App/`、`miniApp/` — 各端集成示例
+
+## Compose Chat SDK（对齐 Flyer 的 core + ui）
+
+路径前缀：`KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/`
+
+| 层 | 目录 | 职责 |
+|----|------|------|
+| Core | `compose/core/` | 模型、`ChatController`、`ChatTheme`、Renderer Registry、`UserCache` |
+| UI | `compose/ui/` | `ChatScreen`、消息列表、气泡、Composer、`ChatSlots` |
+| Adapter | `compose/adapter/` | AG-UI / LLM / AgentCard 与 Core 的边界（禁止协议泄漏到 UI） |
+| AgentCard UI | `compose/agentcard/` | Compose 版消息卡片（与 legacy `agentcard/` 语义对齐） |
+
+## 并行渲染层（Kuikly 特有）
+
+- **Compose DSL**：`compose/`（新 SDK，Flyer 对齐目标）
+- **Kuikly DSL**：`session/`、`bubble/`、`agentcard/`（传统 `ChatSession` 路径）
+- 新增消息卡片须**同时在** `agentcard/` 与 `compose/agentcard/` 实现并注册。
+
+## 协议与数据流
+
+- `agui/` — AG-UI 事件解析与会话编排；协议细节只在此层与 `compose/adapter/`
+- `model/` — Legacy 会话模型（`ChatMessage`、`MessageType` 等），经 adapter 映射到 Compose 模型
+
+## Key Goal
+
+支持 Android / iOS / macOS / JS（H5）等 KMP target；平台逻辑仅放在 `androidMain` / `iosMain` / `macosMain` / `jsMain`，`commonMain` 禁止 `java.time`、裸平台 API。
+
+更多导航见 [AGENTS.md](mdc:AGENTS.md)。

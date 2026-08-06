@@ -21,6 +21,7 @@ import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuiklybase.chat.agentcard.AgUiCardSession
+import com.tencent.kuiklybase.chat.compose.adapter.AttachmentUriCodec
 import com.tencent.kuiklybase.chat.compose.adapter.AgentCardComposeBridge
 import com.tencent.kuiklybase.chat.compose.adapter.rememberLlmChatUiController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
@@ -116,6 +117,91 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
                         author = assistant,
                         parts = listOf(MessagePart.Text("助手普通消息")),
                         createdAt = 4L,
+                    ),
+                ).forEach { message ->
+                    controller.dispatch(ChatIntent.UpsertMessage(message))
+                }
+            }
+        }
+
+        LaunchedEffect(controller) {
+            if (!controller.state.messages.any { it.id.startsWith("demo-attachment") }) {
+                val user = ChatUser(id = "user", name = "You")
+                val assistant = ChatUser(id = "assistant", name = "Assistant")
+                val tinyPng = AttachmentUriCodec.toDataUri(
+                    mimeType = "image/png",
+                    base64Payload = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+                )
+                listOf(
+                    ChatMessage(
+                        id = "demo-attachment-remote",
+                        author = assistant,
+                        parts = listOf(
+                            MessagePart.Text("远程图片（需网络）："),
+                            MessagePart.Attachment(
+                                id = "demo-img-remote",
+                                uri = "https://picsum.photos/320/200",
+                                mimeType = "image/jpeg",
+                                name = "sample.jpg",
+                            ),
+                        ),
+                    ),
+                    ChatMessage(
+                        id = "demo-attachment-data",
+                        author = user,
+                        parts = listOf(
+                            MessagePart.Attachment(
+                                id = "demo-img-data",
+                                uri = tinyPng,
+                                mimeType = "image/png",
+                                name = "pixel.png",
+                            ),
+                        ),
+                    ),
+                    ChatMessage(
+                        id = "demo-attachment-file",
+                        author = assistant,
+                        parts = listOf(
+                            MessagePart.Attachment(
+                                id = "demo-file",
+                                uri = "https://cdn.example/spec.pdf",
+                                mimeType = "application/pdf",
+                                name = "KuiklyChat-Spec.pdf",
+                                sizeBytes = 1536L,
+                            ),
+                        ),
+                    ),
+                    ChatMessage(
+                        id = "demo-attachment-fail",
+                        author = assistant,
+                        parts = listOf(
+                            MessagePart.Attachment(
+                                id = "demo-img-bad",
+                                uri = "https://invalid.local/not-found.png",
+                                mimeType = "image/png",
+                                name = "broken.png",
+                            ),
+                        ),
+                    ),
+                    ChatMessage(
+                        id = "demo-attachment-mixed",
+                        author = assistant,
+                        parts = listOf(
+                            MessagePart.Text("混合：说明 + 图 + 文件"),
+                            MessagePart.Attachment(
+                                id = "demo-mixed-img",
+                                uri = tinyPng,
+                                mimeType = "image/png",
+                                name = "inline.png",
+                            ),
+                            MessagePart.Attachment(
+                                id = "demo-mixed-file",
+                                uri = "https://cdn.example/notes.txt",
+                                mimeType = "text/plain",
+                                name = "notes.txt",
+                                sizeBytes = 420L,
+                            ),
+                        ),
                     ),
                 ).forEach { message ->
                     controller.dispatch(ChatIntent.UpsertMessage(message))

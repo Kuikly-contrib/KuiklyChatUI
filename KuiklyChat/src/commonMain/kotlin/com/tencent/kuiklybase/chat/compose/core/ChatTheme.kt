@@ -41,7 +41,8 @@ data class ChatStrings(
     val sending: String = "发送中",
     val streaming: String = "生成中",
     val cancelled: String = "已取消",
-    val scrollToBottom: String = "回到底部"
+    val scrollToBottom: String = "回到底部",
+    val imageLoadFailed: String = "图片加载失败",
 ) {
     companion object {
         val Default = ChatStrings()

@@ -1,0 +1,32 @@
+---
+description: KuiklyChat 主题、Slots、Renderer 与 resolveUser 定制路径
+globs:
+alwaysApply: true
+---
+# KuiklyChat - Customization
+
+对齐 Flyer 的 **ChatTheme + Builders** 双路径定制。
+
+## 1. 主题与文案（`ChatTheme`）
+
+- [ChatTheme.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTheme.kt) — 语义色、字号、圆角等 token
+- `ChatStrings` — 加载、重试、空态、滚动等文案
+- 传入 `ChatScreen(theme = …, strings = …)`；组件默认读 theme，允许参数覆盖
+
+## 2. Slots 与回调（对齐 `Builders`）
+
+- [ChatSlots.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatSlots.kt) — 可替换列表空态、消息行、头像、Composer 左右区、回底、加载更早、**系统消息**、日期/typing（设计中的 list chrome）等
+- `ChatCallbacks` — 点击、重试、头像点击（与状态变更分离）
+- `ChatScreenConfig` — 是否显示头像/时间/分组窗口、近底阈值等静态 UI 配置
+
+## 3. 整消息 Renderer（对齐各 `flyer_chat_*` Builder）
+
+- [MessageRenderer.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/MessageRenderer.kt) — `MessageRendererRegistry` 按 `AgentCardContent` / `Custom.type` 路由
+- 默认注册在 `defaultChatRendererRegistry()`；AgentCard 走 [AgentCardMessageRenderer.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgentCardMessageRenderer.kt)
+
+## 4. 用户解析（对齐 `resolveUser` + `UserCache`）
+
+- `ChatUserResolver` + `UserCache` + `ChatUserResolutionConfig`
+- `ChatScreen` 带 `userResolution` 的重载启用异步头像/昵称；slot：`avatarContent`、`imageContent`
+
+**原则**：默认 UI 应完整可用；宿主仅需替换 slot/renderer，不必 fork 列表逻辑。

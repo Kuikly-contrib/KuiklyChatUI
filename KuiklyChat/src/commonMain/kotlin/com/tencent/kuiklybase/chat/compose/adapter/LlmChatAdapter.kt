@@ -8,6 +8,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
+import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachmentKind
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageOrigin
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageState
@@ -85,30 +86,70 @@ private fun LlmChatMessage.toChatMessage(
 }
 
 private fun LlmAttachment.toMessagePart(): MessagePart.Attachment {
+    val displayMimeType = mimeType.ifEmpty {
+        when (kind) {
+            LlmAttachmentKind.IMAGE -> "image/unknown"
+            LlmAttachmentKind.AUDIO -> "audio/unknown"
+            else -> "application/octet-stream"
+        }
+    }
+    val sourceUri = when {
+        url.isNotEmpty() -> url
+        bytesBase64.isNotEmpty() -> AttachmentUriCodec.toDataUri(displayMimeType, bytesBase64)
+        else -> ""
+    }
+    val previewUri = if (kind == LlmAttachmentKind.IMAGE && thumbnailBase64.isNotEmpty()) {
+        AttachmentUriCodec.toDataUri(displayMimeType, thumbnailBase64)
+    } else {
+        ""
+    }
     return MessagePart.Attachment(
         id = id,
-        uri = url.ifEmpty { bytesBase64 },
-        mimeType = mimeType,
+        uri = sourceUri,
+        mimeType = displayMimeType,
         name = name,
-        sizeBytes = sizeBytes
+        sizeBytes = sizeBytes,
+        previewUri = previewUri,
     )
 }
 
 private fun List<MessagePart>.toLlmAttachments(): List<LlmAttachment> {
-    return filterIsInstance<MessagePart.Attachment>().map { attachment ->
-        LlmAttachment(
-            id = attachment.id,
-            kind = when {
-                attachment.mimeType.startsWith("image/") -> com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachmentKind.IMAGE
-                attachment.mimeType.startsWith("audio/") -> com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachmentKind.AUDIO
-                else -> com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachmentKind.FILE
-            },
-            name = attachment.name,
-            mimeType = attachment.mimeType,
-            url = attachment.uri,
-            sizeBytes = attachment.sizeBytes
+    return filterIsInstance<MessagePart.Attachment>().map { it.toLlmAttachment() }
+}
+
+private fun MessagePart.Attachment.toLlmAttachment(): LlmAttachment {
+    val parsedUri = AttachmentUriCodec.parseDataUri(uri.trim())
+    val thumbnailFromPreview = previewUri.trim().let { preview ->
+        AttachmentUriCodec.parseDataUri(preview)?.base64Payload.orEmpty()
+    }
+    if (parsedUri != null) {
+        return LlmAttachment(
+            id = id,
+            kind = llmKindFromMime(mimeType.ifEmpty { parsedUri.mimeType }),
+            name = name,
+            mimeType = mimeType.ifEmpty { parsedUri.mimeType },
+            url = "",
+            bytesBase64 = parsedUri.base64Payload,
+            thumbnailBase64 = thumbnailFromPreview,
+            sizeBytes = sizeBytes,
         )
     }
+    return LlmAttachment(
+        id = id,
+        kind = llmKindFromMime(mimeType),
+        name = name,
+        mimeType = mimeType,
+        url = uri,
+        bytesBase64 = "",
+        thumbnailBase64 = thumbnailFromPreview,
+        sizeBytes = sizeBytes,
+    )
+}
+
+private fun llmKindFromMime(mimeType: String): LlmAttachmentKind = when {
+    mimeType.startsWith("image/") -> LlmAttachmentKind.IMAGE
+    mimeType.startsWith("audio/") -> LlmAttachmentKind.AUDIO
+    else -> LlmAttachmentKind.FILE
 }
 
 private fun LlmProviderException.toChatError(): ChatError {

@@ -1,0 +1,41 @@
+---
+description: KuiklyChat Compose 核心数据模型与 Legacy 映射关系
+globs:
+alwaysApply: true
+---
+# KuiklyChat - Core Data Models
+
+Compose SDK 模型在 `compose/core/`；Legacy 会话模型在 `model/`（经 adapter 转换，UI 层不直接依赖协议）。
+
+## ChatMessage
+
+- 定义：[ChatMessage.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt)
+- 字段：`id`、`author`（`ChatUser`）、`parts`、`status`、`createdAt`、`replyToId`、`metadata`
+- `parts` 为 `MessagePart` 列表（对齐 Flyer 多类型消息，但用 part 组合而非 sealed Message 子类）
+
+## MessagePart（sealed）
+
+| 类型 | 用途 | Flyer 对照 |
+|------|------|------------|
+| `Text` | 纯文本 / Markdown | `TextMessage` |
+| `Attachment` | 图片/文件（在气泡内按 part 渲染） | `ImageMessage` / `FileMessage` |
+| `AgentCardContent` | 结构化 Agent 卡片 | `CustomMessage` + 卡片包 |
+| `Custom` | 宿主扩展 type + payload | `CustomMessage` |
+| `SystemNotice` | 可见系统提示条 | `SystemMessage` |
+
+`SYSTEM_CHAT_USER`（`__system__`）用于 adapter 映射的系统 notice，默认 UI 不展示作者。
+
+## ChatUser
+
+- `id`、`name`、`avatar`（URI）、`metadata`
+- 对齐 Flyer `User`；展示用资料可通过 `resolveUser` + `UserCache` 异步补齐
+
+## 状态与分组
+
+- `MessageStatus`：`SENDING`、`STREAMING`、`SENT`、`FAILED`、`CANCELLED`
+- `MessageGroupStatus` + `groupStatus()` — 连续气泡圆角；系统 notice / 日期边界（list chrome）打断分组
+
+## 映射入口
+
+- Legacy → Compose：[AgUiChatMessageMapper.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgUiChatMessageMapper.kt)
+- LLM 往返：[LlmChatAdapter.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt)

@@ -56,10 +56,12 @@ internal fun ChatMessageRow(
             ChatAvatar(
                 user = message.author,
                 theme = theme,
+                strings = strings,
                 size = avatarSize,
                 onClick = avatarClick,
                 modifier = Modifier.padding(end = 8.dp),
-                avatarContent = slots.avatarContent
+                avatarContent = slots.avatarContent,
+                imageContent = slots.imageContent,
             )
         }
 
@@ -125,10 +127,12 @@ internal fun ChatMessageRow(
             ChatAvatar(
                 user = message.author,
                 theme = theme,
+                strings = strings,
                 size = avatarSize,
                 onClick = avatarClick,
                 modifier = Modifier.padding(start = 8.dp),
-                avatarContent = slots.avatarContent
+                avatarContent = slots.avatarContent,
+                imageContent = slots.imageContent,
             )
         }
     }
@@ -154,6 +158,7 @@ internal fun DefaultChatMessageRow(
             theme = theme,
             strings = strings,
             config = config,
+            slots = slots,
             callbacks = callbacks
         )
     }

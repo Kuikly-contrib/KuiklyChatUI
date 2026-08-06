@@ -38,20 +38,7 @@ fun LegacyChatMessage.toComposeChatMessage(
                 }
             }
             isPlainSystemNotice -> add(MessagePart.SystemNotice(content))
-            else -> {
-                if (content.isNotEmpty()) {
-                    add(MessagePart.Text(content))
-                }
-                addAll(attachments.mapIndexed { index, attachment ->
-                    MessagePart.Attachment(
-                        id = "$id-attachment-$index",
-                        uri = attachment.url,
-                        mimeType = attachment.mimeType,
-                        name = attachment.title,
-                        sizeBytes = attachment.fileSize
-                    )
-                })
-            }
+            else -> addAll(buildStandardComposeParts())
         }
     }
     return ChatMessage(

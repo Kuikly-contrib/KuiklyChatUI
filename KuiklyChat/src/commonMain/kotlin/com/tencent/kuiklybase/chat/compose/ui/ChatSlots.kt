@@ -29,6 +29,17 @@ data class ChatSlots(
             MessagePart.SystemNotice,
         ) -> Unit
     )? = null,
+    val attachmentContent: (
+        @Composable (
+            ChatMessage,
+            MessagePart.Attachment,
+            Boolean,
+            Modifier,
+            () -> Unit,
+        ) -> Unit
+    )? = null,
+    /** Shared by avatar and image attachments; host must apply [modifier]. */
+    val imageContent: (@Composable (String, String?, Modifier) -> Unit)? = null,
     val errorBannerContent: (@Composable (String) -> Unit)? = null,
     val composerLeadingContent: (@Composable () -> Unit)? = null,
     val composerTrailingContent: (@Composable (Boolean, () -> Unit) -> Unit)? = null,
@@ -46,6 +57,7 @@ data class ChatCallbacks(
     val onTextChanged: ((String) -> Unit)? = null,
     val onCopyToClipboard: ((String) -> Unit)? = null,
     val onAvatarClick: ((ChatUser) -> Unit)? = null,
+    val onAttachmentClick: ((ChatMessage, MessagePart.Attachment) -> Unit)? = null,
     @Deprecated(
         "Never wired; use ChatSlots.avatarContent until image-file media layer lands",
         level = DeprecationLevel.WARNING,

@@ -1,0 +1,42 @@
+---
+description: KuiklyChat 架构价值观、分层门禁与 Flyer 对齐决策
+globs:
+alwaysApply: true
+---
+# KuiklyChat - Core Values & Architectural Decisions
+
+## Core Values（对齐 Flyer）
+
+- **Performance** — 列表 sticky-bottom、stable key、避免在 `commonMain` 引入 JVM-only 测试依赖
+- **Customization** — `ChatTheme` + `ChatSlots` + `MessageRendererRegistry` + `resolveUser`
+- **Modularity** — Compose core/ui/adapter/agentcard 分层；协议仅在 `agui/` 与 `adapter/`
+- **Platform support** — `commonMain` 平台无关；多 target 编译门禁（Android + JS 等）
+- **Resource cleanup** — `ChatController.dispose()` 取消进行中的发送 Job
+- **Dual parity** — Kuikly DSL `agentcard/` 与 `compose/agentcard/` 语义对齐
+
+## Key Architectural Decisions
+
+| 决策 | KuiklyChat | Flyer 对照 |
+|------|------------|------------|
+| 状态管理 | `ChatController` + `ChatIntent` | `ChatController` |
+| 依赖注入 | 构造函数 / `remember` 注入 controller、slots、registry | `provider` + `MultiProvider` |
+| 消息类型扩展 | `MessagePart` + Renderer Registry | 独立 `flyer_chat_*` 包 |
+| 附件渲染 | `MessagePart.Attachment` 在 `TextBubbleContent` 内联 | 独立 Image/File 消息类型 |
+| 媒体缓存 | 默认 `rememberAsyncImagePainter`；`CrossCache` 后置 | `cross_cache` |
+| 列表布局 | 正向列表 + 滚底按钮（list chrome 计划真 LazyColumn entry） | 支持 reversed |
+| 协议边界 | `agui/`、`compose/adapter/` | 无内置 AG-UI |
+
+## 硬性门禁（必须本地跑）
+
+```bash
+bash scripts/check-layer-deps.sh
+./gradlew :KuiklyChat:compileDebugKotlinAndroid :KuiklyChat:compileDebugUnitTestKotlinAndroid
+./gradlew :KuiklyChat:testDebugUnitTest
+```
+
+- 单文件 ≤ 400 行（新增超标阻断）
+- `compose/core` 不得 import `compose/ui`
+- UI 层禁止直接耦合 AG-UI 协议
+- 禁止合入裸 `println` / `console.log`
+
+详见 [AGENTS.md](mdc:AGENTS.md) 与 [mechanical-rules.md](mdc:docs/conventions/mechanical-rules.md)。

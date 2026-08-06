@@ -1,0 +1,41 @@
+---
+description: KuiklyChat 流式文本与 Agent 卡片流式渲染（AI 场景）
+globs:
+alwaysApply: false
+---
+# KuiklyChat - Streaming Text & Agent Cards
+
+对齐 Flyer `TextStreamMessage` + `FlyerChatTextStreamMessage`；Kuikly 未单独建 `TextStreamMessage` 类型，而是用 **流式状态 + 文本增量 / AgentCard** 组合实现。
+
+## Controller 流式管线
+
+1. `ChatController.sendText()` 插入用户消息并启动 `ChatMessageSender`
+2. Sender 发射 `ChatStreamEvent.TextDelta` → `applyTextDelta()` 追加 assistant `MessagePart.Text`
+3. `MessageStatus.STREAMING` 直到 `Completed` 或 `Failed`
+4. 新 assistant 消息在非近底时不抢滚动；近底时 sticky-bottom
+
+定义见 [ChatState.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt)、[ChatController.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt)。
+
+## LLM / AG-UI 适配
+
+- [LlmChatAdapter.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt) — `AgUiLlmProvider` → `Flow<ChatStreamEvent>`
+- [AgentCardComposeBridge.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgentCardComposeBridge.kt) — AG-UI 卡片事件 Upsert 为 `MessagePart.AgentCardContent`
+- Demo：`ScriptedSseLlmTransport` + `ComposeChatSdkDemoPage`
+
+## UI 渲染层
+
+| 场景 | 组件 | 说明 |
+|------|------|------|
+| 普通流式 Markdown | [StreamingMarkdownView.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/StreamingMarkdownView.kt) | Compose 解析 + 布局 |
+| 高性能流式 | [NativeMarkdownView.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/NativeMarkdownView.kt) | 流式中优先原生测量 |
+| Tool / Thinking 卡片 | `compose/agentcard/*` | `MessageStatus.STREAMING` 映射自卡片状态 |
+
+库**不规定**外部 AI SDK 如何管理 stream；宿主实现 `ChatMessageSender` 或复用 `AgUiLlmProvider`。
+
+## 与 Flyer 的差异
+
+- Flyer：流结束将 `TextStreamMessage` **替换**为 `TextMessage`
+- Kuikly：同一 `ChatMessage` 上 `Text` part 持续追加，完成后 `status = SENT`（或 `ReplaceMessage` 事件）
+- 气泡级 Markdown 流式见设计稿 `feature-compose-text-markdown-renderer.md`（进行中）
+
+修改流式逻辑时同步检查：tail signature、`unreadCount`、`AgentCard` 与 `TextBubble` 两条渲染路径。

@@ -29,6 +29,7 @@ internal fun TextBubbleContent(
     theme: ChatTheme,
     strings: ChatStrings,
     config: ChatScreenConfig,
+    slots: ChatSlots,
     callbacks: ChatCallbacks,
     modifier: Modifier = Modifier
 ) {
@@ -42,26 +43,42 @@ internal fun TextBubbleContent(
     )
     val showInsideTime = config.timeAndStatusPosition == TimeAndStatusPosition.INSIDE_BUBBLE &&
         (config.showTime || config.showStatus)
+    val hasAttachments = message.parts.any { it is MessagePart.Attachment }
+    val bubbleModifier = modifier
+        .clip(shape)
+        .background(Color(bubbleColor))
+        .then(
+            if (!hasAttachments && callbacks.onMessageClick != null) {
+                Modifier.clickable { callbacks.onMessageClick.invoke(message) }
+            } else {
+                Modifier
+            }
+        )
+        .padding(horizontal = 14.dp, vertical = 10.dp)
 
-    Column(
-        modifier = modifier
-            .clip(shape)
-            .background(Color(bubbleColor))
-            .clickable { callbacks.onMessageClick?.invoke(message) }
-            .padding(horizontal = 14.dp, vertical = 10.dp)
-    ) {
-        message.parts.forEach { part ->
+    Column(modifier = bubbleModifier) {
+        message.parts.forEachIndexed { index, part ->
             when (part) {
                 is MessagePart.Text -> Text(
                     text = part.value,
                     color = Color(textColor),
                     fontSize = theme.fontSize.sp
                 )
-                is MessagePart.Attachment -> Text(
-                    text = part.name.ifEmpty { part.uri },
-                    color = Color(textColor),
-                    fontSize = theme.fontSize.sp
-                )
+                is MessagePart.Attachment -> {
+                    val onClick = callbacks.onAttachmentClick?.let { handler ->
+                        { handler(message, part) }
+                    }
+                    AttachmentContent(
+                        message = message,
+                        attachment = part,
+                        partIndex = index,
+                        isMine = isMine,
+                        theme = theme,
+                        strings = strings,
+                        slots = slots,
+                        onClick = onClick,
+                    )
+                }
                 is MessagePart.Custom -> Text(
                     text = part.payload["text"].orEmpty().ifEmpty { part.type },
                     color = Color(textColor),

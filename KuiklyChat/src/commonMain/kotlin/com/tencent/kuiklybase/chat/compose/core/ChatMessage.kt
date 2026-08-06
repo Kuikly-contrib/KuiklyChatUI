@@ -25,7 +25,9 @@ sealed interface MessagePart {
         val uri: String,
         val mimeType: String = "",
         val name: String = "",
-        val sizeBytes: Long = 0L
+        val sizeBytes: Long = 0L,
+        /** UI preview only; falls back to [uri] when empty. */
+        val previewUri: String = "",
     ) : MessagePart
 
     data class Custom(

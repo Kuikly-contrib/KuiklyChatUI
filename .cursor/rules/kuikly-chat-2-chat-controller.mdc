@@ -1,0 +1,33 @@
+---
+description: KuiklyChat ChatController 职责、Intent 与发送/历史边界
+globs:
+alwaysApply: true
+---
+# KuiklyChat - Chat Controller
+
+`ChatController`（[ChatController.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt)）是 Compose Chat UI 的单一状态源，对齐 Flyer `ChatController`。
+
+## Core Responsibilities
+
+- 持有 `ChatState`（消息列表、`unreadCount`、加载态、错误等）
+- 通过 `dispatch(ChatIntent)` 处理用户与外部操作（发送、重试、加载更早、Upsert 等）
+- 发出 `ChatEffect`（滚底、错误横幅）供 UI 消费
+- **不渲染 UI**，**不直接依赖** AG-UI 协议类型
+
+## 发送与流式
+
+- `ChatMessageSender` 注入发送能力；返回 `Flow<ChatStreamEvent>`（[ChatState.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt)）
+- 事件类型：`TextDelta`、`ReplaceMessage`、`Completed`、`Failed`
+- 默认 LLM 路径：`rememberLlmChatUiController` + [LlmChatAdapter.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt)
+
+## 历史与外部消息
+
+- `ChatHistoryLoader` 可选；无持久化默认实现（对齐 Flyer `InMemoryChatController`）
+- 宿主通过 `ChatIntent.UpsertMessage` / `ReplaceMessages` 或 `upsertExternalMessage()` 注入协议层消息
+- 持久化由宿主自定义 loader / 在 adapter 层桥接会话仓库
+
+## Usage
+
+`ChatScreen` 必须传入 `controller`；列表通过 `controller.state` 订阅，通过 `controller.dispatch` 回传 Intent。
+
+未读：`countsAsUnread()` 的消息（如 `SystemNotice`）不增加 `unreadCount`；近底时自动清零。
