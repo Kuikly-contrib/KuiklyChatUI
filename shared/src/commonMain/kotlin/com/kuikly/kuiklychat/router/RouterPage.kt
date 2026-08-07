@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.router
 
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.*

@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.compose.support
 
 import com.tencent.kuiklybase.chat.compose.adapter.AttachmentUriCodec
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage

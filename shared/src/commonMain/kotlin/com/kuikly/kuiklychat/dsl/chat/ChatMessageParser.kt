@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.dsl.chat
 
 import com.tencent.kuikly.core.nvi.serialization.json.JSONArray
 import com.tencent.kuikly.core.nvi.serialization.json.JSONObject

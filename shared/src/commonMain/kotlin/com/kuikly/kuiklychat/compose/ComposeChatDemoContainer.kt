@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.compose
 
 import com.tencent.kuikly.compose.ComposeContainer
 import com.tencent.kuikly.core.module.Module

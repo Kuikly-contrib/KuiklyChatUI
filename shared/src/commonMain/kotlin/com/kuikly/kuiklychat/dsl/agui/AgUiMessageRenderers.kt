@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.dsl.agui
 
 import com.tencent.kuikly.core.base.*
 import com.tencent.kuikly.core.directives.vif

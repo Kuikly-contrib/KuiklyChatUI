@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.compose.support
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

@@ -1,4 +1,4 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.compose.chat
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,6 +25,11 @@ import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
+import com.kuikly.kuiklychat.compose.ComposeChatDemoContainer
+import com.kuikly.kuiklychat.compose.support.composeChatCacheDemoMessages
+import com.kuikly.kuiklychat.compose.support.randomAuthorDemoSender
+import com.kuikly.kuiklychat.compose.support.rememberDemoChatAttachmentIntegration
+import com.kuikly.kuiklychat.compose.support.rememberDemoChatMessageActions
 import com.tencent.kuiklybase.chat.compose.adapter.AttachmentUriCodec
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatMediaContext

@@ -1,6 +1,7 @@
-package com.kuikly.kuiklychat
+package com.kuikly.kuiklychat.dsl.benchmark
 
 import com.kuikly.kuiklychat.base.BasePager
+import com.kuikly.kuiklychat.router.RouterNavBar
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ViewBuilder
