@@ -55,10 +55,11 @@ kotlin {
                 // Compose DSL 支持
                 api("com.tencent.kuikly:compose:${Version.getKuiklyVersion()}")
                 // KuiklyMarkdown — Markdown 渲染组件
-                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-internal-2.1.21")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-internal-2.1.21")
                 // KuiklyMarkdown 所需的依赖
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdownCompose:1.0.10-internal")
             }
         }
         val commonTest by getting {

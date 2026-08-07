@@ -1,0 +1,1 @@
+export { KRChatByteCacheModule } from './KRChatByteCacheModule';

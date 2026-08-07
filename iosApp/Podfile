@@ -5,6 +5,7 @@ target 'iosApp' do
   platform :ios, '14.1'
   pod 'OpenKuiklyIOSRender' , '~> 2.7.0'
   pod 'shared', :path => '../shared'
+  pod 'KuiklyChatIOS', :path => '..'
 
   pod 'SDWebImage'
 end

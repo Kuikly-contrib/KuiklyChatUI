@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-03
+last_updated: 2026-08-05
 status: active
 owner: @kuikly-chat-team
 ---
@@ -16,7 +16,7 @@ owner: @kuikly-chat-team
 - ✅ 建立 `compose/ui`：`ChatScreen`、消息列表、气泡、Composer、Slots
 - ✅ 建立 LLM/AG-UI/AgentCard 适配层和 Scripted SSE Demo
 - ✅ 消息列表 stable key、sticky-bottom、历史锚点、`ChatEffect` 消费、回底按钮
-- ✅ `AgUiLlmProvider` + `ScriptedSseLlmTransport` 端到端集成测试（174 个 Android 单测）
+- ✅ `AgUiLlmProvider` + `ScriptedSseLlmTransport` 端到端集成测试（210 个 Android 单测）
 - ✅ JS 编译门禁（`KuiklyChat`、`shared`）
 - 📋 人工 UI 验收（见 `docs/plans/compose-ui-acceptance.md`）
 - 📋 **Compose UI 对齐 Flyer**（设计稿已拆分，见下表）
@@ -33,9 +33,9 @@ owner: @kuikly-chat-team
 | P0 | [feature-compose-bubble-grouping-shape.md](feature-compose-bubble-grouping-shape.md) | 分组气泡圆角 |
 | P1 | [feature-compose-list-chrome.md](feature-compose-list-chrome.md) | 日期分隔、FAB、LoadMore、正在输入 |
 | P1 | [feature-compose-text-markdown-renderer.md](feature-compose-text-markdown-renderer.md) | 文本 / Markdown |
-| P1 | [feature-compose-image-file-messages.md](feature-compose-image-file-messages.md) | 图片 / 文件 |
-| P1 | [feature-compose-resolve-user-cache.md](feature-compose-resolve-user-cache.md) | resolveUser + UserCache + 头像加载 |
-| P1 | [feature-compose-system-message.md](feature-compose-system-message.md) | 系统消息 |
+| P1 | [feature-compose-image-file-messages.md](feature-compose-image-file-messages.md) | 图片 / 文件 + `ChatCrossCache` ✅ |
+| P1 | [feature-compose-resolve-user-cache.md](feature-compose-resolve-user-cache.md) | resolveUser + UserCache + 头像加载 ✅ |
+| P1 | [feature-compose-system-message.md](feature-compose-system-message.md) | 系统消息 ✅ |
 | P1 | [feature-compose-composer-enhancement.md](feature-compose-composer-enhancement.md) | 输入区增强 |
 | P2 | [feature-compose-theme-and-slots.md](feature-compose-theme-and-slots.md) | 主题分层与 Slots 对照 |
 

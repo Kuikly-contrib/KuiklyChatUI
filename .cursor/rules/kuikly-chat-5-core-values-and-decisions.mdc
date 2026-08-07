@@ -22,7 +22,7 @@ alwaysApply: true
 | 依赖注入 | 构造函数 / `remember` 注入 controller、slots、registry | `provider` + `MultiProvider` |
 | 消息类型扩展 | `MessagePart` + Renderer Registry | 独立 `flyer_chat_*` 包 |
 | 附件渲染 | `MessagePart.Attachment` 在 `TextBubbleContent` 内联 | 独立 Image/File 消息类型 |
-| 媒体缓存 | 默认 `rememberAsyncImagePainter`；`CrossCache` 后置 | `cross_cache` |
+| 媒体缓存 | `ChatCrossCache`（Android/Apple 文件、Web IndexedDB）+ `rememberAsyncImagePainter` | `cross_cache` |
 | 列表布局 | 正向列表 + 滚底按钮（list chrome 计划真 LazyColumn entry） | 支持 reversed |
 | 协议边界 | `agui/`、`compose/adapter/` | 无内置 AG-UI |
 

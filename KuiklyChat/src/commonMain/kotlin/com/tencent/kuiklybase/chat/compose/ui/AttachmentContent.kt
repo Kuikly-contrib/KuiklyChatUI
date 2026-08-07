@@ -18,6 +18,7 @@ internal fun AttachmentContent(
     theme: ChatTheme,
     strings: ChatStrings,
     slots: ChatSlots,
+    mediaRuntime: ChatMediaRuntime,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -34,6 +35,7 @@ internal fun AttachmentContent(
             theme = theme,
             strings = strings,
             slots = slots,
+            mediaRuntime = mediaRuntime,
             onClick = onClick,
             modifier = modifier,
         )

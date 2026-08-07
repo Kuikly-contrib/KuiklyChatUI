@@ -10,6 +10,7 @@ import com.tencent.kuikly.compose.foundation.shape.RoundedCornerShape
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.unit.dp
+import com.tencent.kuiklybase.chat.compose.core.ChatMediaContext
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
@@ -23,9 +24,11 @@ internal fun ImageAttachmentContent(
     theme: ChatTheme,
     strings: ChatStrings,
     slots: ChatSlots,
+    mediaRuntime: ChatMediaRuntime,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
+    val displaySource = attachmentDisplaySource(attachment)
     val clickModifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier
     Box(
         modifier = modifier
@@ -34,7 +37,11 @@ internal fun ImageAttachmentContent(
             .then(clickModifier),
     ) {
         ChatImage(
-            source = attachmentDisplaySource(attachment),
+            mediaContext = ChatMediaContext.AttachmentPreview(
+                message = message,
+                attachment = attachment,
+                source = displaySource,
+            ),
             contentDescription = attachment.name.ifEmpty { null },
             modifier = Modifier
                 .fillMaxWidth()
@@ -43,6 +50,7 @@ internal fun ImageAttachmentContent(
             theme = theme,
             strings = strings,
             imageContent = slots.imageContent,
+            mediaRuntime = mediaRuntime,
             errorContent = {
                 ChatImageErrorPlaceholder(theme = theme, strings = strings)
             },

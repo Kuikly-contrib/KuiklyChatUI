@@ -740,6 +740,11 @@ Widget Function(BuildContext context)
 | `remove(source)` / `clear()` | 删除 / 清空缓存 |
 | `dispose()` | 释放资源 |
 
+Kuikly Compose 对齐采用 `ChatScreen(mediaConfig)` + `ChatCrossCache`：保留根级注入、
+header/cacheKey、进度、取消和 owned/injected 生命周期，并实现 Android/Apple SHA-256
+文件缓存及 Web IndexedDB。直接 API 包含 `get/set/contains/delete/updateKey/clear`；
+详见 `feature-compose-cross-cache.md`。
+
 ---
 
 ### 11.2 flutter_link_previewer

@@ -15,6 +15,7 @@ import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuiklybase.chat.compose.adapter.agentCardRendererRegistry
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
+import com.tencent.kuiklybase.chat.compose.core.ChatTextRenderConfig
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.MessageRendererRegistry
 import com.tencent.kuiklybase.chat.compose.core.UserCache
@@ -30,6 +31,8 @@ fun ChatScreen(
     config: ChatScreenConfig = ChatScreenConfig.Default,
     slots: ChatSlots = ChatSlots.Default,
     callbacks: ChatCallbacks = ChatCallbacks.Empty,
+    mediaConfig: ChatMediaConfig = ChatMediaConfig.Default,
+    textRenderConfig: ChatTextRenderConfig = ChatTextRenderConfig.Default,
     rendererRegistry: MessageRendererRegistry = defaultChatRendererRegistry()
 ) {
     ChatScreenContent(
@@ -41,6 +44,8 @@ fun ChatScreen(
         config = config,
         slots = slots,
         callbacks = callbacks,
+        mediaConfig = mediaConfig,
+        textRenderConfig = textRenderConfig,
         rendererRegistry = rendererRegistry,
     )
 }
@@ -57,6 +62,8 @@ fun ChatScreen(
     config: ChatScreenConfig = ChatScreenConfig.Default,
     slots: ChatSlots = ChatSlots.Default,
     callbacks: ChatCallbacks = ChatCallbacks.Empty,
+    mediaConfig: ChatMediaConfig = ChatMediaConfig.Default,
+    textRenderConfig: ChatTextRenderConfig = ChatTextRenderConfig.Default,
     rendererRegistry: MessageRendererRegistry = defaultChatRendererRegistry()
 ) {
     require(userResolution.cacheNamespace.isNotBlank()) {
@@ -71,6 +78,8 @@ fun ChatScreen(
         config = config,
         slots = slots,
         callbacks = callbacks,
+        mediaConfig = mediaConfig,
+        textRenderConfig = textRenderConfig,
         rendererRegistry = rendererRegistry,
     )
 }
@@ -86,6 +95,8 @@ private fun ChatScreenContent(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    mediaConfig: ChatMediaConfig,
+    textRenderConfig: ChatTextRenderConfig,
     rendererRegistry: MessageRendererRegistry,
 ) {
     val scope = rememberCoroutineScope()
@@ -100,6 +111,7 @@ private fun ChatScreenContent(
     val cache: UserCache? = userResolution?.cache ?: ownedCache
     val latestResolver = rememberUpdatedState(userResolution?.resolver)
     val resolverAvailable = userResolution?.resolver != null
+    val mediaRuntime = rememberChatMediaRuntime(mediaConfig)
 
     Box(
         modifier = modifier
@@ -123,6 +135,8 @@ private fun ChatScreenContent(
                 config = config,
                 slots = slots,
                 callbacks = callbacks,
+                textRenderConfig = textRenderConfig,
+                mediaRuntime = mediaRuntime,
                 rendererRegistry = rendererRegistry,
                 userResolution = userResolution,
                 userCache = cache,
@@ -136,7 +150,7 @@ private fun ChatScreenContent(
                 strings = strings,
                 config = config,
                 slots = slots,
-                callbacks = callbacks
+                callbacks = callbacks,
             )
         }
     }

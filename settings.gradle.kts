@@ -29,5 +29,6 @@ rootProject.name = "KuiklyChat"
 include(":androidApp")
 include(":shared")
 include(":KuiklyChat")
+include(":KuiklyChatAndroid")
 include(":h5App")
 include(":miniApp")

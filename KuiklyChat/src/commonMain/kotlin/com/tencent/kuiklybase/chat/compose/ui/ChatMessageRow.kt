@@ -5,8 +5,10 @@ import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Arrangement
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
+import com.tencent.kuikly.compose.foundation.layout.Spacer
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
 import com.tencent.kuikly.compose.foundation.layout.padding
+import com.tencent.kuikly.compose.foundation.layout.width
 import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
@@ -17,6 +19,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
+import com.tencent.kuiklybase.chat.compose.core.ChatTextRenderConfig
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
@@ -31,14 +34,22 @@ internal fun ChatMessageRow(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    textRenderConfig: ChatTextRenderConfig = ChatTextRenderConfig.Default,
+    mediaRuntime: ChatMediaRuntime,
     content: @Composable () -> Unit,
     reserveSenderNameSpace: Boolean = false,
 ) {
     val isMine = message.author.id == controller.currentUser.id
     val showAvatar = shouldShowAvatar(groupStatus, config.showAvatar, config.hideAvatarWhenGrouped)
+    val reserveAvatarSpace = shouldReserveAvatarSpace(
+        groupStatus,
+        config.showAvatar,
+        config.hideAvatarWhenGrouped,
+    )
+    val avatarSize = config.avatarSizeDp.dp
+    val avatarInset = avatarSize + 8.dp
     val showName = config.showSenderName && !isMine &&
         (groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.FIRST)
-    val avatarSize = config.avatarSizeDp.dp
     val avatarClick = callbacks.onAvatarClick?.let { handler -> { handler(message.author) } }
 
     Row(
@@ -62,7 +73,10 @@ internal fun ChatMessageRow(
                 modifier = Modifier.padding(end = 8.dp),
                 avatarContent = slots.avatarContent,
                 imageContent = slots.imageContent,
+                mediaRuntime = mediaRuntime,
             )
+        } else if (!isMine && reserveAvatarSpace) {
+            Spacer(modifier = Modifier.width(avatarInset))
         }
 
         Column(
@@ -133,7 +147,10 @@ internal fun ChatMessageRow(
                 modifier = Modifier.padding(start = 8.dp),
                 avatarContent = slots.avatarContent,
                 imageContent = slots.imageContent,
+                mediaRuntime = mediaRuntime,
             )
+        } else if (isMine && reserveAvatarSpace) {
+            Spacer(modifier = Modifier.width(avatarInset))
         }
     }
 }
@@ -148,6 +165,8 @@ internal fun DefaultChatMessageRow(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    textRenderConfig: ChatTextRenderConfig = ChatTextRenderConfig.Default,
+    mediaRuntime: ChatMediaRuntime,
     reserveSenderNameSpace: Boolean = false,
 ) {
     val rowContent: @Composable () -> Unit = {
@@ -159,7 +178,9 @@ internal fun DefaultChatMessageRow(
             strings = strings,
             config = config,
             slots = slots,
-            callbacks = callbacks
+            callbacks = callbacks,
+            textRenderConfig = textRenderConfig,
+            mediaRuntime = mediaRuntime,
         )
     }
 
@@ -175,6 +196,7 @@ internal fun DefaultChatMessageRow(
             config = config,
             slots = slots,
             callbacks = callbacks,
+            mediaRuntime = mediaRuntime,
             content = rowContent,
             reserveSenderNameSpace = reserveSenderNameSpace,
         )

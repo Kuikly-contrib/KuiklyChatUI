@@ -49,6 +49,8 @@ DEFAULT_KUIKLY_CORE_VERSION="2.7.0"
 
 # publish 任务
 PUBLISH_TASK=publishAllPublicationsToMavenRepository
+MODULE_ANDROID="KuiklyChatAndroid"
+ANDROID_PUBLISH_TASK="publishReleasePublicationToMavenRepository"
 
 # ====== 组件模块配置（从 gradle.properties 的 MODULE_NAME 读取） ======
 MODULE_KMP=""
@@ -262,6 +264,11 @@ function publishAll() {
 
     # 发布跨端模块
     if ! publishModule "${MODULE_KMP}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
+      return 1
+    fi
+
+    # 发布 Android 原生模块
+    if ! publishModule "${MODULE_ANDROID}" "${ANDROID_PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
       return 1
     fi
 

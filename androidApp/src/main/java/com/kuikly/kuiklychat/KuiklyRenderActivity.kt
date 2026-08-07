@@ -22,6 +22,7 @@ import com.kuikly.kuiklychat.adapter.KRThreadAdapter
 import com.kuikly.kuiklychat.adapter.KRUncaughtExceptionHandlerAdapter
 import com.kuikly.kuiklychat.module.KRBridgeModule
 import com.kuikly.kuiklychat.module.KRShareModule
+import com.tencent.kuiklybase.chat.android.KRChatByteCacheModule
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
 import com.tencent.kuiklybase.chat.kuiklyai.platform.android.AndroidLlmPlatformRegistry
 import org.json.JSONObject
@@ -99,6 +100,9 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
             }
             moduleExport(KRShareModule.MODULE_NAME) {
                 KRShareModule()
+            }
+            moduleExport(KRChatByteCacheModule.MODULE_NAME) {
+                KRChatByteCacheModule()
             }
         }
     }

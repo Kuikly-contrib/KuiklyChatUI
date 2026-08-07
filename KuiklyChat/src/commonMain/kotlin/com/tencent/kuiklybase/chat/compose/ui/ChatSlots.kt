@@ -38,10 +38,31 @@ data class ChatSlots(
             () -> Unit,
         ) -> Unit
     )? = null,
-    /** Shared by avatar and image attachments; host must apply [modifier]. */
+    /**
+     * Shared by avatar and image attachments; host must apply [modifier].
+     * When provided, this bypasses ChatMediaLoader and owns loading/error UI.
+     */
     val imageContent: (@Composable (String, String?, Modifier) -> Unit)? = null,
+    val textPartContent: (
+        @Composable (
+            message: ChatMessage,
+            part: MessagePart.Text,
+            isMine: Boolean,
+        ) -> Unit
+    )? = null,
     val errorBannerContent: (@Composable (String) -> Unit)? = null,
+    /** Content above pending attachments, such as reply/edit headers. */
+    val composerHeaderContent: (@Composable () -> Unit)? = null,
     val composerLeadingContent: (@Composable () -> Unit)? = null,
+    val attachmentButtonContent: (
+        @Composable (isPicking: Boolean, onClick: () -> Unit) -> Unit
+    )? = null,
+    val pendingAttachmentsContent: (
+        @Composable (
+            attachments: List<MessagePart.Attachment>,
+            onRemove: (attachmentId: String) -> Unit,
+        ) -> Unit
+    )? = null,
     val composerTrailingContent: (@Composable (Boolean, () -> Unit) -> Unit)? = null,
     val modifier: Modifier = Modifier
 ) {
@@ -58,6 +79,16 @@ data class ChatCallbacks(
     val onCopyToClipboard: ((String) -> Unit)? = null,
     val onAvatarClick: ((ChatUser) -> Unit)? = null,
     val onAttachmentClick: ((ChatMessage, MessagePart.Attachment) -> Unit)? = null,
+    /**
+     * Host-owned attachment flow (aligned with Flyer `onAttachmentTap` + picker).
+     *
+     * The SDK only renders the paperclip button and pending chips. The host must:
+     * show source menu / system picker, request permissions, compress, upload, and return
+     * send-ready [MessagePart.Attachment] values. Cancel with an empty list.
+     */
+    val onAttachmentRequest: (suspend () -> List<MessagePart.Attachment>)? = null,
+    val onAttachmentRequestError: ((Throwable) -> Unit)? = null,
+    val onLinkClick: ((ChatMessage, String) -> Unit)? = null,
     @Deprecated(
         "Never wired; use ChatSlots.avatarContent until image-file media layer lands",
         level = DeprecationLevel.WARNING,

@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-06
+last_updated: 2026-08-07
 status: implemented
 owner: @kuikly-chat-team
 ---
@@ -18,7 +18,8 @@ owner: @kuikly-chat-team
 - 不在本需求内做附件选择、上传或待发送队列（见 `feature-compose-composer-enhancement.md`）。
 - 不实现上传百分比。`MessageStatus.SENDING` 是整条消息状态，不能冒充单附件上传进度。
 - 不内置图片预览页、文件下载器或系统打开能力；点击只回调宿主。
-- 不实现 BlurHash/ThumbHash、原图尺寸探测或完整 `CrossCache`。
+- 不实现 BlurHash/ThumbHash、原图尺寸探测、LRU/TTL 或容量上限；跨平台字节缓存见
+  `feature-compose-cross-cache.md`。
 - 不让 `compose/ui` 直接依赖 AG-UI 协议类型。
 
 ## 现状与关键约束
@@ -31,9 +32,9 @@ owner: @kuikly-chat-team
 - 一条 `ChatMessage` 可以同时包含文本和多个附件。用整条消息 renderer 处理某一个附件会吞掉其余 part，
   因此附件必须按 part 渲染。
 - Kuikly Compose 已提供 `Image` +
-  `com.tencent.kuikly.compose.coil3.rememberAsyncImagePainter(String?)`；默认路径可直接使用，
-  并提供 loading/success/error state callback，但该 API 不接收鉴权 header，自定义鉴权/缓存由
-  宿主图片 slot 接管。
+  `com.tencent.kuikly.compose.coil3.rememberAsyncImagePainter(String?)`；默认路径继续复用宿主的
+  Glide / SDWebImage / 浏览器缓存。该 API 不接收鉴权 header，因此认证、签名、解密和自定义缓存
+  通过根级 `ChatMediaLoader` 解析为 painter 可显示的 URL、data URI 或本地 URI。
 - `LlmAttachment.thumbnailBase64` 明确用于 UI 缩略图，当前 mapper 未消费；
   Compose attachment 的 data URI 回传 provider 时也不能继续一律塞进 `url`。
 
@@ -46,6 +47,8 @@ owner: @kuikly-chat-team
 - `chat/compose/ui/ImageAttachmentContent.kt`：图片约束、加载/失败占位。
 - `chat/compose/ui/FileAttachmentContent.kt`：文件类型标识、名称和可读大小。
 - `chat/compose/ui/ChatImage.kt`：头像与附件共用的默认图片路径。
+- `chat/compose/core/ChatMedia.kt`：平台无关的请求、上下文、进度事件和 loader 契约。
+- `chat/compose/ui/ChatMediaConfig.kt`：根级注入、request resolver 与 owned/injected 生命周期。
 - `chat/compose/ui/ChatAvatar.kt`：在没有 `avatarContent` 覆盖时接入 `ChatImage`。
 - `chat/compose/ui/ChatSlots.kt`：该文件实际承载 `ChatSlots` 与 `ChatCallbacks`，新增附件和图片扩展点。
 - `chat/compose/adapter/AttachmentUriCodec.kt`：data URI 编码/解析纯函数，不解码 payload。
@@ -181,7 +184,8 @@ data class ChatCallbacks(
 2. 默认气泡内若提供 `attachmentContent`，由它完整替换单个附件，并通过传入的
    modifier 接受父约束、通过 `onClick` 接入统一宿主回调。
 3. 否则按 MIME 选择内置图片/文件组件。
-4. 内置图片组件优先调用 `imageContent`；未提供时使用
+4. 内置图片组件优先调用 `imageContent`；未提供时依次经过
+   `ChatMediaRequestResolver`、`ChatMediaLoader`，最终把 `Ready.displaySource` 交给
    `Image(rememberAsyncImagePainter(source))`。
 5. `ChatAvatar` 仍以 `avatarContent` 为最高优先级；未提供且 `ChatUser.avatar` 非空时走同一个
    `imageContent` / 默认图片路径。只有 SDK 默认图片路径能检测失败并回退首字母；
@@ -214,11 +218,22 @@ callback 为空时不添加伪 clickable 语义。
 
 ### 缓存与宿主定制
 
-默认实现依赖 Kuikly `rememberAsyncImagePainter` 的平台图片加载行为，不再虚构一个未定义的
-「简单内存缓存接口」。需要鉴权 header、自定义磁盘缓存、解密 URI 或埋点时，宿主通过
-`ChatSlots.imageContent` 提供实现；头像和附件会走同一扩展点。已废弃的
-`ChatCallbacks.onLoadAvatar` 不恢复使用。宿主 slot 必须应用传入 modifier，并自行负责
-加载状态与失败回退；SDK 无法观察一个任意 composable 的加载结果。
+`ChatScreen(mediaConfig = …)` 对齐 Flyer 的根级依赖注入；完整实现和平台矩阵见
+`feature-compose-cross-cache.md`：
+
+- `ChatMediaContext` 区分头像与附件预览，并携带宿主生成鉴权请求所需的用户/消息上下文。
+- `ChatMediaRequest` 显式携带 `source`、稳定 `cacheKey` 与 `headers`；token 不得写入
+  cache key、日志或消息 metadata。签名 URL 应由宿主提供不含凭据的稳定 key。
+- `ChatMediaLoader` 可认证、签名、解密、下载、去重或缓存，并通过 `Progress` /
+  `Ready(displaySource)` / `Failed` 回报状态。请求变化或列表项离开组合时会取消旧 Flow。
+- 默认 loader 是 SDK 自建 `ChatCrossCache`：Android / Apple 使用 SHA-256 文件缓存，
+  JS / H5 使用 IndexedDB；缓存字节最终转换为 data URI 交给 Kuikly painter。
+- SDK 创建的默认 loader 随 `ChatScreen` 关闭；外部注入 loader 由调用方持有和关闭，
+  便于跨页面共享缓存或后台任务。
+
+`ChatSlots.imageContent` 仍是更高优先级的完整 UI 替换入口；提供该 slot 时不会调用
+`ChatMediaLoader`，宿主必须应用传入 modifier，并自行负责 loading/error/fallback。
+已废弃的 `ChatCallbacks.onLoadAvatar` 不恢复使用。
 
 ## 验收标准
 
@@ -231,14 +246,17 @@ callback 为空时不添加伪 clickable 语义。
 - 有 `ChatUser.avatar` 时默认头像图片可加载；失败时回退首字母；
   `avatarContent` 与 `imageContent` 的覆盖优先级符合设计。
 - 自定义 `attachmentContent` 和 `imageContent` 可替换默认实现且仍受消息行尺寸约束。
+- 根级 loader 收到头像/附件上下文及 resolver 生成的 header/cacheKey，进度、成功、失败和取消
+  语义可测试；外部注入 loader 不由 SDK 关闭。
 - data URI 入站/出站可往返且 payload 不进入日志；缩略图只影响预览，点击/重试仍使用原始来源。
-- `commonTest` 覆盖 MIME 分类、URI codec、文件大小格式化、空字段/key fallback、caption 去重、part 顺序，
-  以及 `AgUiChatMessageMapper` 的 IMAGE/FILE 去重与合成规则。
+- `commonTest` 覆盖 media context/request、header/cacheKey 传播、进度/终态、取消、loader 所有权，
+  以及 MIME 分类、URI codec、文件大小格式化、caption 去重和 IMAGE/FILE 映射规则。
 - 按 `AGENTS.md` 三条门禁验证，并补跑 JS 编译与 Android/H5 人工图片验收。
 
 ## 兼容性
 
-`MessagePart.Attachment`、`ChatSlots`、`ChatCallbacks` 都是公开 `data class`。
+`MessagePart.Attachment`、`ChatSlots`、`ChatCallbacks`、`ChatMediaConfig`、`ChatMediaLoader`
+和 `ChatScreen` 都是公开 API。
 增加 `previewUri` / slot 字段会改变构造器、`copy` 和 `componentN` ABI；与主题/slots 分层一起按
 major 交付，不能仅依赖默认参数宣称二进制兼容。
 

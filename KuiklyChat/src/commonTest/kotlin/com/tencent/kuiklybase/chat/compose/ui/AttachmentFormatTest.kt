@@ -30,6 +30,7 @@ class AttachmentFormatTest {
             previewUri = "data:image/png;base64,abc",
         )
         assertEquals("data:image/png;base64,abc", attachmentDisplaySource(attachment))
+        assertEquals("https://origin.example/full.png", attachment.uri)
     }
 
     @Test

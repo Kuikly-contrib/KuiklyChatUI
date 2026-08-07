@@ -413,7 +413,7 @@ separator
 | `SliverAnimatedList` | `List` + `vfor` + `diffUpdate` + `animate` |
 | `ScrollController` | `List.scrollToPosition`、`setContentOffset`、`getFirstVisiblePosition` |
 | `TextEditingController` | `TextAreaView`/`InputView` ref + `textInputState` |
-| `ImageProvider` / cache | `Image.src`、`ImageUri`，缓存放到平台适配层 |
+| `ImageProvider` / cache | `rememberAsyncImagePainter` + 根级 `ChatCrossCache`；Android/Apple 文件缓存、Web IndexedDB |
 | Freezed union | Kotlin `sealed interface` + `data class` |
 | JSON serialization | KMP serializer 或明确的 `decode/encode` codec |
 | Provider | 显式 `ChatContext`、Pager 作用域字段或构造注入 |

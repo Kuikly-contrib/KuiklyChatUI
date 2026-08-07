@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "KuiklyChatOhos",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

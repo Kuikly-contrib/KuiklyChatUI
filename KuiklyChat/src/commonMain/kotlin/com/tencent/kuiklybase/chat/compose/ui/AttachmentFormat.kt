@@ -10,6 +10,7 @@ fun isDisplayableImageSource(source: String): Boolean {
     if (trimmed.isEmpty()) return false
     if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return true
     if (trimmed.startsWith("file://") || trimmed.startsWith("content://")) return true
+    if (trimmed.startsWith("assets/")) return true
     val dataUri = AttachmentUriCodec.parseDataUri(trimmed)
     return dataUri != null && dataUri.mimeType.startsWith("image/")
 }

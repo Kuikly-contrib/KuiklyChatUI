@@ -15,6 +15,7 @@ import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.Dp
 import com.tencent.kuikly.compose.ui.unit.sp
+import com.tencent.kuiklybase.chat.compose.core.ChatMediaContext
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
@@ -28,6 +29,16 @@ fun shouldShowAvatar(
     if (!showAvatar) return false
     if (!hideAvatarWhenGrouped) return true
     return groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.FIRST
+}
+
+/** Keeps grouped rows aligned with the first bubble when the avatar is hidden. */
+fun shouldReserveAvatarSpace(
+    groupStatus: MessageGroupStatus,
+    showAvatar: Boolean,
+    hideAvatarWhenGrouped: Boolean,
+): Boolean {
+    if (!showAvatar || !hideAvatarWhenGrouped) return false
+    return groupStatus == MessageGroupStatus.MIDDLE || groupStatus == MessageGroupStatus.LAST
 }
 
 fun avatarInitial(user: ChatUser): String {
@@ -47,6 +58,7 @@ internal fun ChatAvatar(
     modifier: Modifier = Modifier,
     avatarContent: (@Composable (ChatUser, Dp) -> Unit)? = null,
     imageContent: (@Composable (String, String?, Modifier) -> Unit)? = null,
+    mediaRuntime: ChatMediaRuntime,
 ) {
     val clickModifier = if (onClick != null) {
         Modifier.clickable { onClick() }
@@ -64,12 +76,13 @@ internal fun ChatAvatar(
         when {
             avatarContent != null -> avatarContent(user, size)
             user.avatar.isNotBlank() -> ChatImage(
-                source = user.avatar.trim(),
+                mediaContext = ChatMediaContext.Avatar(user),
                 contentDescription = user.name.ifEmpty { null },
                 modifier = Modifier.fillMaxSize(),
                 theme = theme,
                 strings = strings,
                 imageContent = imageContent,
+                mediaRuntime = mediaRuntime,
                 errorContent = {
                     Text(
                         text = avatarInitial(user),

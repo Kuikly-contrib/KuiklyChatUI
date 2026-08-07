@@ -29,6 +29,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
+import com.tencent.kuiklybase.chat.compose.core.ChatTextRenderConfig
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUserResolver
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
@@ -48,6 +49,8 @@ internal fun ChatMessageList(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    textRenderConfig: ChatTextRenderConfig,
+    mediaRuntime: ChatMediaRuntime,
     rendererRegistry: MessageRendererRegistry,
     userResolution: ChatUserResolutionConfig? = null,
     userCache: UserCache? = null,
@@ -139,6 +142,8 @@ internal fun ChatMessageList(
                                 config = config,
                                 slots = slots,
                                 callbacks = callbacks,
+                                textRenderConfig = textRenderConfig,
+                                mediaRuntime = mediaRuntime,
                                 rendererRegistry = rendererRegistry,
                                 userResolution = userResolution,
                                 userCache = userCache,
@@ -216,6 +221,8 @@ private fun ChatMessageListItem(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    textRenderConfig: ChatTextRenderConfig,
+    mediaRuntime: ChatMediaRuntime,
     rendererRegistry: MessageRendererRegistry,
     userResolution: ChatUserResolutionConfig?,
     userCache: UserCache?,
@@ -259,6 +266,7 @@ private fun ChatMessageListItem(
                 config = config,
                 slots = slots,
                 callbacks = callbacks,
+                mediaRuntime = mediaRuntime,
                 content = rendererContent,
                 reserveSenderNameSpace = reserveSenderNameSpace,
             )
@@ -300,6 +308,8 @@ private fun ChatMessageListItem(
             config = config,
             slots = slots,
             callbacks = callbacks,
+            textRenderConfig = textRenderConfig,
+            mediaRuntime = mediaRuntime,
             reserveSenderNameSpace = reserveSenderNameSpace,
         )
     }

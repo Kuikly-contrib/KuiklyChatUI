@@ -17,6 +17,7 @@ import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
+import com.tencent.kuiklybase.chat.compose.core.ChatTextRenderConfig
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
@@ -31,6 +32,8 @@ internal fun TextBubbleContent(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    textRenderConfig: ChatTextRenderConfig = ChatTextRenderConfig.Default,
+    mediaRuntime: ChatMediaRuntime,
     modifier: Modifier = Modifier
 ) {
     val bubbleColor = if (isMine) theme.outgoingBubbleColor else theme.incomingBubbleColor
@@ -59,10 +62,14 @@ internal fun TextBubbleContent(
     Column(modifier = bubbleModifier) {
         message.parts.forEachIndexed { index, part ->
             when (part) {
-                is MessagePart.Text -> Text(
-                    text = part.value,
-                    color = Color(textColor),
-                    fontSize = theme.fontSize.sp
+                is MessagePart.Text -> TextPartContent(
+                    message = message,
+                    part = part,
+                    isMine = isMine,
+                    theme = theme,
+                    textRenderConfig = textRenderConfig,
+                    slots = slots,
+                    callbacks = callbacks,
                 )
                 is MessagePart.Attachment -> {
                     val onClick = callbacks.onAttachmentClick?.let { handler ->
@@ -76,6 +83,7 @@ internal fun TextBubbleContent(
                         theme = theme,
                         strings = strings,
                         slots = slots,
+                        mediaRuntime = mediaRuntime,
                         onClick = onClick,
                     )
                 }

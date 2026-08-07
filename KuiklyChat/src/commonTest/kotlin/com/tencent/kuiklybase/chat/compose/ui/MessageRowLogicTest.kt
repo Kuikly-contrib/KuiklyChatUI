@@ -19,6 +19,45 @@ class MessageRowLogicTest {
     }
 
     @Test
+    fun shouldReserveAvatarSpaceWhenGroupedAvatarHidden() {
+        assertFalse(
+            shouldReserveAvatarSpace(
+                MessageGroupStatus.SINGLE,
+                showAvatar = true,
+                hideAvatarWhenGrouped = true,
+            ),
+        )
+        assertFalse(
+            shouldReserveAvatarSpace(
+                MessageGroupStatus.FIRST,
+                showAvatar = true,
+                hideAvatarWhenGrouped = true,
+            ),
+        )
+        assertTrue(
+            shouldReserveAvatarSpace(
+                MessageGroupStatus.MIDDLE,
+                showAvatar = true,
+                hideAvatarWhenGrouped = true,
+            ),
+        )
+        assertTrue(
+            shouldReserveAvatarSpace(
+                MessageGroupStatus.LAST,
+                showAvatar = true,
+                hideAvatarWhenGrouped = true,
+            ),
+        )
+        assertFalse(
+            shouldReserveAvatarSpace(
+                MessageGroupStatus.MIDDLE,
+                showAvatar = true,
+                hideAvatarWhenGrouped = false,
+            ),
+        )
+    }
+
+    @Test
     fun shouldShowAvatarWhenGroupingHideDisabled() {
         assertTrue(shouldShowAvatar(MessageGroupStatus.MIDDLE, showAvatar = true, hideAvatarWhenGrouped = false))
     }
