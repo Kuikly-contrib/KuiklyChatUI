@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.background
+import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.fillMaxSize
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
@@ -26,14 +27,11 @@ import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuiklybase.chat.compose.adapter.AttachmentUriCodec
 import com.tencent.kuiklybase.chat.compose.core.ChatController
-import com.tencent.kuiklybase.chat.compose.core.ChatIntent
 import com.tencent.kuiklybase.chat.compose.core.ChatMediaContext
 import com.tencent.kuiklybase.chat.compose.core.ChatMediaRequest
-import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
-import com.tencent.kuiklybase.chat.compose.core.MessagePart
 import com.tencent.kuiklybase.chat.compose.ui.ChatMediaConfig
 import com.tencent.kuiklybase.chat.compose.ui.ChatMediaRequestResolver
 import com.tencent.kuiklybase.chat.compose.ui.ChatScreen
@@ -74,12 +72,16 @@ internal class ComposeChatCacheDemoPage : ComposeChatDemoContainer() {
                 avatar = DEMO_REMOTE_IMAGE,
             )
         }
-        val controller = remember(scope, currentUser, assistant) {
+        val demoMessages = remember(assistant) {
+            composeChatCacheDemoMessages(assistant, DEMO_REMOTE_IMAGE)
+        }
+        val controller = remember(scope, currentUser, assistant, demoMessages) {
             ChatController(
                 currentUser = currentUser,
                 scope = scope,
                 sender = randomAuthorDemoSender(currentUser, assistant),
                 assistantUser = assistant,
+                initialMessages = demoMessages,
             )
         }
         DisposableEffect(controller) {
@@ -105,71 +107,6 @@ internal class ComposeChatCacheDemoPage : ComposeChatDemoContainer() {
         var containsRemoteImage by remember { mutableStateOf(false) }
         val attachmentIntegration = rememberDemoChatAttachmentIntegration()
 
-        LaunchedEffect(controller) {
-            if (controller.state.messages.isNotEmpty()) return@LaunchedEffect
-            val assistant = ChatUser(
-                id = "assistant",
-                name = "Assistant",
-                avatar = DEMO_REMOTE_IMAGE,
-            )
-            val tinyPng = AttachmentUriCodec.toDataUri(
-                mimeType = "image/png",
-                base64Payload = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-            )
-            listOf(
-                ChatMessage(
-                    id = "cache-demo-intro",
-                    author = assistant,
-                    parts = listOf(
-                        MessagePart.Text(
-                            "本页使用 KRChatByteCacheModule + ChatCrossCache。下方两张图使用同一远程 URL，第二次应命中持久化缓存。",
-                        ),
-                    ),
-                ),
-                ChatMessage(
-                    id = "cache-demo-remote-1",
-                    author = assistant,
-                    parts = listOf(
-                        MessagePart.Text("远程图片 #1"),
-                        MessagePart.Attachment(
-                            id = "cache-demo-img-1",
-                            uri = DEMO_REMOTE_IMAGE,
-                            mimeType = "image/jpeg",
-                            name = "cache-demo-1.jpg",
-                        ),
-                    ),
-                ),
-                ChatMessage(
-                    id = "cache-demo-remote-2",
-                    author = assistant,
-                    parts = listOf(
-                        MessagePart.Text("远程图片 #2（同 URL，应复用缓存）"),
-                        MessagePart.Attachment(
-                            id = "cache-demo-img-2",
-                            uri = DEMO_REMOTE_IMAGE,
-                            mimeType = "image/jpeg",
-                            name = "cache-demo-2.jpg",
-                        ),
-                    ),
-                ),
-                ChatMessage(
-                    id = "cache-demo-inline",
-                    author = assistant,
-                    parts = listOf(
-                        MessagePart.Text("内联 data URI（写入同一 Module 缓存）"),
-                        MessagePart.Attachment(
-                            id = "cache-demo-inline-img",
-                            uri = tinyPng,
-                            mimeType = "image/png",
-                            name = "inline.png",
-                        ),
-                    ),
-                ),
-            ).forEach { message ->
-                controller.dispatch(ChatIntent.UpsertMessage(message))
-            }
-        }
-
         LaunchedEffect(cache) {
             while (true) {
                 containsRemoteImage = cache.contains(cacheKeyFor(DEMO_REMOTE_IMAGE))
@@ -191,23 +128,31 @@ internal class ComposeChatCacheDemoPage : ComposeChatDemoContainer() {
             outgoingBubbleColor = 0xFF176B5B,
             accentColor = 0xFF176B5B,
         )
+        val messageActions = rememberDemoChatMessageActions(
+            controller = controller,
+            baseCallbacks = attachmentIntegration.callbacks,
+            theme = theme,
+        )
 
         Column(modifier = Modifier.fillMaxSize().background(Color(theme.backgroundColor))) {
             CacheDemoHeader(
                 containsRemoteImage = containsRemoteImage,
                 cachedEntryCount = cachedEntryCount,
             )
-            ChatScreen(
-                controller = controller,
-                theme = theme,
-                strings = ChatStrings.Default.copy(
-                    inputPlaceholder = "ChatCrossCache Module 演示",
-                ),
-                callbacks = attachmentIntegration.callbacks,
-                slots = attachmentIntegration.slots,
-                mediaConfig = mediaConfig,
-                modifier = Modifier.weight(1f),
-            )
+            Box(modifier = Modifier.weight(1f)) {
+                ChatScreen(
+                    controller = controller,
+                    theme = theme,
+                    strings = ChatStrings.Default.copy(
+                        inputPlaceholder = "长按消息可复制或删除",
+                    ),
+                    callbacks = messageActions.callbacks,
+                    slots = attachmentIntegration.slots,
+                    mediaConfig = mediaConfig,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                messageActions.overlay()
+            }
         }
     }
 }

@@ -78,6 +78,19 @@ data class ChatSlots(
 /** Host callbacks that are intentionally separate from state mutation. */
 data class ChatCallbacks(
     val onMessageClick: ((ChatMessage) -> Unit)? = null,
+    /** Whole-message long press (Flyer `onMessageLongPress`). Works on attachments too. */
+    val onMessageLongPress: ((ChatMessage) -> Unit)? = null,
+    /**
+     * Long press with bubble bounds in window coordinates (legacy `onMessageLongPressWithPosition`).
+     * When set, takes priority over [onMessageLongPress].
+     */
+    val onMessageLongPressWithPosition: ((
+        message: ChatMessage,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+    ) -> Unit)? = null,
     val onRetryClick: ((ChatMessage) -> Unit)? = null,
     val onTextChanged: ((String) -> Unit)? = null,
     val onCopyToClipboard: ((String) -> Unit)? = null,
@@ -125,6 +138,11 @@ data class ChatScreenConfig(
     val estimatedMessageHeightPx: Int = 72,
     /** Max bubble width as a fraction of the list width (aligns with legacy `bubbleMaxWidthRatio`). */
     val bubbleMaxWidthRatio: Float = 0.8f,
+    /**
+     * Bottom safe-area inset for the composer only (host passes `pagerData.safeAreaInsets.bottom`).
+     * Does not include keyboard height; keyboard avoidance is handled inside [ChatScreen].
+     */
+    val composerBottomInsetDp: Float = 0f,
 ) {
     companion object {
         val Default = ChatScreenConfig()

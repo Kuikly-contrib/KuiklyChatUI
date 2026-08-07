@@ -212,7 +212,8 @@ Kuikly Compose 不支持通用 `Icon` 组件；文件标识使用 `Text`、`Canv
 用 `message.id + partIndex` 防御性回退。图片尺寸约束必须同时接受消息行父约束，不能用屏幕固定宽度
 撑破列表。
 
-`TextBubbleContent` 当前整泡有 `onMessageClick`。附件子节点点击必须消费该次交互并只调用
+`TextBubbleContent` 气泡支持 `onMessageClick`（无附件时）与 `onMessageLongPress` /
+`onMessageLongPressWithPosition`（含附件，对齐 Flyer）。附件子节点点击必须消费该次交互并只调用
 `onAttachmentClick`；不得让同一次点击同时触发 attachment 与 message 两个 callback。
 callback 为空时不添加伪 clickable 语义。
 

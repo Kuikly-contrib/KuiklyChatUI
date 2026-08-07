@@ -18,13 +18,20 @@ internal fun AttachmentContent(
     theme: ChatTheme,
     strings: ChatStrings,
     slots: ChatSlots,
+    callbacks: ChatCallbacks,
     mediaRuntime: ChatMediaRuntime,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
+    val gestureModifier = modifier.chatMessageGestures(
+        message = message,
+        callbacks = callbacks,
+        onTap = onClick,
+        enableLongPress = true,
+    )
     if (slots.attachmentContent != null) {
         val clickHandler = onClick ?: {}
-        slots.attachmentContent.invoke(message, attachment, isMine, modifier, clickHandler)
+        slots.attachmentContent.invoke(message, attachment, isMine, gestureModifier, clickHandler)
         return
     }
     if (isImageMimeType(attachment.mimeType)) {
@@ -36,16 +43,14 @@ internal fun AttachmentContent(
             strings = strings,
             slots = slots,
             mediaRuntime = mediaRuntime,
-            onClick = onClick,
-            modifier = modifier,
+            modifier = gestureModifier,
         )
     } else {
         FileAttachmentContent(
             attachment = attachment,
             isMine = isMine,
             theme = theme,
-            onClick = onClick,
-            modifier = modifier,
+            modifier = gestureModifier,
         )
     }
 }

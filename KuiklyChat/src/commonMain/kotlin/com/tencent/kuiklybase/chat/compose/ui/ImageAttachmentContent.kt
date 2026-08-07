@@ -1,7 +1,6 @@
 package com.tencent.kuiklybase.chat.compose.ui
 
 import androidx.compose.runtime.Composable
-import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.aspectRatio
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
@@ -25,16 +24,13 @@ internal fun ImageAttachmentContent(
     strings: ChatStrings,
     slots: ChatSlots,
     mediaRuntime: ChatMediaRuntime,
-    onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val displaySource = attachmentDisplaySource(attachment)
-    val clickModifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 4.dp)
-            .then(clickModifier),
+            .padding(top = 4.dp),
     ) {
         ChatImage(
             mediaContext = ChatMediaContext.AttachmentPreview(

@@ -28,6 +28,7 @@ import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.text.TextStyle
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
+import com.tencent.kuikly.compose.extension.keyboardHeightChange
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
@@ -44,6 +45,7 @@ internal fun ChatComposer(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
+    onKeyboardHeightChange: ((Float) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -59,7 +61,12 @@ internal fun ChatComposer(
         modifier = modifier
             .fillMaxWidth()
             .background(Color(theme.composerColor))
-            .padding(theme.contentPadding.dp)
+            .padding(
+                start = theme.contentPadding.dp,
+                end = theme.contentPadding.dp,
+                top = theme.contentPadding.dp,
+                bottom = theme.contentPadding.dp + config.composerBottomInsetDp.dp,
+            )
     ) {
         if (sessionError != null) {
             Text(
@@ -154,6 +161,13 @@ internal fun ChatComposer(
                 modifier = Modifier
                     .weight(1f)
                     .border(1.dp, Color(theme.borderColor), RoundedCornerShape(theme.bubbleRadius.dp))
+                    .then(
+                        if (onKeyboardHeightChange != null) {
+                            Modifier.keyboardHeightChange { onKeyboardHeightChange(it.height) }
+                        } else {
+                            Modifier
+                        },
+                    ),
             )
             Spacer(Modifier.width(8.dp))
 

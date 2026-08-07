@@ -2,7 +2,6 @@ package com.tencent.kuiklybase.chat.compose.ui
 
 import androidx.compose.runtime.Composable
 import com.tencent.kuikly.compose.foundation.background
-import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Arrangement
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
@@ -47,14 +46,23 @@ internal fun TextBubbleContent(
     val showInsideTime = config.timeAndStatusPosition == TimeAndStatusPosition.INSIDE_BUBBLE &&
         shouldShowTimeAndStatus(groupStatus, config)
     val hasAttachments = message.parts.any { it is MessagePart.Attachment }
+    val messageTap = if (!hasAttachments) {
+        callbacks.onMessageClick?.let { handler -> { handler(message) } }
+    } else {
+        null
+    }
     val bubbleModifier = modifier
         .clip(shape)
         .background(Color(bubbleColor))
         .then(
-            if (!hasAttachments && callbacks.onMessageClick != null) {
-                Modifier.clickable { callbacks.onMessageClick.invoke(message) }
-            } else {
+            if (hasAttachments) {
                 Modifier
+            } else {
+                Modifier.chatMessageGestures(
+                    message = message,
+                    callbacks = callbacks,
+                    onTap = messageTap,
+                )
             }
         )
         .padding(horizontal = 14.dp, vertical = 10.dp)
@@ -62,15 +70,28 @@ internal fun TextBubbleContent(
     Column(modifier = bubbleModifier.wrapContentWidth()) {
         message.parts.forEachIndexed { index, part ->
             when (part) {
-                is MessagePart.Text -> TextPartContent(
-                    message = message,
-                    part = part,
-                    isMine = isMine,
-                    theme = theme,
-                    textRenderConfig = textRenderConfig,
-                    slots = slots,
-                    callbacks = callbacks,
-                )
+                is MessagePart.Text -> {
+                    val textGestureModifier = if (hasAttachments && messageLongPressEnabled(callbacks)) {
+                        Modifier.chatMessageGestures(
+                            message = message,
+                            callbacks = callbacks,
+                            onTap = null,
+                        )
+                    } else {
+                        Modifier
+                    }
+                    Column(modifier = textGestureModifier) {
+                        TextPartContent(
+                            message = message,
+                            part = part,
+                            isMine = isMine,
+                            theme = theme,
+                            textRenderConfig = textRenderConfig,
+                            slots = slots,
+                            callbacks = callbacks,
+                        )
+                    }
+                }
                 is MessagePart.Attachment -> {
                     val onClick = callbacks.onAttachmentClick?.let { handler ->
                         { handler(message, part) }
@@ -83,6 +104,7 @@ internal fun TextBubbleContent(
                         theme = theme,
                         strings = strings,
                         slots = slots,
+                        callbacks = callbacks,
                         mediaRuntime = mediaRuntime,
                         onClick = onClick,
                     )

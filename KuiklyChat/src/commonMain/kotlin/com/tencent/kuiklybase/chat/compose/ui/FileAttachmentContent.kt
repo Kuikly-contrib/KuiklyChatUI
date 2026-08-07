@@ -2,7 +2,6 @@ package com.tencent.kuiklybase.chat.compose.ui
 
 import androidx.compose.runtime.Composable
 import com.tencent.kuikly.compose.foundation.background
-import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
@@ -28,20 +27,17 @@ internal fun FileAttachmentContent(
     attachment: MessagePart.Attachment,
     isMine: Boolean,
     theme: ChatTheme,
-    onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val bubbleColor = if (isMine) theme.outgoingBubbleColor else theme.incomingBubbleColor
     val textColor = if (isMine) theme.outgoingTextColor else theme.incomingTextColor
     val fileName = attachment.name.ifEmpty { attachment.uri }
     val sizeLabel = formatFileSize(attachment.sizeBytes)
-    val clickModifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 4.dp)
             .background(Color(bubbleColor), RoundedCornerShape(theme.bubbleRadiusSmall.dp))
-            .then(clickModifier)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

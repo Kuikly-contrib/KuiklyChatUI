@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatMessageSender
+import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStreamEvent
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
@@ -39,15 +40,17 @@ internal fun randomAuthorDemoSender(
 internal fun rememberRandomAuthorChatController(
     currentUser: ChatUser,
     assistant: ChatUser,
+    initialMessages: List<ChatMessage> = emptyList(),
 ): ChatController {
     val scope = rememberCoroutineScope()
     val controller =
-        remember(scope, currentUser, assistant) {
+        remember(scope, currentUser, assistant, initialMessages) {
             ChatController(
                 currentUser = currentUser,
                 scope = scope,
                 sender = randomAuthorDemoSender(currentUser, assistant),
                 assistantUser = assistant,
+                initialMessages = initialMessages,
             )
         }
     DisposableEffect(controller) {

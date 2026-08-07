@@ -1,17 +1,22 @@
 package com.tencent.kuiklybase.chat.compose.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.ExperimentalFoundationApi
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.fillMaxSize
+import com.tencent.kuikly.compose.foundation.layout.padding
 import com.tencent.kuikly.compose.foundation.lazy.LazyListState
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.graphics.Color
+import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuiklybase.chat.compose.adapter.agentCardRendererRegistry
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
@@ -112,13 +117,20 @@ private fun ChatScreenContent(
     val latestResolver = rememberUpdatedState(userResolution?.resolver)
     val resolverAvailable = userResolution?.resolver != null
     val mediaRuntime = rememberChatMediaRuntime(mediaConfig)
+    var keyboardHeight by remember { mutableStateOf(0f) }
+    // Kuikly keyboardHeightChange reports layout units; use as dp directly (see KuiklyAiChatView).
+    val keyboardPadding = keyboardHeight.dp
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color(theme.backgroundColor))
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = keyboardPadding),
+        ) {
             ChatEffectHandler(
                 controller = controller,
                 scrollState = scrollState,
@@ -151,6 +163,7 @@ private fun ChatScreenContent(
                 config = config,
                 slots = slots,
                 callbacks = callbacks,
+                onKeyboardHeightChange = { keyboardHeight = it },
             )
         }
     }

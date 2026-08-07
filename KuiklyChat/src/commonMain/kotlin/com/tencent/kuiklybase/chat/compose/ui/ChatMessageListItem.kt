@@ -75,11 +75,16 @@ internal fun ChatMessageListItem(
             resolverAvailable = resolverAvailable,
         )
         val rendererContent: @Composable () -> Unit = {
+            val messageTap = callbacks.onMessageClick?.let { handler -> { handler(message) } }
             customRenderer.Render(
                 message,
                 group,
                 theme,
-                Modifier,
+                Modifier.chatMessageGestures(
+                    message = message,
+                    callbacks = callbacks,
+                    onTap = messageTap,
+                ),
             )
         }
         ChatMessageListItemBody(
