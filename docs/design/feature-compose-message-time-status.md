@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-04
+last_updated: 2026-08-07
 status: implemented
 owner: @kuikly-chat-team
 ---
@@ -13,7 +13,7 @@ owner: @kuikly-chat-team
 
 ## 非目标
 - 不实现 `deliveredAt` / `seenAt` / 双勾已读（模型字段可预留，UI 后置）。
-- 不实现消息列表顶部的「日期分隔线」（见 `feature-compose-list-chrome.md`）。
+- 列表顶部**日期分隔 header** 见 [`feature-compose-datetime.md`](feature-compose-datetime.md)（`showDateSeparators`，对齐 Flyer `headerWidget`）。
 - 不在本需求内做 Markdown 或流式动画（见 `feature-compose-text-markdown-renderer.md`）。
 
 ## 技术方案
@@ -55,9 +55,13 @@ data class ChatScreenConfig(
     val showTime: Boolean = true,
     val showStatus: Boolean = true,
     val timeAndStatusPosition: TimeAndStatusPosition = TimeAndStatusPosition.BELOW_BUBBLE,
-    val timeFormat: String = "HH:mm", // 或注入 formatter
+    val timeFormat: String = "HH:mm",
+    val dateTimeFormatter: ChatDateTimeFormatter = LocalChatDateTimeFormatter.Default,
+    val hideTimeWhenGrouped: Boolean = true,
 )
 ```
+
+时间与 formatter 详见 [`feature-compose-datetime.md`](feature-compose-datetime.md)。
 
 ### 状态展示映射
 
@@ -85,6 +89,7 @@ data class ChatScreenConfig(
 ## 依赖
 - `feature-kuikly-chat-ui-sdk-redesign`（✅）
 - `feature-compose-message-row.md`（📋）：时间区在消息行内排版
+- `feature-compose-datetime.md`（✅）：`ChatDateTimeFormatter`、分组时间显隐
 
 ---
 > 参考：Flutter `timeFormat`、`getIconForStatus`、`TimeAndStatus`

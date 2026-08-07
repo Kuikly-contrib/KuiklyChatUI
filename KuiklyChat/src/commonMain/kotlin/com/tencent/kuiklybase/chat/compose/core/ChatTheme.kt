@@ -17,6 +17,8 @@ data class ChatTheme(
     val timeTextColor: Long = 0xFF94A3B8,
     val systemBackgroundColor: Long = 0xFFE2E8F0,
     val systemTextColor: Long = 0xFF64748B,
+    val dateSeparatorBgColor: Long = 0xFFCECECE,
+    val dateSeparatorTextColor: Long = 0xFFFFFFFF,
     val fontSize: Float = 16f,
     val smallFontSize: Float = 12f,
     val bubbleRadius: Float = 18f,

@@ -1,12 +1,12 @@
 ---
-last_updated: 2026-08-05
+last_updated: 2026-08-07
 status: draft
 owner: @kuikly-chat-team
 ---
 
 # Feature: Compose Chat 列表附属 UI（List Chrome）
 
-## Status: 📝 Draft
+## Status: 📝 Draft（日期分隔 header 已落地，见 `feature-compose-datetime.md`）
 
 ## 目标
 在现有 sticky-bottom、历史加载、空态和未读计数基础上，补齐可注入时区/本地化策略的日期分隔
@@ -19,8 +19,16 @@ owner: @kuikly-chat-team
 - 不改造 `ChatHistoryLoader` / `ChatIntent.LoadEarlier` 分页协议。
 - 不处理 Composer 安全区、键盘避让或高度测量；这些由 `feature-compose-composer-enhancement.md` 负责。
 - 不在 `commonMain` 直接使用 `java.time` 或平台日期 API。
-- 不在未验证 `ohosArm64` 依赖矩阵前直接引入官方 `kotlinx-datetime`；
-  首期通过纯 Kotlin formatter 契约注入本地日历规则。
+
+## 已实现（2026-08-07）
+
+日期分隔已按 Flyer **`ChatMessage.headerWidget`** 模式接入（非独立 LazyColumn item）：
+
+- `showDateSeparators` + `ChatDateTimeFormatter.dateSeparatorLabel()`；
+- `ChatMessageListItem` 在消息行上方渲染 `ChatDateSeparator` / `dateSeparatorContent`；
+- 跨自然日打断 `MessageGroupStatus`。
+
+详见 [`feature-compose-datetime.md`](feature-compose-datetime.md)。
 
 ## 现状与改动边界
 
@@ -37,12 +45,12 @@ owner: @kuikly-chat-team
 
 ### 涉及的模块
 - `chat/compose/ui/ChatMessageList.kt`：将统一 entry 作为真正的 LazyColumn items 渲染，
-  插入日期/typing 并修正锚点与分组边界。
+  插入 typing 并修正锚点（**日期 header 已在 `ChatMessageListItem` 落地，见 datetime 文档**）。
 - `chat/compose/ui/ChatListScroll.kt`：让近底判断显式接收距离阈值。
-- `chat/compose/ui/ChatListEntry.kt`：把消息、日期和 typing 预先归一为可测试的 entry 列表。
+- `chat/compose/ui/ChatListEntry.kt`：把消息、日期和 typing 预先归一为可测试的 entry 列表（日期 entry 可后续从 header 模式迁移）。
 - `chat/compose/ui/ScrollToBottomButton.kt`：升级为 mini FAB + 独立未读角标。
 - `chat/compose/ui/ChatMessageItem.kt`：保留默认空态内容。
-- `chat/compose/ui/`：新增 `DateSeparator.kt`、`TypingIndicator.kt`。
+- `chat/compose/ui/`：✅ `ChatDateSeparator.kt`；📋 `TypingIndicator.kt`。
 - `chat/compose/ui/MessageTimeAndStatus.kt`：与日期分隔共用同一时区/格式化契约。
 - `chat/compose/ui/ChatSlots.kt`：实际承载 `ChatSlots`、`ChatScreenConfig`，在此增加日期/typing slot 与静态配置。
 - `chat/compose/core/ChatTheme.kt`：补充日期分隔、typing、未读角标所需 token 和文案。
@@ -53,7 +61,7 @@ owner: @kuikly-chat-team
 |--------|-------------|------|
 | 回底按钮 | `ScrollToBottom` | mini FAB + 独立未读角标；继续锚定在列表底部 |
 | 加载更早 | `LoadMore` | 空闲时保留可点击文案，加载中改用 `CircularProgressIndicator` |
-| 日期分隔 | Flyer 列表惯例 | 按宿主 formatter 插入「今天 / 昨天 / 日期」 |
+| 日期分隔 | Flyer `headerWidget` | ✅ 消息行上方 header；📋 可选迁移为独立 LazyColumn entry |
 | 正在输入 | `IsTypingIndicator` | 支持多个用户；默认三点动画，可由 slot 替换 |
 | 空列表 | `EmptyChatList` | 默认内容在列表可用区域内居中 |
 
@@ -93,11 +101,12 @@ data class ChatScreenConfig(
     // 现有字段保持不变
     val nearBottomThresholdPx: Int = 120,
     val showDateSeparators: Boolean = false,
-    /** 默认 UTC 以保持现有时间行为；宿主可替换为业务时区/本地化实现。 */
-    val dateTimeFormatter: ChatDateTimeFormatter = UtcChatDateTimeFormatter,
+    val dateTimeFormatter: ChatDateTimeFormatter = LocalChatDateTimeFormatter.Default,
     val dateSeparatorClock: ChatClock = ChatClock.System,
 )
 ```
+
+> 以上字段已在 `ChatSlots.kt` / `ChatScreenConfig` 实现；默认 `showDateSeparators = false`。
 
 `ChatListChromeState` 按 `feature-compose-theme-and-slots.md` 的统一后缀接入两个现有
 `ChatScreen` 入口；不要新增一个其余参数全部有默认值的平行 overload。新增函数默认参数和
@@ -110,14 +119,13 @@ data class 字段都只保持源码兼容，不保持 KMP ABI。
 ### 日期与分组逻辑
 
 - `createdAt <= 0L` 视为未知时间，不插入分隔项。
-- `showDateSeparators = false` 时不插入日期。默认 `UtcChatDateTimeFormatter` 保持当前
-  `formatMessageTime()` 的 UTC 行为并用 ISO 日期；它不会被描述成本地时区。
+- `showDateSeparators = false` 时不插入日期。默认 formatter 为 `LocalChatDateTimeFormatter`（本地时区），与气泡时间一致。
 - 宿主 formatter 同时负责消息时间、日期边界和文案，可使用
   `ChatStrings.today/yesterday`，从而避免「日期按本地时区、气泡时间仍按 UTC」的不一致。
 - 首条有效时间消息以及 formatter 判定跨日时显示日期。`nowMillis` 来自可注入
   `ChatClock`，测试不得依赖真实时钟。
-- `kotlinx-datetime` 只有在 Android/JS/iOS/macOS 与独立 OHOS 构建都确认兼容 artifact 后，
-  才可增加零配置本地 formatter；否则保持 UTC 默认 + 宿主注入。
+- `kotlinx-datetime`（✅ `0.6.0-RC.2-KBA-003`，见 `feature-compose-datetime.md`）在默认
+  `LocalChatDateTimeFormatter` 中用于本地时区；宿主仍可注入 `UtcChatDateTimeFormatter`。
 - 日期边界必须同时打断 `MessageGroupStatus`：计算当前项的 previous/next 时，将分隔边界一侧视为 `null`，
   避免气泡跨日期条仍被判为同组。
 - 所有 entry key 都带类型 namespace，例如 `message:<id>`、`date:<nextMessageId>`、

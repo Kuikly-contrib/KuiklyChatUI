@@ -7,6 +7,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatDateTimeFormatter
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.LocalChatDateTimeFormatter
+import com.tencent.kuiklybase.chat.compose.core.ChatClock
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 
@@ -31,6 +32,7 @@ data class ChatSlots(
             MessagePart.SystemNotice,
         ) -> Unit
     )? = null,
+    val dateSeparatorContent: (@Composable (timestampMillis: Long, label: String) -> Unit)? = null,
     val attachmentContent: (
         @Composable (
             ChatMessage,
@@ -112,8 +114,11 @@ data class ChatScreenConfig(
     val showStatus: Boolean = true,
     val timeAndStatusPosition: TimeAndStatusPosition = TimeAndStatusPosition.BELOW_BUBBLE,
     val timeFormat: String = "HH:mm",
-  /** Formats bubble time and (future) date separators; default uses device local time zone. */
+    /** Formats bubble time and date headers (Flyer-style calendar-day separators). */
     val dateTimeFormatter: ChatDateTimeFormatter = LocalChatDateTimeFormatter.Default,
+    /** When true, inserts a date header above messages that start a new calendar day. */
+    val showDateSeparators: Boolean = false,
+    val dateSeparatorClock: ChatClock = ChatClock.System,
     val groupingWindowMillis: Long = 5 * 60 * 1000L,
     val maxLines: Int = 5,
     val loadEarlierThresholdPx: Int = 120,
