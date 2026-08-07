@@ -38,6 +38,7 @@ class ChatController(
     private var activeAssistantId: String? = null
     private var pendingUserMessageId: String? = null
     private var lastUserPrompt: String? = null
+    private var lastUserSubmission: List<MessagePart>? = null
     private var isListNearBottom = true
     private var localId = 0
 
@@ -50,6 +51,7 @@ class ChatController(
     fun dispatch(intent: ChatIntent) {
         when (intent) {
             is ChatIntent.SendText -> sendText(intent.text)
+            is ChatIntent.SendMessage -> sendMessage(intent.text, intent.attachments)
             ChatIntent.StopGeneration -> stopGeneration()
             is ChatIntent.RetryMessage -> retryMessage(intent.messageId)
             ChatIntent.LoadEarlier -> loadEarlier()
@@ -78,24 +80,35 @@ class ChatController(
     }
 
     /** Adds a local message and starts the injected sender when one is available. */
-    fun sendText(rawText: String): Boolean {
-        val text = rawText.trim()
-        if (text.isEmpty() || state.isSending) return false
+    fun sendText(rawText: String): Boolean = sendMessage(rawText, emptyList())
 
+    fun sendMessage(
+        rawText: String,
+        attachments: List<MessagePart.Attachment> = emptyList(),
+    ): Boolean {
+        val text = rawText.trim()
+        if ((text.isEmpty() && attachments.isEmpty()) || state.isSending) return false
+        if (attachments.isNotEmpty() && !validateOutgoingAttachments(attachments)) return false
+
+        val parts = buildList {
+            if (text.isNotEmpty()) add(MessagePart.Text(text))
+            addAll(attachments)
+        }
         val message = ChatMessage(
             id = nextLocalId("user"),
             author = currentUser,
-            parts = listOf(MessagePart.Text(text)),
+            parts = parts,
             status = MessageStatus.SENDING,
-            createdAt = clock.nowMillis()
+            createdAt = clock.nowMillis(),
         )
         lastUserPrompt = text
+        lastUserSubmission = parts
         pendingUserMessageId = message.id
         state = state.copy(
             messages = state.messages + message,
             isSending = sender != null,
             error = null,
-            lastMessageId = message.id
+            lastMessageId = message.id,
         )
         maybeIncrementUnread()
         if (sender == null) {
@@ -131,14 +144,16 @@ class ChatController(
         if (state.isSending) return
         val failed = state.messages.firstOrNull { it.id == messageId } ?: return
         if (failed.status != MessageStatus.FAILED) return
-        val retryText = lastUserPrompt ?: failed.text
+        val retryParts = resolveRetryParts(failed) ?: return
+        val retryText = retryParts.filterIsInstance<MessagePart.Text>().joinToString("") { it.value }
+        val retryAttachments = retryParts.filterIsInstance<MessagePart.Attachment>()
         state = state.copy(messages = state.messages.filterNot { it.id == messageId }, error = null)
         if (failed.author.id != currentUser.id) {
             pendingUserMessageId?.let { userId ->
                 state = state.copy(messages = state.messages.filterNot { it.id == userId })
             }
         }
-        sendText(retryText)
+        sendMessage(retryText, retryAttachments)
     }
 
     fun refresh() {
@@ -278,8 +293,16 @@ class ChatController(
                 createdAt = clock.nowMillis()
             )
         activeAssistantId = assistant.id
+        val textFormat =
+            assistant.parts.filterIsInstance<MessagePart.Text>().firstOrNull()?.format
+                ?: event.format
         val updated = assistant.copy(
-            parts = listOf(MessagePart.Text(assistant.text + event.text)),
+            parts = listOf(
+                MessagePart.Text(
+                    value = assistant.text + event.text,
+                    format = textFormat,
+                ),
+            ),
             status = MessageStatus.STREAMING
         )
         val isNewAssistant = state.messages.none { it.id == assistant.id }
@@ -344,4 +367,21 @@ class ChatController(
     }
 
     private fun nextLocalId(prefix: String): String = "$prefix-${localId++}"
+
+    private fun resolveRetryParts(failed: ChatMessage): List<MessagePart>? {
+        if (failed.author.id == currentUser.id) return failed.parts
+        pendingUserMessageId
+            ?.let { userId -> state.messages.firstOrNull { it.id == userId }?.parts }
+            ?.let { return it }
+        return lastUserSubmission
+    }
+
+    private fun validateOutgoingAttachments(attachments: List<MessagePart.Attachment>): Boolean {
+        val ids = mutableSetOf<String>()
+        return attachments.all { attachment ->
+            attachment.id.isNotBlank() &&
+                attachment.uri.isNotBlank() &&
+                ids.add(attachment.id)
+        }
+    }
 }

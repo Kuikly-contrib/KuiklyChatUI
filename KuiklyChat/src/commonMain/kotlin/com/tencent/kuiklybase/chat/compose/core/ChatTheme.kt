@@ -43,6 +43,10 @@ data class ChatStrings(
     val cancelled: String = "已取消",
     val scrollToBottom: String = "回到底部",
     val imageLoadFailed: String = "图片加载失败",
+    val attachmentFallbackName: String = "附件",
+    val photoLibraryLabel: String = "相册",
+    val cameraLabel: String = "拍照",
+    val fileLabel: String = "文件",
 ) {
     companion object {
         val Default = ChatStrings()

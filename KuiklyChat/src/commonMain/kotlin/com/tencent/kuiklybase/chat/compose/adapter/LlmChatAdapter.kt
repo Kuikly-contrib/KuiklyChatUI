@@ -7,8 +7,8 @@ import com.tencent.kuiklybase.chat.compose.core.ChatStreamEvent
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
+import com.tencent.kuiklybase.chat.compose.core.TextFormat
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachment
-import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmAttachmentKind
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageOrigin
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmMessageState
@@ -26,10 +26,11 @@ import kotlinx.coroutines.flow.collect
 class LlmChatAdapter(
     private val provider: LlmProvider,
     private val currentUser: ChatUser = ChatUser("user", "You"),
-    private val assistant: ChatUser = ChatUser("assistant", "Assistant")
+    private val assistant: ChatUser = ChatUser("assistant", "Assistant"),
+    private val assistantTextFormat: TextFormat = TextFormat.MARKDOWN,
 ) {
     val initialMessages: List<ChatMessage>
-        get() = provider.history.map { it.toChatMessage(currentUser, assistant) }
+        get() = provider.history.map { it.toChatMessage(currentUser, assistant, assistantTextFormat) }
 
     val sender: ChatMessageSender = ChatMessageSender { userMessage ->
         send(userMessage)
@@ -37,13 +38,19 @@ class LlmChatAdapter(
 
     private fun send(userMessage: ChatMessage): Flow<ChatStreamEvent> = flow {
         val assistantId = "assistant-${userMessage.id}"
-        emit(ChatStreamEvent.TextDelta(messageId = assistantId, text = ""))
+        emit(ChatStreamEvent.TextDelta(messageId = assistantId, text = "", format = assistantTextFormat))
         try {
             provider.sendMessageStream(
                 prompt = userMessage.text,
                 attachments = userMessage.parts.toLlmAttachments()
             ).collect { delta ->
-                emit(ChatStreamEvent.TextDelta(messageId = assistantId, text = delta))
+                emit(
+                    ChatStreamEvent.TextDelta(
+                        messageId = assistantId,
+                        text = delta,
+                        format = assistantTextFormat,
+                    ),
+                )
             }
             emit(ChatStreamEvent.Completed)
         } catch (cancelled: CancellationException) {
@@ -58,7 +65,8 @@ class LlmChatAdapter(
 
 private fun LlmChatMessage.toChatMessage(
     currentUser: ChatUser,
-    assistant: ChatUser
+    assistant: ChatUser,
+    assistantTextFormat: TextFormat,
 ): ChatMessage {
     val author = if (origin == LlmMessageOrigin.USER) {
         currentUser
@@ -72,8 +80,12 @@ private fun LlmChatMessage.toChatMessage(
         LlmMessageState.CANCELED -> MessageStatus.CANCELLED
     }
     val parts = buildList {
-        if (text.isNotEmpty()) add(MessagePart.Text(text))
-        addAll(attachments.map { it.toMessagePart() })
+        if (text.isNotEmpty()) {
+            val format =
+                if (origin == LlmMessageOrigin.USER) TextFormat.PLAIN else assistantTextFormat
+            add(MessagePart.Text(text, format = format))
+        }
+        addAll(attachments.map { it.toComposeAttachment() })
     }
     return ChatMessage(
         id = id,
@@ -85,71 +97,8 @@ private fun LlmChatMessage.toChatMessage(
     )
 }
 
-private fun LlmAttachment.toMessagePart(): MessagePart.Attachment {
-    val displayMimeType = mimeType.ifEmpty {
-        when (kind) {
-            LlmAttachmentKind.IMAGE -> "image/unknown"
-            LlmAttachmentKind.AUDIO -> "audio/unknown"
-            else -> "application/octet-stream"
-        }
-    }
-    val sourceUri = when {
-        url.isNotEmpty() -> url
-        bytesBase64.isNotEmpty() -> AttachmentUriCodec.toDataUri(displayMimeType, bytesBase64)
-        else -> ""
-    }
-    val previewUri = if (kind == LlmAttachmentKind.IMAGE && thumbnailBase64.isNotEmpty()) {
-        AttachmentUriCodec.toDataUri(displayMimeType, thumbnailBase64)
-    } else {
-        ""
-    }
-    return MessagePart.Attachment(
-        id = id,
-        uri = sourceUri,
-        mimeType = displayMimeType,
-        name = name,
-        sizeBytes = sizeBytes,
-        previewUri = previewUri,
-    )
-}
-
 private fun List<MessagePart>.toLlmAttachments(): List<LlmAttachment> {
     return filterIsInstance<MessagePart.Attachment>().map { it.toLlmAttachment() }
-}
-
-private fun MessagePart.Attachment.toLlmAttachment(): LlmAttachment {
-    val parsedUri = AttachmentUriCodec.parseDataUri(uri.trim())
-    val thumbnailFromPreview = previewUri.trim().let { preview ->
-        AttachmentUriCodec.parseDataUri(preview)?.base64Payload.orEmpty()
-    }
-    if (parsedUri != null) {
-        return LlmAttachment(
-            id = id,
-            kind = llmKindFromMime(mimeType.ifEmpty { parsedUri.mimeType }),
-            name = name,
-            mimeType = mimeType.ifEmpty { parsedUri.mimeType },
-            url = "",
-            bytesBase64 = parsedUri.base64Payload,
-            thumbnailBase64 = thumbnailFromPreview,
-            sizeBytes = sizeBytes,
-        )
-    }
-    return LlmAttachment(
-        id = id,
-        kind = llmKindFromMime(mimeType),
-        name = name,
-        mimeType = mimeType,
-        url = uri,
-        bytesBase64 = "",
-        thumbnailBase64 = thumbnailFromPreview,
-        sizeBytes = sizeBytes,
-    )
-}
-
-private fun llmKindFromMime(mimeType: String): LlmAttachmentKind = when {
-    mimeType.startsWith("image/") -> LlmAttachmentKind.IMAGE
-    mimeType.startsWith("audio/") -> LlmAttachmentKind.AUDIO
-    else -> LlmAttachmentKind.FILE
 }
 
 private fun LlmProviderException.toChatError(): ChatError {

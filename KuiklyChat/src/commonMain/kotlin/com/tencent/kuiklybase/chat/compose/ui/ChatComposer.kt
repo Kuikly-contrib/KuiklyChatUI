@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.border
@@ -31,6 +32,9 @@ import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
+import com.tencent.kuiklybase.chat.compose.core.MessagePart
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun ChatComposer(
@@ -40,12 +44,16 @@ internal fun ChatComposer(
     config: ChatScreenConfig,
     slots: ChatSlots,
     callbacks: ChatCallbacks,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    var input by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+    var input by remember(controller) { mutableStateOf("") }
+    var pendingAttachments by remember(controller) { mutableStateOf(emptyList<MessagePart.Attachment>()) }
+    var isPickingAttachment by remember(controller) { mutableStateOf(false) }
     val isSending = controller.state.isSending
-    val canSend = input.isNotBlank() && !isSending
+    val canSend = (input.isNotBlank() || pendingAttachments.isNotEmpty()) && !isSending
     val sessionError = controller.state.error
+    val attachmentRequest = callbacks.onAttachmentRequest
 
     Column(
         modifier = modifier
@@ -64,78 +72,137 @@ internal fun ChatComposer(
                     .padding(bottom = 8.dp)
             )
         }
+        slots.composerHeaderContent?.invoke()
+        if (slots.composerHeaderContent != null) {
+            Spacer(Modifier.height(8.dp))
+        }
+        ChatComposerPendingAttachments(
+            attachments = pendingAttachments,
+            theme = theme,
+            strings = strings,
+            onRemove = { attachmentId ->
+                pendingAttachments = pendingAttachments.filterNot { it.id == attachmentId }
+            },
+            content = slots.pendingAttachmentsContent,
+        )
+        if (pendingAttachments.isNotEmpty()) {
+            Spacer(Modifier.height(8.dp))
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-        slots.composerLeadingContent?.invoke()
-        if (slots.composerLeadingContent != null) Spacer(Modifier.width(8.dp))
+            slots.composerLeadingContent?.invoke()
+            if (slots.composerLeadingContent != null) Spacer(Modifier.width(8.dp))
 
-        TextField(
-            value = input,
-            onValueChange = {
-                input = it
-                callbacks.onTextChanged?.invoke(it)
-            },
-            placeholder = {
-                Text(
-                    text = strings.inputPlaceholder,
-                    color = Color(theme.placeholderColor),
-                    fontSize = theme.fontSize.sp
-                )
-            },
-            textStyle = TextStyle(
-                color = Color(theme.incomingTextColor),
-                fontSize = theme.fontSize.sp
-            ),
-            maxLines = config.maxLines,
-            shape = RoundedCornerShape(theme.bubbleRadius.dp),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color(theme.incomingTextColor),
-                unfocusedTextColor = Color(theme.incomingTextColor),
-                focusedContainerColor = Color(theme.composerColor),
-                unfocusedContainerColor = Color(theme.composerColor),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                cursorColor = Color(theme.accentColor)
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .border(1.dp, Color(theme.borderColor), RoundedCornerShape(theme.bubbleRadius.dp))
-        )
-        Spacer(Modifier.width(8.dp))
-
-        if (slots.composerTrailingContent != null) {
-            slots.composerTrailingContent.invoke(isSending) {
-                submit(input, controller) { input = "" }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(theme.bubbleRadius.dp))
-                    .background(Color(if (isSending) theme.errorColor else theme.accentColor))
-                    .clickable {
-                        if (isSending) {
-                            controller.dispatch(ChatIntent.StopGeneration)
-                        } else if (canSend) {
-                            submit(input, controller) { input = "" }
+            if (attachmentRequest != null) {
+                ChatComposerAttachmentButton(
+                    enabled = !isSending && !isPickingAttachment,
+                    isPicking = isPickingAttachment,
+                    theme = theme,
+                    onClick = {
+                        scope.launch {
+                            isPickingAttachment = true
+                            try {
+                                val picked = attachmentRequest()
+                                pendingAttachments = mergePickedAttachments(
+                                    pendingAttachments,
+                                    picked,
+                                )
+                            } catch (cancelled: CancellationException) {
+                                throw cancelled
+                            } catch (error: Throwable) {
+                                callbacks.onAttachmentRequestError?.invoke(error)
+                            } finally {
+                                isPickingAttachment = false
+                            }
                         }
-                    }
-                    .padding(horizontal = 14.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = if (isSending) strings.stop else strings.send,
-                    color = Color(theme.outgoingTextColor),
-                    fontSize = theme.smallFontSize.sp
+                    },
+                    content = slots.attachmentButtonContent,
                 )
+                Spacer(Modifier.width(8.dp))
             }
-        }
+
+            TextField(
+                value = input,
+                onValueChange = {
+                    input = it
+                    callbacks.onTextChanged?.invoke(it)
+                },
+                placeholder = {
+                    Text(
+                        text = strings.inputPlaceholder,
+                        color = Color(theme.placeholderColor),
+                        fontSize = theme.fontSize.sp
+                    )
+                },
+                textStyle = TextStyle(
+                    color = Color(theme.incomingTextColor),
+                    fontSize = theme.fontSize.sp
+                ),
+                maxLines = config.maxLines,
+                shape = RoundedCornerShape(theme.bubbleRadius.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color(theme.incomingTextColor),
+                    unfocusedTextColor = Color(theme.incomingTextColor),
+                    focusedContainerColor = Color(theme.composerColor),
+                    unfocusedContainerColor = Color(theme.composerColor),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Color(theme.accentColor)
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .border(1.dp, Color(theme.borderColor), RoundedCornerShape(theme.bubbleRadius.dp))
+            )
+            Spacer(Modifier.width(8.dp))
+
+            if (slots.composerTrailingContent != null) {
+                slots.composerTrailingContent.invoke(isSending) {
+                    submit(input, pendingAttachments, controller) {
+                        input = ""
+                        callbacks.onTextChanged?.invoke("")
+                        pendingAttachments = emptyList()
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(theme.bubbleRadius.dp))
+                        .background(Color(if (isSending) theme.errorColor else theme.accentColor))
+                        .clickable {
+                            if (isSending) {
+                                controller.dispatch(ChatIntent.StopGeneration)
+                            } else if (canSend) {
+                                submit(input, pendingAttachments, controller) {
+                                    input = ""
+                                    callbacks.onTextChanged?.invoke("")
+                                    pendingAttachments = emptyList()
+                                }
+                            }
+                        }
+                        .padding(horizontal = 14.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (isSending) strings.stop else strings.send,
+                        color = Color(theme.outgoingTextColor),
+                        fontSize = theme.smallFontSize.sp
+                    )
+                }
+            }
         }
     }
 }
 
-private fun submit(input: String, controller: ChatController, clear: () -> Unit) {
-    if (controller.sendText(input)) clear()
+private fun submit(
+    input: String,
+    attachments: List<MessagePart.Attachment>,
+    controller: ChatController,
+    onAccepted: () -> Unit,
+) {
+    if (controller.sendMessage(input, attachments)) {
+        onAccepted()
+    }
 }

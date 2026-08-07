@@ -3,6 +3,7 @@ package com.tencent.kuiklybase.chat.compose.adapter
 import com.tencent.kuiklybase.chat.compose.core.ChatStreamEvent
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
+import com.tencent.kuiklybase.chat.compose.core.TextFormat
 import com.tencent.kuiklybase.chat.kuiklyai.provider.BaseLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmChatMessage
@@ -39,6 +40,7 @@ class LlmChatAdapterTest {
         assertTrue(events.last() is ChatStreamEvent.Completed)
         val deltas = events.filterIsInstance<ChatStreamEvent.TextDelta>()
         assertEquals("hi", deltas.fold("") { acc, delta -> acc + delta.text })
+        assertTrue(deltas.all { it.format == TextFormat.MARKDOWN })
     }
 
     @Test

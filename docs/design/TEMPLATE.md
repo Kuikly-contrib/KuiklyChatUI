@@ -1,12 +1,12 @@
 ---
-last_updated: 2026-07-27
-status: draft
+last_updated: 2026-08-05
+status: template
 owner: @kuikly-chat-team
 ---
 
 # Feature: [功能名称]
 
-## Status: 📝 Draft | 📋 Approved | 🚧 In Progress | ✅ Implemented
+## Status: Template（复制后改为 📝 Draft | 📋 Approved | 🚧 In Progress | ✅ Implemented）
 
 ## 目标
 一句话描述这个功能要解决什么问题。

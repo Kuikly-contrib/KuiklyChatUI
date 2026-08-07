@@ -11,6 +11,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
 import com.tencent.kuiklybase.chat.compose.core.SYSTEM_CHAT_USER
+import com.tencent.kuiklybase.chat.compose.core.TextFormat
 import com.tencent.kuiklybase.chat.compose.core.groupStatus
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.flow
@@ -38,6 +39,32 @@ class ChatControllerTest {
         val controller = ChatController(ChatUser("user"), backgroundScope)
         assertFalse(controller.sendText(""))
         assertFalse(controller.sendText("   "))
+        assertFalse(controller.sendMessage("", emptyList()))
+        assertTrue(controller.state.messages.isEmpty())
+    }
+
+    @Test
+    fun attachmentOnlySendIsAccepted() = runTest {
+        val controller = ChatController(ChatUser("user"), backgroundScope)
+        val attachment = MessagePart.Attachment(
+            id = "file-1",
+            uri = "https://example.com/a.png",
+            mimeType = "image/png",
+            name = "a.png",
+        )
+
+        assertTrue(controller.sendMessage("", listOf(attachment)))
+        val message = controller.state.messages.single()
+        assertEquals("", message.text)
+        assertEquals(listOf(attachment), message.parts)
+    }
+
+    @Test
+    fun sendMessageRejectsInvalidAttachments() = runTest {
+        val controller = ChatController(ChatUser("user"), backgroundScope)
+        val attachment = MessagePart.Attachment(id = "", uri = "https://example.com/a.png")
+
+        assertFalse(controller.sendMessage("hi", listOf(attachment)))
         assertTrue(controller.state.messages.isEmpty())
     }
 
@@ -245,6 +272,32 @@ class ChatControllerTest {
         controller.sendText("question")
         testScheduler.advanceUntilIdle()
         assertEquals(1_704_000_100_000L, controller.state.messages.last().createdAt)
+    }
+
+    @Test
+    fun streamDeltaPreservesTextFormat() = runTest(StandardTestDispatcher()) {
+        val user = ChatUser("user")
+        val sender = ChatMessageSender {
+            flow {
+                emit(
+                    ChatStreamEvent.TextDelta(
+                        text = "# ",
+                        format = TextFormat.MARKDOWN,
+                    ),
+                )
+                emit(ChatStreamEvent.TextDelta(text = "title"))
+                emit(ChatStreamEvent.Completed)
+            }
+        }
+        val controller = ChatController(user, this, sender)
+
+        controller.sendText("question")
+        testScheduler.advanceUntilIdle()
+
+        val assistant = controller.state.messages.last()
+        val textPart = assistant.parts.filterIsInstance<MessagePart.Text>().single()
+        assertEquals("# title", textPart.value)
+        assertEquals(TextFormat.MARKDOWN, textPart.format)
     }
 
     @Test

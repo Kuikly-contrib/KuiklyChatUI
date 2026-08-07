@@ -26,6 +26,10 @@ sealed interface ChatEffect {
 
 sealed interface ChatIntent {
     data class SendText(val text: String) : ChatIntent
+    data class SendMessage(
+        val text: String,
+        val attachments: List<MessagePart.Attachment> = emptyList(),
+    ) : ChatIntent
     data object StopGeneration : ChatIntent
     data class RetryMessage(val messageId: String) : ChatIntent
     data object LoadEarlier : ChatIntent
@@ -43,7 +47,11 @@ sealed interface ChatIntent {
 
 /** Events emitted by a host sender while a response is being generated. */
 sealed interface ChatStreamEvent {
-    data class TextDelta(val messageId: String? = null, val text: String) : ChatStreamEvent
+    data class TextDelta(
+        val messageId: String? = null,
+        val text: String,
+        val format: TextFormat = TextFormat.PLAIN,
+    ) : ChatStreamEvent
     data class ReplaceMessage(val message: ChatMessage) : ChatStreamEvent
     data object Completed : ChatStreamEvent
     data class Failed(val error: ChatError) : ChatStreamEvent
