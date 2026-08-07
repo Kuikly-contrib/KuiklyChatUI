@@ -1,10 +1,15 @@
 #import "KuiklyRenderComponentExpandHandler.h"
+
+#import <SDWebImage/SDImageCodersManager.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImageSVGCoder/SDWebImageSVGCoder.h>
+
+static NSString * const kAssetsScheme = @"assets://";
 
 @implementation KuiklyRenderComponentExpandHandler
 
 + (void)load {
-    // 注册自定义实现
+    [[SDImageCodersManager sharedManager] addCoder:SDImageSVGCoder.sharedCoder];
     [KuiklyRenderBridge registerComponentExpandHandler:[self new]];
 }
 
@@ -14,9 +19,29 @@
  * @return 是否处理该图片设置，返回值为YES，则交给该代理实现，否则sdk内部自己处理
  */
 - (BOOL)hr_setImageWithUrl:(NSString *)url forImageView:(UIImageView *)imageView {
-    [imageView sd_setImageWithURL:[NSURL URLWithString:url]];
-    return YES;
+    if (url.length == 0) {
+        imageView.image = nil;
+        return YES;
+    }
+
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"]) {
+        [imageView sd_setImageWithURL:[NSURL URLWithString:url]];
+        return YES;
+    }
+
+    if ([url hasPrefix:kAssetsScheme]) {
+        NSString *relativePath = [url substringFromIndex:kAssetsScheme.length];
+        NSString *fullPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:relativePath];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
+            [imageView sd_setImageWithURL:[NSURL fileURLWithPath:fullPath]];
+            return YES;
+        }
+        return NO;
+    }
+
+    return NO;
 }
+
 /*
  * 自定义实现设置颜值
  * @param value 设置的颜色值

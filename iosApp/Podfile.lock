@@ -5,18 +5,22 @@ PODS:
   - SDWebImage (5.21.7):
     - SDWebImage/Core (= 5.21.7)
   - SDWebImage/Core (5.21.7)
+  - SDWebImageSVGCoder (1.8.0):
+    - SDWebImage/Core (~> 5.6)
   - shared (1.0)
 
 DEPENDENCIES:
   - KuiklyChatIOS (from `..`)
   - OpenKuiklyIOSRender (~> 2.17.0)
   - SDWebImage
+  - SDWebImageSVGCoder
   - shared (from `../shared`)
 
 SPEC REPOS:
   trunk:
     - OpenKuiklyIOSRender
     - SDWebImage
+    - SDWebImageSVGCoder
 
 EXTERNAL SOURCES:
   KuiklyChatIOS:
@@ -28,8 +32,9 @@ SPEC CHECKSUMS:
   KuiklyChatIOS: 3455eb26dd7c4bef75a6c10466a981438d79d87b
   OpenKuiklyIOSRender: 6b714dcd35d89f54e335a32c7b2f384169ec4289
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
-  shared: 45c4d5a3fe6bf89e105d0ff0f3587f64ad21dd48
+  SDWebImageSVGCoder: 8e10c8f6cc879c7dfb317b284e13dd589379f01c
+  shared: 4e9a09e14ac4cfb244988e3c54c62a27865cf67a
 
-PODFILE CHECKSUM: 811434a2dbc7460ea1d18d182e0c49fecfbf0f1e
+PODFILE CHECKSUM: 5a88517a497acdf1a5f4c518dcc953a993b9aa5e
 
 COCOAPODS: 1.16.2

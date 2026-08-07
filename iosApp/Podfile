@@ -8,4 +8,5 @@ target 'iosApp' do
   pod 'KuiklyChatIOS', :path => '..'
 
   pod 'SDWebImage'
+  pod 'SDWebImageSVGCoder'
 end
