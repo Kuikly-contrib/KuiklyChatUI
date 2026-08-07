@@ -11,11 +11,11 @@ import kotlin.test.assertTrue
 
 class MessageRowLogicTest {
     @Test
-    fun shouldShowAvatarWhenGroupedHiddenForMiddleAndLast() {
+    fun shouldShowAvatarWhenGroupedHiddenForFirstAndMiddle() {
         assertTrue(shouldShowAvatar(MessageGroupStatus.SINGLE, showAvatar = true, hideAvatarWhenGrouped = true))
-        assertTrue(shouldShowAvatar(MessageGroupStatus.FIRST, showAvatar = true, hideAvatarWhenGrouped = true))
+        assertFalse(shouldShowAvatar(MessageGroupStatus.FIRST, showAvatar = true, hideAvatarWhenGrouped = true))
         assertFalse(shouldShowAvatar(MessageGroupStatus.MIDDLE, showAvatar = true, hideAvatarWhenGrouped = true))
-        assertFalse(shouldShowAvatar(MessageGroupStatus.LAST, showAvatar = true, hideAvatarWhenGrouped = true))
+        assertTrue(shouldShowAvatar(MessageGroupStatus.LAST, showAvatar = true, hideAvatarWhenGrouped = true))
     }
 
     @Test
@@ -27,7 +27,7 @@ class MessageRowLogicTest {
                 hideAvatarWhenGrouped = true,
             ),
         )
-        assertFalse(
+        assertTrue(
             shouldReserveAvatarSpace(
                 MessageGroupStatus.FIRST,
                 showAvatar = true,
@@ -41,7 +41,7 @@ class MessageRowLogicTest {
                 hideAvatarWhenGrouped = true,
             ),
         )
-        assertTrue(
+        assertFalse(
             shouldReserveAvatarSpace(
                 MessageGroupStatus.LAST,
                 showAvatar = true,

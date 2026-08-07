@@ -28,17 +28,17 @@ fun shouldShowAvatar(
 ): Boolean {
     if (!showAvatar) return false
     if (!hideAvatarWhenGrouped) return true
-    return groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.FIRST
+    return groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.LAST
 }
 
-/** Keeps grouped rows aligned with the first bubble when the avatar is hidden. */
+/** Keeps grouped rows aligned when the avatar is only shown on the last bubble in a group. */
 fun shouldReserveAvatarSpace(
     groupStatus: MessageGroupStatus,
     showAvatar: Boolean,
     hideAvatarWhenGrouped: Boolean,
 ): Boolean {
     if (!showAvatar || !hideAvatarWhenGrouped) return false
-    return groupStatus == MessageGroupStatus.MIDDLE || groupStatus == MessageGroupStatus.LAST
+    return groupStatus == MessageGroupStatus.FIRST || groupStatus == MessageGroupStatus.MIDDLE
 }
 
 fun avatarInitial(user: ChatUser): String {
