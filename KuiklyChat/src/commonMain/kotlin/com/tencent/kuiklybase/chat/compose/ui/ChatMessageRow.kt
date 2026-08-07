@@ -65,7 +65,8 @@ internal fun ChatMessageRow(
     ) {
         val leftAvatarInset = if (!isMine && (showAvatar || reserveAvatarSpace)) avatarInset else 0.dp
         val rightAvatarInset = if (isMine && (showAvatar || reserveAvatarSpace)) avatarInset else 0.dp
-        val bubbleMaxWidth = (maxWidth - leftAvatarInset - rightAvatarInset) * config.bubbleMaxWidthRatio
+        val availableWidth = maxWidth - leftAvatarInset - rightAvatarInset
+        val bubbleMaxWidth = availableWidth * config.bubbleMaxWidthRatio
 
         val bubbleColumnAlign = if (isMine) Alignment.End else Alignment.Start
 

@@ -124,7 +124,7 @@ data class ChatScreenConfig(
     val loadEarlierThresholdPx: Int = 120,
     val estimatedMessageHeightPx: Int = 72,
     /** Max bubble width as a fraction of the list width (aligns with legacy `bubbleMaxWidthRatio`). */
-    val bubbleMaxWidthRatio: Float = 0.65f,
+    val bubbleMaxWidthRatio: Float = 0.8f,
 ) {
     companion object {
         val Default = ChatScreenConfig()

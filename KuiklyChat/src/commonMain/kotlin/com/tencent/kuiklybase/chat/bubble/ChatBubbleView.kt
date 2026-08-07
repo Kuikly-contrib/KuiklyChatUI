@@ -618,7 +618,7 @@ class ChatBubbleAttr : ComposeAttr() {
 
     // ---------- 布局可配属性（均有默认值，使用方可按需覆盖） ----------
     /** 气泡最大宽度占屏幕宽度的比例 */
-    var bubbleMaxWidthRatio: Float by observable(0.65f)
+    var bubbleMaxWidthRatio: Float by observable(0.8f)
     /** 气泡内水平 padding（单侧） */
     var bubblePaddingH: Float by observable(12f)
     /** 气泡内垂直 padding（单侧） */

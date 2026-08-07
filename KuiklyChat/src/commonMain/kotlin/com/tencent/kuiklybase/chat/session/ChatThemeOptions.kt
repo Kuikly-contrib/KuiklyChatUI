@@ -37,8 +37,8 @@ class ChatThemeOptions {
     var avatarRadius: Float = 8f
 
     // ---- Dimens（对应 StreamDimens） ----
-    /** 气泡最大宽度占屏幕宽度的比例（默认 0.65） */
-    var bubbleMaxWidthRatio: Float = 0.65f
+    /** 气泡最大宽度占屏幕宽度的比例（默认 0.8） */
+    var bubbleMaxWidthRatio: Float = 0.8f
     /** 气泡内水平 padding（单侧，默认 12f） */
     var bubblePaddingH: Float = 12f
     /** 气泡内垂直 padding（单侧，默认 10f） */

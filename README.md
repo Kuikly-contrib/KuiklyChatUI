@@ -217,7 +217,7 @@ ChatSession({ ctx.messageList }) {
 | `otherTextColor` | `Long` | `0xFF333333` | 对方文字颜色 |
 | `selfTextColor` | `Long` | `0xFFFFFFFF` | 自己文字颜色 |
 | `avatarRadius` | `Float` | `8f` | 头像圆角（20f=圆形, 8f=微信风格, 0f=方形） |
-| `bubbleMaxWidthRatio` | `Float` | `0.65f` | 气泡最大宽度比例 |
+| `bubbleMaxWidthRatio` | `Float` | `0.8f` | 气泡最大宽度比例 |
 | `bubblePaddingH` | `Float` | `12f` | 气泡水平内边距 |
 | `bubblePaddingV` | `Float` | `10f` | 气泡垂直内边距 |
 | `messageFontSize` | `Float` | `15f` | 消息文字大小 |

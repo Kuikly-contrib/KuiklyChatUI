@@ -3,6 +3,7 @@ package com.tencent.kuiklybase.chat.compose.ui
 import androidx.compose.runtime.Composable
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.clickable
+import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
@@ -16,8 +17,11 @@ import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.text.style.TextOverflow
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
+import com.tencent.kuiklybase.chat.compose.agentcard.LucideSvgIcon
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
+
+internal const val CHAT_FILE_ATTACHMENT_ICON = "kuikly_chat_ic_file"
 
 @Composable
 internal fun FileAttachmentContent(
@@ -41,15 +45,18 @@ internal fun FileAttachmentContent(
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = "FILE",
-            color = Color(theme.accentColor),
-            fontSize = theme.smallFontSize.sp,
+        Box(
             modifier = Modifier
-                .size(width = 36.dp, height = 24.dp)
-                .background(Color(theme.borderColor), RoundedCornerShape(4.dp))
-                .padding(horizontal = 4.dp, vertical = 2.dp),
-        )
+                .size(36.dp)
+                .background(Color(theme.borderColor), RoundedCornerShape(4.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            LucideSvgIcon(
+                name = CHAT_FILE_ATTACHMENT_ICON,
+                size = 20.dp,
+                tint = Color(theme.accentColor),
+            )
+        }
         Column(modifier = Modifier.padding(start = 10.dp).weight(1f)) {
             Text(
                 text = fileName,
