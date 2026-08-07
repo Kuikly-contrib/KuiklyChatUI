@@ -3,8 +3,10 @@ package com.tencent.kuiklybase.chat.compose.ui
 import androidx.compose.runtime.Composable
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.unit.Dp
+import com.tencent.kuiklybase.chat.compose.core.ChatDateTimeFormatter
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
+import com.tencent.kuiklybase.chat.compose.core.LocalChatDateTimeFormatter
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 
@@ -105,10 +107,13 @@ data class ChatScreenConfig(
     val showAvatar: Boolean = true,
     val avatarSizeDp: Float = 32f,
     val hideAvatarWhenGrouped: Boolean = true,
+    val hideTimeWhenGrouped: Boolean = true,
     val showTime: Boolean = true,
     val showStatus: Boolean = true,
     val timeAndStatusPosition: TimeAndStatusPosition = TimeAndStatusPosition.BELOW_BUBBLE,
     val timeFormat: String = "HH:mm",
+  /** Formats bubble time and (future) date separators; default uses device local time zone. */
+    val dateTimeFormatter: ChatDateTimeFormatter = LocalChatDateTimeFormatter.Default,
     val groupingWindowMillis: Long = 5 * 60 * 1000L,
     val maxLines: Int = 5,
     val loadEarlierThresholdPx: Int = 120,

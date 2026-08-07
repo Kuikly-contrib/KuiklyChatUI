@@ -45,7 +45,7 @@ internal fun TextBubbleContent(
         smallRadius = theme.bubbleRadiusSmall.dp
     )
     val showInsideTime = config.timeAndStatusPosition == TimeAndStatusPosition.INSIDE_BUBBLE &&
-        (config.showTime || config.showStatus)
+        shouldShowTimeAndStatus(groupStatus, config)
     val hasAttachments = message.parts.any { it is MessagePart.Attachment }
     val bubbleModifier = modifier
         .clip(shape)

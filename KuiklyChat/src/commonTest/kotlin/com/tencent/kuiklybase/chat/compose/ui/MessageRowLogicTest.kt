@@ -63,6 +63,21 @@ class MessageRowLogicTest {
     }
 
     @Test
+    fun shouldShowTimeAndStatusOnlyOnLastGroupedMessage() {
+        val config = ChatScreenConfig.Default
+        assertTrue(shouldShowTimeAndStatus(MessageGroupStatus.SINGLE, config))
+        assertFalse(shouldShowTimeAndStatus(MessageGroupStatus.FIRST, config))
+        assertFalse(shouldShowTimeAndStatus(MessageGroupStatus.MIDDLE, config))
+        assertTrue(shouldShowTimeAndStatus(MessageGroupStatus.LAST, config))
+    }
+
+    @Test
+    fun shouldShowTimeAndStatusWhenGroupingHideDisabled() {
+        val config = ChatScreenConfig.Default.copy(hideTimeWhenGrouped = false)
+        assertTrue(shouldShowTimeAndStatus(MessageGroupStatus.FIRST, config))
+    }
+
+    @Test
     fun formatMessageTimeReturnsEmptyForZeroTimestamp() {
         assertEquals("", formatMessageTime(0L))
     }

@@ -60,6 +60,7 @@ kotlin {
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
                 implementation("com.tencent.kuiklybase:KuiklyMarkdownCompose:1.0.10-internal")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2-KBA-003")
             }
         }
         val commonTest by getting {

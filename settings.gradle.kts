@@ -22,6 +22,9 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")
         }
+        maven {
+            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
+        }
     }
 }
 

@@ -21,15 +21,22 @@ import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 
+/** Flyer-style grouped rows: chrome (avatar, time) only on SINGLE or LAST. */
+internal fun shouldShowGroupedRowChrome(
+    groupStatus: MessageGroupStatus,
+    enabled: Boolean,
+    hideWhenGrouped: Boolean,
+): Boolean {
+    if (!enabled) return false
+    if (!hideWhenGrouped) return true
+    return groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.LAST
+}
+
 fun shouldShowAvatar(
     groupStatus: MessageGroupStatus,
     showAvatar: Boolean,
     hideAvatarWhenGrouped: Boolean
-): Boolean {
-    if (!showAvatar) return false
-    if (!hideAvatarWhenGrouped) return true
-    return groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.LAST
-}
+): Boolean = shouldShowGroupedRowChrome(groupStatus, showAvatar, hideAvatarWhenGrouped)
 
 /** Keeps grouped rows aligned when the avatar is only shown on the last bubble in a group. */
 fun shouldReserveAvatarSpace(

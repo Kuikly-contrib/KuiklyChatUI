@@ -12,23 +12,18 @@ import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatStrings
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
+import com.tencent.kuiklybase.chat.compose.core.MessageGroupStatus
 import com.tencent.kuiklybase.chat.compose.core.MessageStatus
+import com.tencent.kuiklybase.chat.compose.core.UtcChatDateTimeFormatter
 
 enum class TimeAndStatusPosition {
     BELOW_BUBBLE,
     INSIDE_BUBBLE
 }
 
-/** Formats epoch millis as HH:mm (UTC-based; aligns with legacy date separator helper). */
-fun formatMessageTime(timestamp: Long, pattern: String = "HH:mm"): String {
-    if (timestamp <= 0) return ""
-    if (pattern != "HH:mm") {
-        // P0 only supports HH:mm; fall back to the same formatter.
-    }
-    val hours = ((timestamp / 3600000) % 24).toInt()
-    val minutes = ((timestamp / 60000) % 60).toInt()
-    return "${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}"
-}
+/** Legacy UTC helper; prefer [ChatScreenConfig.dateTimeFormatter]. */
+fun formatMessageTime(timestamp: Long, pattern: String = "HH:mm"): String =
+    UtcChatDateTimeFormatter.formatMessageTime(timestamp, pattern)
 
 fun statusLabel(status: MessageStatus, strings: ChatStrings): String? = when (status) {
     MessageStatus.SENDING -> strings.sending
@@ -36,6 +31,15 @@ fun statusLabel(status: MessageStatus, strings: ChatStrings): String? = when (st
     MessageStatus.CANCELLED -> strings.cancelled
     MessageStatus.SENT, MessageStatus.FAILED -> null
 }
+
+fun shouldShowTimeAndStatus(
+    groupStatus: MessageGroupStatus,
+    config: ChatScreenConfig,
+): Boolean = shouldShowGroupedRowChrome(
+    groupStatus = groupStatus,
+    enabled = config.showTime || config.showStatus,
+    hideWhenGrouped = config.hideTimeWhenGrouped,
+)
 
 @Composable
 internal fun MessageTimeAndStatus(
@@ -47,7 +51,11 @@ internal fun MessageTimeAndStatus(
     modifier: Modifier = Modifier
 ) {
     if (!config.showTime && !config.showStatus) return
-    val timeText = if (config.showTime) formatMessageTime(message.createdAt, config.timeFormat) else ""
+    val timeText = if (config.showTime) {
+        config.dateTimeFormatter.formatMessageTime(message.createdAt, config.timeFormat)
+    } else {
+        ""
+    }
     val statusText = if (config.showStatus) statusLabel(message.status, strings) else null
     if (timeText.isEmpty() && statusText == null) return
 

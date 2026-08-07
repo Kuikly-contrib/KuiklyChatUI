@@ -138,7 +138,9 @@ internal fun ChatMessageRow(
                     }
                 }
 
-                if (config.timeAndStatusPosition == TimeAndStatusPosition.BELOW_BUBBLE) {
+                if (config.timeAndStatusPosition == TimeAndStatusPosition.BELOW_BUBBLE &&
+                    shouldShowTimeAndStatus(groupStatus, config)
+                ) {
                     if (slots.timeAndStatusContent != null) {
                         slots.timeAndStatusContent.invoke(message, isMine)
                     } else {
