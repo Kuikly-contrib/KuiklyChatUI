@@ -1,14 +1,16 @@
 package com.tencent.kuiklybase.chat.compose.ui
 
 import androidx.compose.runtime.Composable
-import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Arrangement
+import com.tencent.kuikly.compose.foundation.layout.BoxWithConstraints
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
 import com.tencent.kuikly.compose.foundation.layout.Spacer
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
 import com.tencent.kuikly.compose.foundation.layout.padding
 import com.tencent.kuikly.compose.foundation.layout.width
+import com.tencent.kuikly.compose.foundation.layout.widthIn
+import com.tencent.kuikly.compose.foundation.layout.wrapContentWidth
 import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
@@ -52,105 +54,121 @@ internal fun ChatMessageRow(
         (groupStatus == MessageGroupStatus.SINGLE || groupStatus == MessageGroupStatus.FIRST)
     val avatarClick = callbacks.onAvatarClick?.let { handler -> { handler(message.author) } }
 
-    Row(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 top = messageRowTopPadding(groupStatus),
                 start = theme.contentPadding.dp,
-                end = theme.contentPadding.dp
+                end = theme.contentPadding.dp,
             ),
-        horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start,
-        verticalAlignment = Alignment.Bottom
     ) {
-        if (!isMine && showAvatar) {
-            ChatAvatar(
-                user = message.author,
-                theme = theme,
-                strings = strings,
-                size = avatarSize,
-                onClick = avatarClick,
-                modifier = Modifier.padding(end = 8.dp),
-                avatarContent = slots.avatarContent,
-                imageContent = slots.imageContent,
-                mediaRuntime = mediaRuntime,
-            )
-        } else if (!isMine && reserveAvatarSpace) {
-            Spacer(modifier = Modifier.width(avatarInset))
-        }
+        val leftAvatarInset = if (!isMine && (showAvatar || reserveAvatarSpace)) avatarInset else 0.dp
+        val rightAvatarInset = if (isMine && (showAvatar || reserveAvatarSpace)) avatarInset else 0.dp
+        val bubbleMaxWidth = (maxWidth - leftAvatarInset - rightAvatarInset) * config.bubbleMaxWidthRatio
 
-        Column(
-            modifier = Modifier.fillMaxWidth(0.82f),
-            horizontalAlignment = if (isMine) Alignment.End else Alignment.Start
+        val bubbleColumnAlign = if (isMine) Alignment.End else Alignment.Start
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start,
+            verticalAlignment = Alignment.Bottom,
         ) {
-            if (showName) {
-                if (message.author.name.isNotEmpty()) {
-                    Text(
-                        text = message.author.name,
-                        color = Color(theme.placeholderColor),
-                        fontSize = theme.smallFontSize.sp,
-                        modifier = Modifier.padding(bottom = 3.dp)
-                    )
-                } else if (reserveSenderNameSpace) {
-                    Text(
-                        text = "",
-                        color = Color(theme.placeholderColor),
-                        fontSize = theme.smallFontSize.sp,
-                        modifier = Modifier.padding(bottom = 3.dp)
-                    )
-                }
+            if (!isMine && showAvatar) {
+                ChatAvatar(
+                    user = message.author,
+                    theme = theme,
+                    strings = strings,
+                    size = avatarSize,
+                    onClick = avatarClick,
+                    modifier = Modifier.padding(end = 8.dp),
+                    avatarContent = slots.avatarContent,
+                    imageContent = slots.imageContent,
+                    mediaRuntime = mediaRuntime,
+                )
+            } else if (!isMine && reserveAvatarSpace) {
+                Spacer(modifier = Modifier.width(avatarInset))
             }
 
-            Row(
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start
+            Column(
+                modifier = Modifier
+                    .widthIn(max = bubbleMaxWidth)
+                    .wrapContentWidth(align = bubbleColumnAlign),
+                horizontalAlignment = bubbleColumnAlign,
             ) {
-                content()
-                if (config.showStatus && message.status == MessageStatus.FAILED) {
-                    Text(
-                        text = strings.retry,
-                        color = Color(theme.errorColor),
-                        fontSize = theme.smallFontSize.sp,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .clickable {
+                if (showName) {
+                    if (message.author.name.isNotEmpty()) {
+                        Text(
+                            text = message.author.name,
+                            color = Color(theme.placeholderColor),
+                            fontSize = theme.smallFontSize.sp,
+                            modifier = Modifier.padding(bottom = 3.dp),
+                        )
+                    } else if (reserveSenderNameSpace) {
+                        Text(
+                            text = "",
+                            color = Color(theme.placeholderColor),
+                            fontSize = theme.smallFontSize.sp,
+                            modifier = Modifier.padding(bottom = 3.dp),
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.wrapContentWidth(align = bubbleColumnAlign),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start,
+                ) {
+                    content()
+                    if (config.showStatus && message.status == MessageStatus.FAILED) {
+                        ChatPressableText(
+                            enabled = true,
+                            onClick = {
                                 callbacks.onRetryClick?.invoke(message)
                                     ?: controller.dispatch(ChatIntent.RetryMessage(message.id))
-                            }
-                    )
+                            },
+                            modifier = Modifier.padding(start = 8.dp),
+                        ) { _ ->
+                            Text(
+                                text = strings.retry,
+                                color = Color(theme.errorColor),
+                                fontSize = theme.smallFontSize.sp,
+                            )
+                        }
+                    }
+                }
+
+                if (config.timeAndStatusPosition == TimeAndStatusPosition.BELOW_BUBBLE) {
+                    if (slots.timeAndStatusContent != null) {
+                        slots.timeAndStatusContent.invoke(message, isMine)
+                    } else {
+                        MessageTimeAndStatus(
+                            message = message,
+                            isMine = isMine,
+                            theme = theme,
+                            strings = strings,
+                            config = config,
+                            modifier = Modifier.align(if (isMine) Alignment.End else Alignment.Start),
+                        )
+                    }
                 }
             }
 
-            if (config.timeAndStatusPosition == TimeAndStatusPosition.BELOW_BUBBLE) {
-                if (slots.timeAndStatusContent != null) {
-                    slots.timeAndStatusContent.invoke(message, isMine)
-                } else {
-                    MessageTimeAndStatus(
-                        message = message,
-                        isMine = isMine,
-                        theme = theme,
-                        strings = strings,
-                        config = config,
-                        modifier = Modifier.align(if (isMine) Alignment.End else Alignment.Start)
-                    )
-                }
+            if (isMine && showAvatar) {
+                ChatAvatar(
+                    user = message.author,
+                    theme = theme,
+                    strings = strings,
+                    size = avatarSize,
+                    onClick = avatarClick,
+                    modifier = Modifier.padding(start = 8.dp),
+                    avatarContent = slots.avatarContent,
+                    imageContent = slots.imageContent,
+                    mediaRuntime = mediaRuntime,
+                )
+            } else if (isMine && reserveAvatarSpace) {
+                Spacer(modifier = Modifier.width(avatarInset))
             }
-        }
-
-        if (isMine && showAvatar) {
-            ChatAvatar(
-                user = message.author,
-                theme = theme,
-                strings = strings,
-                size = avatarSize,
-                onClick = avatarClick,
-                modifier = Modifier.padding(start = 8.dp),
-                avatarContent = slots.avatarContent,
-                imageContent = slots.imageContent,
-                mediaRuntime = mediaRuntime,
-            )
-        } else if (isMine && reserveAvatarSpace) {
-            Spacer(modifier = Modifier.width(avatarInset))
         }
     }
 }

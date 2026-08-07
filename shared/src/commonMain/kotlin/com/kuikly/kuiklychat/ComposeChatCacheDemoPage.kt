@@ -1,6 +1,7 @@
 package com.kuikly.kuiklychat
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -59,15 +60,30 @@ internal class ComposeChatCacheDemoPage : ComposeChatDemoContainer() {
     @Composable
     private fun DemoContent() {
         val scope = rememberCoroutineScope()
-        val controller = remember(scope) {
-            ChatController(
-                currentUser = ChatUser(
-                    id = "user",
-                    name = "You",
-                    avatar = DEMO_REMOTE_IMAGE,
-                ),
-                scope = scope,
+        val currentUser = remember {
+            ChatUser(
+                id = "user",
+                name = "You",
+                avatar = DEMO_REMOTE_IMAGE,
             )
+        }
+        val assistant = remember {
+            ChatUser(
+                id = "assistant",
+                name = "Assistant",
+                avatar = DEMO_REMOTE_IMAGE,
+            )
+        }
+        val controller = remember(scope, currentUser, assistant) {
+            ChatController(
+                currentUser = currentUser,
+                scope = scope,
+                sender = randomAuthorDemoSender(currentUser, assistant),
+                assistantUser = assistant,
+            )
+        }
+        DisposableEffect(controller) {
+            onDispose { controller.dispose() }
         }
         val cache = rememberChatCrossCache(CACHE_NAMESPACE)
         val mediaConfig = remember(cache) {

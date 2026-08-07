@@ -6,8 +6,8 @@ import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Arrangement
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
-import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
 import com.tencent.kuikly.compose.foundation.layout.padding
+import com.tencent.kuikly.compose.foundation.layout.wrapContentWidth
 import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.ui.Alignment
 import com.tencent.kuikly.compose.ui.Modifier
@@ -59,7 +59,7 @@ internal fun TextBubbleContent(
         )
         .padding(horizontal = 14.dp, vertical = 10.dp)
 
-    Column(modifier = bubbleModifier) {
+    Column(modifier = bubbleModifier.wrapContentWidth()) {
         message.parts.forEachIndexed { index, part ->
             when (part) {
                 is MessagePart.Text -> TextPartContent(
@@ -106,11 +106,9 @@ internal fun TextBubbleContent(
         }
         if (showInsideTime) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
+                modifier = Modifier.padding(top = 4.dp),
                 horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 MessageTimeAndStatus(
                     message = message,

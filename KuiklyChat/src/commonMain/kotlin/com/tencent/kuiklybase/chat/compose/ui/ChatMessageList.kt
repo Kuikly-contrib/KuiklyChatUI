@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.tencent.kuikly.compose.foundation.ExperimentalFoundationApi
-import com.tencent.kuikly.compose.foundation.clickable
 import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Spacer
@@ -197,15 +196,20 @@ private fun LoadEarlierSection(
         }
         state.hasMoreEarlier && state.messages.isNotEmpty() -> {
             slots.loadEarlierContent?.invoke(false, onLoadEarlier)
-                ?: Text(
-                    text = strings.loadEarlier,
-                    color = Color(theme.accentColor),
-                    fontSize = theme.smallFontSize.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onLoadEarlier() }
-                        .padding(8.dp)
-                )
+                ?: ChatPressableText(
+                    enabled = true,
+                    onClick = onLoadEarlier,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { _ ->
+                    Text(
+                        text = strings.loadEarlier,
+                        color = Color(theme.accentColor),
+                        fontSize = theme.smallFontSize.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                    )
+                }
         }
     }
 }
@@ -251,7 +255,7 @@ private fun ChatMessageListItem(
                 message,
                 group,
                 theme,
-                Modifier.fillMaxWidth()
+                Modifier,
             )
         }
         if (slots.messageRowContent != null) {

@@ -3,8 +3,6 @@ package com.tencent.kuiklybase.chat.compose.ui
 import androidx.compose.runtime.Composable
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.border
-import com.tencent.kuikly.compose.foundation.clickable
-import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Row
 import com.tencent.kuikly.compose.foundation.layout.Spacer
 import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
@@ -67,24 +65,18 @@ internal fun ChatComposerAttachmentButton(
         content(isPicking, click)
         return
     }
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .then(
-                if (enabled && !isPicking) {
-                    Modifier.clickable(onClick = click)
-                } else {
-                    Modifier
-                },
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
+    ChatPressableIconBox(
+        enabled = enabled && !isPicking,
+        onClick = click,
+        modifier = Modifier.size(48.dp),
+    ) { pressed ->
         LucideSvgIcon(
             name = CHAT_COMPOSER_PAPERCLIP_ICON,
             size = 18.dp,
-            tint = Color(
-                if (enabled && !isPicking) theme.placeholderColor else theme.borderColor,
+            tint = composerIconColor(
+                theme = theme,
+                enabled = enabled && !isPicking,
+                pressed = pressed,
             ),
         )
     }
@@ -126,12 +118,16 @@ internal fun ChatComposerPendingAttachments(
                     maxLines = 1,
                 )
                 Spacer(Modifier.width(6.dp))
-                Text(
-                    text = "\u00D7",
-                    color = Color(theme.placeholderColor),
-                    fontSize = 15.sp,
-                    modifier = Modifier.clickable { onRemove(attachment.id) },
-                )
+                ChatPressableText(
+                    enabled = true,
+                    onClick = { onRemove(attachment.id) },
+                ) { _ ->
+                    Text(
+                        text = "\u00D7",
+                        color = Color(theme.placeholderColor),
+                        fontSize = 15.sp,
+                    )
+                }
             }
         }
     }

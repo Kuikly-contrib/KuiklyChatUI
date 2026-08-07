@@ -20,10 +20,7 @@ import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
-import com.tencent.kuiklybase.chat.agentcard.AgUiCardSession
 import com.tencent.kuiklybase.chat.compose.adapter.AttachmentUriCodec
-import com.tencent.kuiklybase.chat.compose.adapter.AgentCardComposeBridge
-import com.tencent.kuiklybase.chat.compose.adapter.rememberLlmChatUiController
 import com.tencent.kuiklybase.chat.compose.core.ChatIntent
 import com.tencent.kuiklybase.chat.compose.core.ChatMediaContext
 import com.tencent.kuiklybase.chat.compose.core.ChatMediaRequest
@@ -39,9 +36,6 @@ import com.tencent.kuiklybase.chat.compose.ui.ChatMediaConfig
 import com.tencent.kuiklybase.chat.compose.ui.ChatMediaRequestResolver
 import com.tencent.kuiklybase.chat.compose.ui.ChatUserResolutionConfig
 import com.tencent.kuiklybase.chat.compose.ui.ChatScreen
-import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiLlmProvider
-import com.tencent.kuiklybase.chat.kuiklyai.provider.AgUiScriptedScenarios
-import com.tencent.kuiklybase.chat.kuiklyai.provider.ScriptedSseLlmTransport
 
 /** Standalone demo for validating the new Compose-first Chat UI SDK. */
 @Page("compose_chat_sdk_demo", supportInLocal = true)
@@ -53,20 +47,11 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
 
     @Composable
     private fun DemoContent() {
-        val cardSession = remember { AgUiCardSession(cards = mutableListOf()) }
-        val cardBridge = remember(cardSession) { AgentCardComposeBridge(cardSession) }
-        val transport = remember { ScriptedSseLlmTransport(AgUiScriptedScenarios.textAndToolCall) }
-        val provider = remember(transport, cardBridge) {
-            AgUiLlmProvider(
-                transport = transport,
-                endpoint = "memory://agui",
-                onEvent = cardBridge.onEvent
-            )
-        }
-        val controller = rememberLlmChatUiController(
-            provider = provider,
-            currentUser = ChatUser(id = "user", name = "You"),
-            assistant = ChatUser(id = "assistant", name = "Assistant")
+        val currentUser = remember { ChatUser(id = "user", name = "You") }
+        val assistant = remember { ChatUser(id = "assistant", name = "Assistant") }
+        val controller = rememberRandomAuthorChatController(
+            currentUser = currentUser,
+            assistant = assistant,
         )
         val rendererRegistry = remember { com.tencent.kuiklybase.chat.compose.ui.defaultChatRendererRegistry() }
         val mediaLoader = remember { DemoChatMediaLoader() }
@@ -92,10 +77,6 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
 
         val attachmentIntegration = rememberDemoChatAttachmentIntegration()
 
-        DisposableEffect(controller, cardBridge) {
-            cardBridge.attach(controller)
-            onDispose { cardBridge.detach() }
-        }
         DisposableEffect(mediaLoader) {
             onDispose { mediaLoader.close() }
         }
@@ -298,7 +279,9 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
                 controller = controller,
                 userResolution = userResolution,
                 theme = theme,
-                strings = ChatStrings.Default.copy(inputPlaceholder = "试试新的 Compose Chat UI"),
+                strings = ChatStrings.Default.copy(
+                    inputPlaceholder = "发送后随机显示为我方或对方",
+                ),
                 callbacks = attachmentIntegration.callbacks,
                 slots = attachmentIntegration.slots,
                 mediaConfig = mediaConfig,
@@ -324,7 +307,7 @@ private fun DemoHeader(
         verticalArrangement = com.tencent.kuikly.compose.foundation.layout.Arrangement.Center
     ) {
         Text(
-            text = "Compose Chat UI SDK · media $mediaCacheHits/$mediaRequests hits",
+            text = "Compose Chat UI SDK · 发送随机左右 · media $mediaCacheHits/$mediaRequests hits",
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF17211E)

@@ -166,29 +166,41 @@ internal fun ChatComposer(
                     }
                 }
             } else {
-                Box(
-                    modifier = Modifier
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(theme.bubbleRadius.dp))
-                        .background(Color(if (isSending) theme.errorColor else theme.accentColor))
-                        .clickable {
-                            if (isSending) {
-                                controller.dispatch(ChatIntent.StopGeneration)
-                            } else if (canSend) {
-                                submit(input, pendingAttachments, controller) {
-                                    input = ""
-                                    callbacks.onTextChanged?.invoke("")
-                                    pendingAttachments = emptyList()
-                                }
+                val sendEnabled = isSending || canSend
+                val sendBaseColor = when {
+                    isSending -> theme.errorColor
+                    canSend -> theme.accentColor
+                    else -> theme.borderColor
+                }
+                ChatPressableFilledButton(
+                    enabled = sendEnabled,
+                    onClick = {
+                        if (isSending) {
+                            controller.dispatch(ChatIntent.StopGeneration)
+                        } else if (canSend) {
+                            submit(input, pendingAttachments, controller) {
+                                input = ""
+                                callbacks.onTextChanged?.invoke("")
+                                pendingAttachments = emptyList()
                             }
                         }
-                        .padding(horizontal = 14.dp),
-                    contentAlignment = Alignment.Center
+                    },
+                    theme = theme,
+                    baseColor = sendBaseColor,
+                    modifier = Modifier.height(48.dp),
+                    shapeRadius = theme.bubbleRadius.dp,
                 ) {
                     Text(
                         text = if (isSending) strings.stop else strings.send,
-                        color = Color(theme.outgoingTextColor),
-                        fontSize = theme.smallFontSize.sp
+                        color = Color(
+                            if (canSend || isSending) {
+                                theme.outgoingTextColor
+                            } else {
+                                theme.placeholderColor
+                            },
+                        ),
+                        fontSize = theme.smallFontSize.sp,
+                        modifier = Modifier.padding(horizontal = 14.dp),
                     )
                 }
             }

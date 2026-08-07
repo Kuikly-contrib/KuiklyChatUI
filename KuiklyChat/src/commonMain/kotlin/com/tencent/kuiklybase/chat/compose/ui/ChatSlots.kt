@@ -112,7 +112,9 @@ data class ChatScreenConfig(
     val groupingWindowMillis: Long = 5 * 60 * 1000L,
     val maxLines: Int = 5,
     val loadEarlierThresholdPx: Int = 120,
-    val estimatedMessageHeightPx: Int = 72
+    val estimatedMessageHeightPx: Int = 72,
+    /** Max bubble width as a fraction of the list width (aligns with legacy `bubbleMaxWidthRatio`). */
+    val bubbleMaxWidthRatio: Float = 0.65f,
 ) {
     companion object {
         val Default = ChatScreenConfig()
