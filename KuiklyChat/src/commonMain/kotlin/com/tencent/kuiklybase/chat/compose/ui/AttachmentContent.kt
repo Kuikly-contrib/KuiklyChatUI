@@ -21,6 +21,8 @@ internal fun AttachmentContent(
     callbacks: ChatCallbacks,
     mediaRuntime: ChatMediaRuntime,
     onClick: (() -> Unit)?,
+    imageOnly: Boolean = false,
+    isFirstAttachment: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val gestureModifier = modifier.chatMessageGestures(
@@ -43,6 +45,8 @@ internal fun AttachmentContent(
             strings = strings,
             slots = slots,
             mediaRuntime = mediaRuntime,
+            imageOnly = imageOnly,
+            isFirstAttachment = isFirstAttachment,
             modifier = gestureModifier,
         )
     } else {

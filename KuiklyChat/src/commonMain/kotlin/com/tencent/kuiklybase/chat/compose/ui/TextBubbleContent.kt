@@ -45,6 +45,7 @@ internal fun TextBubbleContent(
     )
     val showInsideTime = config.timeAndStatusPosition == TimeAndStatusPosition.INSIDE_BUBBLE &&
         shouldShowTimeAndStatus(groupStatus, config)
+    val imageOnly = isImageOnlyMessage(message)
     val hasAttachments = message.parts.any { it is MessagePart.Attachment }
     val messageTap = if (!hasAttachments) {
         callbacks.onMessageClick?.let { handler -> { handler(message) } }
@@ -53,7 +54,13 @@ internal fun TextBubbleContent(
     }
     val bubbleModifier = modifier
         .clip(shape)
-        .background(Color(bubbleColor))
+        .then(
+            if (imageOnly) {
+                Modifier
+            } else {
+                Modifier.background(Color(bubbleColor))
+            }
+        )
         .then(
             if (hasAttachments) {
                 Modifier
@@ -65,7 +72,13 @@ internal fun TextBubbleContent(
                 )
             }
         )
-        .padding(horizontal = 14.dp, vertical = 10.dp)
+        .then(
+            if (imageOnly) {
+                Modifier
+            } else {
+                Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+            }
+        )
 
     Column(modifier = bubbleModifier.wrapContentWidth()) {
         message.parts.forEachIndexed { index, part ->
@@ -96,6 +109,8 @@ internal fun TextBubbleContent(
                     val onClick = callbacks.onAttachmentClick?.let { handler ->
                         { handler(message, part) }
                     }
+                    val attachmentIndex = message.parts.take(index + 1)
+                        .count { it is MessagePart.Attachment }
                     AttachmentContent(
                         message = message,
                         attachment = part,
@@ -107,6 +122,8 @@ internal fun TextBubbleContent(
                         callbacks = callbacks,
                         mediaRuntime = mediaRuntime,
                         onClick = onClick,
+                        imageOnly = imageOnly,
+                        isFirstAttachment = attachmentIndex == 1,
                     )
                 }
                 is MessagePart.Custom -> Text(

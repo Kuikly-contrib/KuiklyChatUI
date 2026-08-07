@@ -112,7 +112,7 @@ internal class ComposeChatSdkDemoPage : ComposeContainer() {
                     userResolution = userResolution,
                     theme = theme,
                     strings = ChatStrings.Default.copy(
-                        inputPlaceholder = "长按消息可复制或删除",
+                        inputPlaceholder = "",
                     ),
                     callbacks = messageActions.callbacks,
                     slots = attachmentIntegration.slots,

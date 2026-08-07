@@ -1,6 +1,7 @@
 package com.tencent.kuiklybase.chat.compose.ui
 
 import com.tencent.kuiklybase.chat.compose.adapter.AttachmentUriCodec
+import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 
 fun isImageMimeType(mimeType: String): Boolean = mimeType.startsWith("image/")
@@ -43,4 +44,11 @@ fun attachmentDisplaySource(attachment: MessagePart.Attachment): String {
     val preview = attachment.previewUri.trim()
     if (preview.isNotEmpty()) return preview
     return attachment.uri.trim()
+}
+
+/** True when every part is an image attachment (no text bubble wrapper). */
+internal fun isImageOnlyMessage(message: ChatMessage): Boolean {
+    return message.parts.isNotEmpty() && message.parts.all { part ->
+        part is MessagePart.Attachment && isImageMimeType(part.mimeType)
+    }
 }

@@ -1,5 +1,7 @@
 package com.tencent.kuiklybase.chat.compose.ui
 
+import com.tencent.kuiklybase.chat.compose.core.ChatMessage
+import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.MessagePart
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,5 +41,18 @@ class AttachmentFormatTest {
         assertTrue(isDisplayableImageSource("data:image/png;base64,abc"))
         assertFalse(isDisplayableImageSource("data:application/pdf;base64,abc"))
         assertFalse(isDisplayableImageSource(""))
+    }
+
+    @Test
+    fun isImageOnlyMessageRequiresAllImageAttachments() {
+        val user = ChatUser("user")
+        val image = MessagePart.Attachment(id = "a1", uri = "https://example.com/a.png", mimeType = "image/png")
+        val file = MessagePart.Attachment(id = "a2", uri = "https://example.com/a.pdf", mimeType = "application/pdf")
+        val text = MessagePart.Text("hello")
+
+        assertTrue(isImageOnlyMessage(ChatMessage("m1", user, listOf(image))))
+        assertFalse(isImageOnlyMessage(ChatMessage("m2", user, listOf(image, text))))
+        assertFalse(isImageOnlyMessage(ChatMessage("m3", user, listOf(file))))
+        assertFalse(isImageOnlyMessage(ChatMessage("m4", user, emptyList())))
     }
 }

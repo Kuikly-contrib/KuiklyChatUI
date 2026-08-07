@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target    = '14.1'
   spec.source_files             = 'KuiklyChatIOS/**/*.{h,m}'
   spec.public_header_files      = 'KuiklyChatIOS/**/*.h'
-  spec.dependency 'OpenKuiklyIOSRender', '~> 2.7.0'
+  spec.dependency 'OpenKuiklyIOSRender', '~> 2.17.0'
   spec.frameworks               = 'Foundation'
   spec.requires_arc             = true
 end

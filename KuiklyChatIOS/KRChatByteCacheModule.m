@@ -17,80 +17,6 @@ static NSString * const kDefaultChatCacheNamespace = @"kuikly_chat_media";
 
 @end
 
-@implementation KRChatByteCacheStore {
-    NSString *_directory;
-}
-
-- (instancetype)initWithDirectory:(NSString *)directory {
-    self = [super init];
-    if (self) {
-        _directory = [directory copy];
-    }
-    return self;
-}
-
-- (NSString *)pathForKey:(NSString *)key {
-    return [_directory stringByAppendingPathComponent:KRChatSHA256Hex(key)];
-}
-
-- (void)ensureDirectory {
-    [[NSFileManager defaultManager] createDirectoryAtPath:_directory
-                              withIntermediateDirectories:YES
-                                               attributes:nil
-                                                    error:nil];
-}
-
-- (nullable NSData *)dataForKey:(NSString *)key {
-    return [NSData dataWithContentsOfFile:[self pathForKey:key]];
-}
-
-- (void)setData:(NSData *)data forKey:(NSString *)key {
-    [self ensureDirectory];
-    NSString *path = [self pathForKey:key];
-    NSString *temporary = [path stringByAppendingString:@".tmp"];
-    [data writeToFile:temporary atomically:YES];
-    NSFileManager *manager = [NSFileManager defaultManager];
-    if ([manager fileExistsAtPath:path]) {
-        [manager removeItemAtPath:path error:nil];
-    }
-    [manager moveItemAtPath:temporary toPath:path error:nil];
-}
-
-- (BOOL)containsKey:(NSString *)key {
-    return [[NSFileManager defaultManager] fileExistsAtPath:[self pathForKey:key]];
-}
-
-- (void)deleteKey:(NSString *)key {
-    NSString *path = [self pathForKey:key];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
-    }
-}
-
-- (void)updateKey:(NSString *)oldKey toKey:(NSString *)newKey error:(NSError **)error {
-    [self ensureDirectory];
-    NSString *source = [self pathForKey:oldKey];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:source]) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"KRChatByteCache"
-                                         code:404
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Cache miss"}];
-        }
-        return;
-    }
-    NSString *destination = [self pathForKey:newKey];
-    [[NSFileManager defaultManager] removeItemAtPath:destination error:nil];
-    [[NSFileManager defaultManager] moveItemAtPath:source toPath:destination error:error];
-}
-
-- (void)clear {
-    NSArray<NSString *> *names = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_directory error:nil];
-    for (NSString *name in names) {
-        [[NSFileManager defaultManager] removeItemAtPath:[_directory stringByAppendingPathComponent:name]
-                                                   error:nil];
-    }
-}
-
 static NSString *KRChatSHA256Hex(NSString *value) {
     NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
     uint8_t digest[CC_SHA256_DIGEST_LENGTH];
@@ -165,6 +91,82 @@ static NSDictionary *KRChatJsonParam(id param) {
     }
     return nil;
 }
+
+@implementation KRChatByteCacheStore {
+    NSString *_directory;
+}
+
+- (instancetype)initWithDirectory:(NSString *)directory {
+    self = [super init];
+    if (self) {
+        _directory = [directory copy];
+    }
+    return self;
+}
+
+- (NSString *)pathForKey:(NSString *)key {
+    return [_directory stringByAppendingPathComponent:KRChatSHA256Hex(key)];
+}
+
+- (void)ensureDirectory {
+    [[NSFileManager defaultManager] createDirectoryAtPath:_directory
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:nil];
+}
+
+- (nullable NSData *)dataForKey:(NSString *)key {
+    return [NSData dataWithContentsOfFile:[self pathForKey:key]];
+}
+
+- (void)setData:(NSData *)data forKey:(NSString *)key {
+    [self ensureDirectory];
+    NSString *path = [self pathForKey:key];
+    NSString *temporary = [path stringByAppendingString:@".tmp"];
+    [data writeToFile:temporary atomically:YES];
+    NSFileManager *manager = [NSFileManager defaultManager];
+    if ([manager fileExistsAtPath:path]) {
+        [manager removeItemAtPath:path error:nil];
+    }
+    [manager moveItemAtPath:temporary toPath:path error:nil];
+}
+
+- (BOOL)containsKey:(NSString *)key {
+    return [[NSFileManager defaultManager] fileExistsAtPath:[self pathForKey:key]];
+}
+
+- (void)deleteKey:(NSString *)key {
+    NSString *path = [self pathForKey:key];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    }
+}
+
+- (void)updateKey:(NSString *)oldKey toKey:(NSString *)newKey error:(NSError **)error {
+    [self ensureDirectory];
+    NSString *source = [self pathForKey:oldKey];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:source]) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"KRChatByteCache"
+                                         code:404
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Cache miss"}];
+        }
+        return;
+    }
+    NSString *destination = [self pathForKey:newKey];
+    [[NSFileManager defaultManager] removeItemAtPath:destination error:nil];
+    [[NSFileManager defaultManager] moveItemAtPath:source toPath:destination error:error];
+}
+
+- (void)clear {
+    NSArray<NSString *> *names = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_directory error:nil];
+    for (NSString *name in names) {
+        [[NSFileManager defaultManager] removeItemAtPath:[_directory stringByAppendingPathComponent:name]
+                                                   error:nil];
+    }
+}
+
+@end
 
 @implementation KRChatByteCacheModule {
     KRChatByteCacheStore *_store;

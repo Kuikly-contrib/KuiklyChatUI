@@ -24,13 +24,26 @@ internal fun ImageAttachmentContent(
     strings: ChatStrings,
     slots: ChatSlots,
     mediaRuntime: ChatMediaRuntime,
+    imageOnly: Boolean = false,
+    isFirstAttachment: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val displaySource = attachmentDisplaySource(attachment)
+    val topPadding = if (imageOnly && isFirstAttachment) 0.dp else 4.dp
+    val imageModifier = Modifier
+        .fillMaxWidth()
+        .aspectRatio(4f / 3f)
+        .then(
+            if (imageOnly) {
+                Modifier
+            } else {
+                Modifier.clip(RoundedCornerShape(theme.bubbleRadiusSmall.dp))
+            }
+        )
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 4.dp),
+            .padding(top = topPadding),
     ) {
         ChatImage(
             mediaContext = ChatMediaContext.AttachmentPreview(
@@ -39,10 +52,7 @@ internal fun ImageAttachmentContent(
                 source = displaySource,
             ),
             contentDescription = attachment.name.ifEmpty { null },
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(4f / 3f)
-                .clip(RoundedCornerShape(theme.bubbleRadiusSmall.dp)),
+            modifier = imageModifier,
             theme = theme,
             strings = strings,
             imageContent = slots.imageContent,
