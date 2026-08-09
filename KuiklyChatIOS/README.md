@@ -1,11 +1,31 @@
 # KuiklyChatIOS
 
-iOS 原生桥 + Compose Chat UI 资源包。
+iOS 原生桥 + Compose Chat UI 资源包（自包含 CocoaPods 模块）。
+
+## 目录结构
+
+```text
+KuiklyChatIOS/
+├── KuiklyChatIOS.podspec
+├── Sources/
+│   ├── KRChatAttachmentPickerModule.h/.m
+│   ├── KRChatByteCacheModule.h
+│   ├── KRChatByteCacheModule.m
+│   ├── KRChatImageExpandHandler.h
+│   └── KRChatImageExpandHandler.m
+├── Resources/
+│   └── common/              # kuikly_chat_ic_*.svg → App.app/common/
+└── README.md
+```
+
+发版前从 `KuiklyChat` 同步图标：`bash scripts/sync-kuikly-chat-ios-assets.sh`
 
 | 能力 | 说明 |
 |------|------|
+| `KRChatAttachmentPickerModule` | 相册 / 相机 / 文件原生选择器 |
 | `KRChatByteCacheModule` | 媒体字节缓存 Native 实现 |
-| `KuiklyChat/.../assets/common/*.svg` | 回形针、文件等内置图标，随 Pod 打入 App |
+| `KRChatImageExpandHandler` | HTTP / assets / file + SVG 图片加载（`+load` 自动注册） |
+| `KuiklyChatIOS/Resources/common/*.svg` | 回形针、文件等内置图标，随 Pod 打入 App |
 
 ## 接入（推荐）
 
@@ -15,11 +35,14 @@ iOS 原生桥 + Compose Chat UI 资源包。
 
 ```ruby
 pod 'OpenKuiklyIOSRender', '~> 2.17.0'   # 与 Kuikly core 版本对齐
-pod 'KuiklyChatIOS', :path => '..'         # 或发布后 pod 'KuiklyChatIOS', '~> x.y.z'
+pod 'KuiklyChatIOS', :path => '../KuiklyChatIOS'  # 本地开发
+
+# 发布后（podspec 在子目录）：
+# pod 'KuiklyChatIOS', :git => 'https://git.woa.com/kuikly/KuiklyChatUI.git', :tag => '1.0.0-2.1.21', :podspec => 'KuiklyChatIOS/KuiklyChatIOS.podspec'
 pod 'shared', :path => '../shared'         # 你的 KMP 宿主页模块
 ```
 
-`KuiklyChatIOS` 已声明 `SDWebImage` / `SDWebImageSVGCoder` 依赖，用于解码 SVG 图标。
+`KuiklyChatIOS` 使用 `static_framework = true`，确保 SVG 复制到 **主 App bundle** 的 `common/`（供 `assets://common/...` 加载），而不是留在动态 framework 内。
 
 ### 2. Kotlin（commonMain）
 
@@ -28,28 +51,28 @@ implementation("com.tencent.kuiklybase:KuiklyChat:<version>")
 // 本地：api(project(":KuiklyChat"))
 ```
 
-在 `createExternalModules()` 合并缓存 Module（若使用 `ChatCrossCache`）：
+在 `createExternalModules()` 合并所需的 Kotlin Module：
 
 ```kotlin
 import com.tencent.kuiklybase.chat.compose.core.chatByteCacheExternalModules
+import com.tencent.kuiklybase.chat.kuiklyai.platform.chatAttachmentPickerExternalModules
 
 override fun createExternalModules(): Map<String, Module>? {
     val modules = (super.createExternalModules() as? HashMap<String, Module>) ?: hashMapOf()
     modules.putAll(chatByteCacheExternalModules())
+    modules.putAll(chatAttachmentPickerExternalModules())
     return modules
 }
 ```
 
-### 3. iOS 图片加载（一次性配置）
+使用相机来源时，宿主 `Info.plist` 还需提供 `NSCameraUsageDescription`。相册使用
+`PHPickerViewController`，不要求完整照片库权限。
 
-Compose Chat 图标走 `assets://common/kuikly_chat_ic_*.svg`。宿主需在
-`KuiklyRenderComponentExpandHandler` 中：
+### 3. iOS 图片加载
 
-- 注册 `SDImageSVGCoder`
-- `http(s)` 走网络
-- `assets://` 从 main bundle 的 `common/` 读取
+链接 `KuiklyChatIOS` Pod 后，`KRChatImageExpandHandler` 会在 `+load` 中自动注册（SDWebImage + SVGCoder，支持 `http(s)`、`assets://`、`file://` + `.svg`）。
 
-可参考本仓库 `iosApp/iosApp/KuiklyExpand/Handler/KuiklyRenderComponentExpandHandler.m`。
+若宿主需要自定义 `KuiklyRenderComponentExpandProtocol`，请在启动时调用 `[KRChatImageExpandHandler registerDefaultHandler]`，或自行组合其 `hr_setImageWithUrl:` 逻辑。
 
 ### 4. shared 模块 iOS 资源
 
@@ -62,7 +85,7 @@ cocoapods {
 }
 ```
 
-**不要**再把 `KuiklyChat` 的 assets 拷进 `shared`——那是本仓库 Demo 在 `project(:KuiklyChat)` 多模块开发时的临时方案；正式接入由 `KuiklyChatIOS` Pod 提供。
+**不要**再把 `KuiklyChat` 的 assets 拷进 `shared`——图标由 `KuiklyChatIOS/Resources/common` 随 Pod 打入 App。发版前可运行 `bash scripts/sync-kuikly-chat-ios-assets.sh` 从 `KuiklyChat` 同步 SVG。
 
 ## 平台对照
 

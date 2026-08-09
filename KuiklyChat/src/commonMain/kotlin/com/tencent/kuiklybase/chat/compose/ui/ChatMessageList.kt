@@ -52,6 +52,7 @@ internal fun ChatMessageList(
     userCache: UserCache? = null,
     latestResolver: State<ChatUserResolver?>? = null,
     resolverAvailable: Boolean = false,
+    onDismissKeyboard: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val state = controller.state
@@ -92,6 +93,18 @@ internal fun ChatMessageList(
             anchorScrollOffset = 0
             messagesBeforeLoad = 0
         }
+    }
+
+    LaunchedEffect(listState, onDismissKeyboard) {
+        var wasScrolling = false
+        snapshotFlow { listState.isScrollInProgress }
+            .distinctUntilChanged()
+            .collect { scrolling ->
+                if (scrolling && !wasScrolling) {
+                    onDismissKeyboard()
+                }
+                wasScrolling = scrolling
+            }
     }
 
     LaunchedEffect(listState, state.hasMoreEarlier, state.messages.size) {

@@ -43,6 +43,8 @@ android {
 dependencies {
     implementation("com.tencent.kuikly:core-render-android:${Version.getKuiklyVersion()}")
     implementation("androidx.core:core-ktx:1.10.1")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.caverock:androidsvg-aar:1.4")
 }
 
 afterEvaluate {

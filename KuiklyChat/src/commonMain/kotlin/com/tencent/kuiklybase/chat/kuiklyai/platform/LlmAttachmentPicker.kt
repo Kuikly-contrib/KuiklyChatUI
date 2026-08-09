@@ -24,8 +24,8 @@ enum class LlmAttachmentSource {
  * 决定用哪个图片选择 SDK**。不同宿主的权限申请流程、图片压缩策略、
  * 隐私合规要求差别很大，硬塞一个默认实现只会让接入方绕着它走。
  *
- * 所以这里只定义契约，`androidMain` / `iosMain` 也刻意不提供默认实现。
- * 宿主拿到用户选择后转成 [LlmAttachment] 交回来即可。
+ * 所以这里只定义契约；宿主可自行实现，也可使用平台集成包提供的默认实现
+ * （Android `AndroidLlmPlatformRegistry`、iOS `KuiklyChatIOS` Module）。
  *
  * 未提供实现时（[LlmAttachmentPicker] 为 null），输入区不显示附件按钮，
  * 而不是显示一个点了没反应的按钮。

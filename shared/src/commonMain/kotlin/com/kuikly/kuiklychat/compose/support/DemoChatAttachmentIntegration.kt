@@ -18,6 +18,7 @@ import com.tencent.kuikly.compose.material3.Text
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.graphics.Color
+import com.tencent.kuikly.compose.ui.platform.LocalActivity
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuiklybase.chat.compose.adapter.toComposeAttachment
@@ -28,6 +29,7 @@ import com.tencent.kuiklybase.chat.compose.ui.ChatSlots
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmAttachmentPicker
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmAttachmentSource
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
+import com.tencent.kuiklybase.chat.kuiklyai.platform.createChatAttachmentPicker
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 
@@ -44,12 +46,17 @@ data class DemoChatAttachmentIntegration(
 
 @Composable
 fun rememberDemoChatAttachmentIntegration(
-    attachmentPicker: LlmAttachmentPicker? = LlmChatPlatformRegistry.current?.attachmentPicker,
+    attachmentPicker: LlmAttachmentPicker? = null,
     theme: ChatTheme = ChatTheme.Default,
     strings: ChatStrings = ChatStrings.Default,
     onError: ((Throwable) -> Unit)? = null,
 ): DemoChatAttachmentIntegration {
-    val picker = attachmentPicker
+    val pager = LocalActivity.current.getPager()
+    val picker = remember(attachmentPicker, pager) {
+        attachmentPicker
+            ?: LlmChatPlatformRegistry.current?.attachmentPicker
+            ?: createChatAttachmentPicker(pager)
+    }
     if (picker == null || picker.supportedSources.isEmpty()) {
         return DemoChatAttachmentIntegration(ChatCallbacks.Empty, ChatSlots.Default)
     }
@@ -103,13 +110,7 @@ fun rememberDemoChatAttachmentIntegration(
 }
 
 private fun LlmAttachmentPicker.preferredSource(): LlmAttachmentSource? {
-    if (LlmAttachmentSource.PHOTO_LIBRARY in supportedSources) {
-        return LlmAttachmentSource.PHOTO_LIBRARY
-    }
-    if (supportedSources.size == 1) {
-        return supportedSources.first()
-    }
-    return null
+    return supportedSources.singleOrNull()
 }
 
 @Composable

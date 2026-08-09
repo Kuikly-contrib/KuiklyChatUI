@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.tencent.kuikly.compose.ComposeContainer
 import com.tencent.kuikly.compose.foundation.Image
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.clickable
@@ -27,6 +26,7 @@ import com.tencent.kuikly.compose.resources.InternalResourceApi
 import com.tencent.kuikly.compose.resources.painterResource
 import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.graphics.ColorFilter
+import com.tencent.kuikly.compose.ui.platform.LocalActivity
 import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.Dp
 import com.tencent.kuikly.compose.ui.unit.dp
@@ -36,6 +36,7 @@ import com.tencent.kuikly.core.base.attr.ImageUri
 import com.tencent.kuikly.core.module.RouterModule
 import com.tencent.kuiklybase.chat.kuiklyai.provider.EchoLlmProvider
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
+import com.tencent.kuiklybase.chat.kuiklyai.platform.createChatAttachmentPicker
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.LlmChatController
 import com.tencent.kuiklybase.chat.kuiklyai.runtime.rememberLlmChatController
 import com.tencent.kuiklybase.chat.legacy.ai.KuiklyAiChatView
@@ -49,7 +50,7 @@ import com.tencent.kuiklybase.chat.legacy.ai.LlmChatViewStyle
  * provider 时页面 UI 无需改动。
  */
 @Page("kuiklyai_demo", supportInLocal = true)
-internal class KuiklyAiDemoPage : ComposeContainer() {
+internal class KuiklyAiDemoPage : ComposeChatDemoContainer() {
 
     override fun willInit() {
         super.willInit()
@@ -66,9 +67,13 @@ internal class KuiklyAiDemoPage : ComposeContainer() {
         }
         var designSystem by remember { mutableStateOf(LlmChatDesignSystem.MATERIAL) }
         val services = LlmChatPlatformRegistry.current
+        val pager = LocalActivity.current.getPager()
+        val attachmentPicker = remember(services?.attachmentPicker, pager) {
+            services?.attachmentPicker ?: createChatAttachmentPicker(pager)
+        }
         val controller = rememberLlmChatController(
             provider = provider,
-            attachmentPicker = services?.attachmentPicker,
+            attachmentPicker = attachmentPicker,
             speechRecognizer = services?.speechRecognizer,
             clipboard = services?.clipboard
         )
@@ -183,7 +188,8 @@ private fun ChevronLeftIcon(
         painter = painterResource(drawable),
         contentDescription = "chevron-left",
         modifier = Modifier.size(size),
-        colorFilter = ColorFilter.tint(color),
+        alpha = color.alpha,
+        colorFilter = ColorFilter.tint(color.copy(alpha = 1f)),
     )
 }
 

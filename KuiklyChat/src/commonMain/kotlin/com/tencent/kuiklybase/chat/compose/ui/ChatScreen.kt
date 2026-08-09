@@ -118,6 +118,9 @@ private fun ChatScreenContent(
     val resolverAvailable = userResolution?.resolver != null
     val mediaRuntime = rememberChatMediaRuntime(mediaConfig)
     var keyboardHeight by remember { mutableStateOf(0f) }
+    val dismissKeyboard = rememberDismissChatKeyboard(
+        onKeyboardHeightReset = { keyboardHeight = 0f },
+    )
     // Kuikly keyboardHeightChange reports layout units; use as dp directly (see KuiklyAiChatView).
     val keyboardPadding = keyboardHeight.dp
 
@@ -154,6 +157,7 @@ private fun ChatScreenContent(
                 userCache = cache,
                 latestResolver = latestResolver,
                 resolverAvailable = resolverAvailable,
+                onDismissKeyboard = dismissKeyboard,
                 modifier = Modifier.weight(1f)
             )
             ChatComposer(

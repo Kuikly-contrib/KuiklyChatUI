@@ -154,15 +154,6 @@ fun getLinkerArgs(): List<String> {
     return listOf()
 }
 
-val syncKuiklyChatAssets by tasks.registering(Copy::class) {
-    description = "Copy KuiklyChat common assets into shared for iOS bundle packaging"
-    from(rootProject.layout.projectDirectory.dir("KuiklyChat/src/commonMain/assets/common"))
-    into(layout.projectDirectory.dir("src/commonMain/assets/common"))
-}
-
-tasks.matching { it.name.contains("Ios", ignoreCase = true) && it.name.contains("compile", ignoreCase = true) }
-    .configureEach { dependsOn(syncKuiklyChatAssets) }
-
 // Kuikly 插件配置
 configure<KuiklyConfig> {
     // JS 产物配置

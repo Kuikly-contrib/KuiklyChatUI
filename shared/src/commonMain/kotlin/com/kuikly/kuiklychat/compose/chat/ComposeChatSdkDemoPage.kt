@@ -3,7 +3,6 @@ package com.kuikly.kuiklychat.compose.chat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import com.tencent.kuikly.compose.ComposeContainer
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import com.tencent.kuikly.compose.ui.text.font.FontWeight
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.core.annotations.Page
+import com.kuikly.kuiklychat.compose.ComposeChatDemoContainer
 import com.kuikly.kuiklychat.compose.support.DemoChatMediaLoader
 import com.kuikly.kuiklychat.compose.support.composeChatSdkDemoMessages
 import com.kuikly.kuiklychat.compose.support.rememberDemoChatAttachmentIntegration
@@ -38,7 +38,7 @@ import com.tencent.kuiklybase.chat.compose.ui.ChatScreen
 
 /** Standalone demo for validating the new Compose-first Chat UI SDK. */
 @Page("compose_chat_sdk_demo", supportInLocal = true)
-internal class ComposeChatSdkDemoPage : ComposeContainer() {
+internal class ComposeChatSdkDemoPage : ComposeChatDemoContainer() {
     override fun willInit() {
         super.willInit()
         setContent { DemoContent() }

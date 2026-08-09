@@ -47,7 +47,7 @@ ChatImage
 ```text
 KuiklyChat/              # KMP 跨端库（ChatByteCacheModule、ChatCrossCache）
 KuiklyChatAndroid/       # Android 原生桥（Gradle 发布 KuiklyChatAndroid）
-KuiklyChatIOS/           # iOS 原生桥（CocoaPods：KuiklyChatIOS.podspec）
+KuiklyChatIOS/           # iOS 原生桥（CocoaPods：KuiklyChatIOS/KuiklyChatIOS.podspec）
 KuiklyChatOhos/          # 鸿蒙原生桥（ohpm：@kuikly-open/chat-cache）
 shared/                  # Demo 宿主页，依赖 project(:KuiklyChat)
 androidApp/              # Android Demo，额外依赖 project(:KuiklyChatAndroid)

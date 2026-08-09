@@ -201,6 +201,14 @@ KuiklyAiChatView(
 
 库内已有完整示例：`KuiklyChat/src/androidMain/.../platform/android/AndroidLlmPlatform.kt` 中的 `AndroidLlmAttachmentPicker`。它基于 Android 原生 `ACTION_OPEN_DOCUMENT` / `MediaStore` 实现，宿主可以直接复用或替换为自己的选择器（如微信图片选择库、相册三方库）。
 
+### iOS 默认实现
+
+`KuiklyChatIOS` 提供 `KRChatAttachmentPickerModule`，使用
+`PHPickerViewController` / `UIImagePickerController` / `UIDocumentPickerViewController`
+实现相册、相机和文件选择。Kotlin 页面需在 `createExternalModules()` 中合并
+`chatAttachmentPickerExternalModules()`；使用相机时宿主还需配置
+`NSCameraUsageDescription`。
+
 ---
 
 ## 三、剪贴板接入（`LlmClipboard`）

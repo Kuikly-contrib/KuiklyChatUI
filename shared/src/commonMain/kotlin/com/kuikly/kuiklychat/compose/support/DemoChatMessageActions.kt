@@ -1,6 +1,7 @@
 package com.kuikly.kuiklychat.compose.support
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.containsSystemNotice
 import com.tencent.kuiklybase.chat.compose.ui.ChatCallbacks
+import kotlinx.coroutines.delay
 
 /**
  * Demo-only long-press menu (copy / delete) wired through [ChatCallbacks.onMessageLongPressWithPosition].
@@ -201,6 +203,10 @@ private fun DemoActionToast(
     onDismiss: () -> Unit,
 ) {
     if (message == null) return
+    LaunchedEffect(message) {
+        delay(2_500)
+        onDismiss()
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()

@@ -15,7 +15,7 @@ import com.tencent.kuikly.core.render.android.expand.KuiklyRenderViewBaseDelegat
 import com.tencent.kuikly.core.render.android.expand.KuiklyRenderViewBaseDelegator
 import com.kuikly.kuiklychat.adapter.KRColorParserAdapter
 import com.kuikly.kuiklychat.adapter.KRFontAdapter
-import com.kuikly.kuiklychat.adapter.KRImageAdapter
+import com.tencent.kuiklybase.chat.android.KuiklyChatAndroid
 import com.kuikly.kuiklychat.adapter.KRLogAdapter
 import com.kuikly.kuiklychat.adapter.KRRouterAdapter
 import com.kuikly.kuiklychat.adapter.KRThreadAdapter
@@ -155,7 +155,7 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
 
         private fun initKuiklyAdapter() {
             with(KuiklyRenderAdapterManager) {
-                krImageAdapter = KRImageAdapter(KRApplication.application)
+                KuiklyChatAndroid.registerDefaultImageAdapter(KRApplication.application)
                 krLogAdapter = KRLogAdapter
                 krUncaughtExceptionHandlerAdapter = KRUncaughtExceptionHandlerAdapter
                 krFontAdapter = KRFontAdapter
