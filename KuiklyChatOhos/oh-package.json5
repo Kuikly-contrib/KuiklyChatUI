@@ -1,7 +1,7 @@
 {
   "name": "@kuikly-open/chat-cache",
   "version": "1.0.0",
-  "description": "KuiklyChat HarmonyOS native bridge for chat media byte cache",
+  "description": "KuiklyChat HarmonyOS native bridge for chat media cache and attachment picking",
   "main": "src/main/ets/Index.ets",
   "author": "Kuikly Team",
   "license": "MIT",

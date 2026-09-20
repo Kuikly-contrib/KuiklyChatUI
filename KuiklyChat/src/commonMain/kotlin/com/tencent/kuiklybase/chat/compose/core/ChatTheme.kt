@@ -49,6 +49,7 @@ data class ChatStrings(
     val photoLibraryLabel: String = "相册",
     val cameraLabel: String = "拍照",
     val fileLabel: String = "文件",
+    val attachmentSheetTitle: String = "添加附件",
     val today: String = "今天",
     val yesterday: String = "昨天",
 ) {

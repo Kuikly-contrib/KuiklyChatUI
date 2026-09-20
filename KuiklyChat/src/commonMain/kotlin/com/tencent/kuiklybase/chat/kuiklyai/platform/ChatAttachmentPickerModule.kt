@@ -11,7 +11,7 @@ import kotlin.coroutines.resume
 /**
  * Kuikly Module bridge for a host-provided native attachment picker.
  *
- * The matching native module is currently provided by `KuiklyChatIOS`.
+ * The matching native module is provided by `KuiklyChatIOS` and `KuiklyChatOhos`.
  */
 open class ChatAttachmentPickerModule : Module() {
     override fun moduleName(): String = MODULE_NAME

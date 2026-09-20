@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.background
 import com.tencent.kuikly.compose.foundation.border
 import com.tencent.kuikly.compose.foundation.clickable
-import com.tencent.kuikly.compose.foundation.layout.Box
 import com.tencent.kuikly.compose.foundation.layout.Column
 import com.tencent.kuikly.compose.foundation.layout.Row
 import com.tencent.kuikly.compose.foundation.layout.Spacer
@@ -56,6 +55,41 @@ internal fun ChatComposer(
     val canSend = (input.isNotBlank() || pendingAttachments.isNotEmpty()) && !isSending
     val sessionError = controller.state.error
     val attachmentRequest = callbacks.onAttachmentRequest
+    val commandPick = callbacks.pickAttachmentsFromCommand
+    val commandTiles = callbacks.attachmentCommandTiles.ifEmpty {
+        ChatAttachmentCommandTile.entries.toList()
+    }
+    var showAttachmentSheet by remember(controller) { mutableStateOf(false) }
+    val useCommandSheet = commandPick != null
+
+    fun sendOrStop() {
+        if (isSending) {
+            controller.dispatch(ChatIntent.StopGeneration)
+        } else if (canSend) {
+            submit(input, pendingAttachments, controller) {
+                input = ""
+                callbacks.onTextChanged?.invoke("")
+                pendingAttachments = emptyList()
+            }
+        }
+    }
+
+    fun pickFromCommand(tile: ChatAttachmentCommandTile) {
+        val pick = commandPick ?: return
+        scope.launch {
+            isPickingAttachment = true
+            try {
+                val picked = pick(tile)
+                pendingAttachments = mergePickedAttachments(pendingAttachments, picked)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Throwable) {
+                callbacks.onAttachmentRequestError?.invoke(error)
+            } finally {
+                isPickingAttachment = false
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -83,6 +117,37 @@ internal fun ChatComposer(
         if (slots.composerHeaderContent != null) {
             Spacer(Modifier.height(8.dp))
         }
+        if (useCommandSheet) {
+            ChatComposerDshInputCard(
+                input = input,
+                onInputChange = {
+                    input = it
+                    callbacks.onTextChanged?.invoke(it)
+                },
+                pendingAttachments = pendingAttachments,
+                onRemoveAttachment = { attachmentId ->
+                    pendingAttachments = pendingAttachments.filterNot { it.id == attachmentId }
+                },
+                theme = theme,
+                strings = strings,
+                config = config,
+                isSending = isSending,
+                canSend = canSend,
+                isPickingAttachment = isPickingAttachment,
+                onOpenAttachmentSheet = { showAttachmentSheet = true },
+                onSendOrStop = { sendOrStop() },
+                onKeyboardHeightChange = onKeyboardHeightChange,
+                pendingContent = slots.pendingAttachmentsContent,
+            )
+            ChatAttachmentCommandSheet(
+                visible = showAttachmentSheet,
+                tiles = commandTiles,
+                theme = theme,
+                strings = strings,
+                onDismiss = { showAttachmentSheet = false },
+                onPickTile = { tile -> pickFromCommand(tile) },
+            )
+        } else {
         ChatComposerPendingAttachments(
             attachments = pendingAttachments,
             theme = theme,
@@ -218,6 +283,7 @@ internal fun ChatComposer(
                     )
                 }
             }
+        }
         }
     }
 }

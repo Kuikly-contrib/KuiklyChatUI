@@ -11,6 +11,10 @@
     {
       "name": "EntryAbility_label",
       "value": "kuiklydemo"
+    },
+    {
+      "name": "camera_permission_reason",
+      "value": "Allow camera access to attach photos in Compose Chat demo"
     }
   ]
 }

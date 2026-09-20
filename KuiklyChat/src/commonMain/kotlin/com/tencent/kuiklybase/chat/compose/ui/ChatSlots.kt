@@ -104,6 +104,15 @@ data class ChatCallbacks(
      * send-ready [MessagePart.Attachment] values. Cancel with an empty list.
      */
     val onAttachmentRequest: (suspend () -> List<MessagePart.Attachment>)? = null,
+    /**
+     * DSH-style command sheet flow: host picks by [ChatAttachmentCommandTile] after the user
+     * taps "+" in the composer. When set, [ChatComposer] renders the card layout and bottom sheet.
+     */
+    val pickAttachmentsFromCommand: (
+        suspend (ChatAttachmentCommandTile) -> List<MessagePart.Attachment>
+    )? = null,
+    /** Tiles shown in the command sheet; defaults to camera/gallery/file when empty. */
+    val attachmentCommandTiles: List<ChatAttachmentCommandTile> = emptyList(),
     val onAttachmentRequestError: ((Throwable) -> Unit)? = null,
     val onLinkClick: ((ChatMessage, String) -> Unit)? = null,
     @Deprecated(

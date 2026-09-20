@@ -209,6 +209,17 @@ KuiklyAiChatView(
 `chatAttachmentPickerExternalModules()`；使用相机时宿主还需配置
 `NSCameraUsageDescription`。
 
+### HarmonyOS 默认实现
+
+`KuiklyChatOhos` 提供 `KRChatAttachmentPickerModule`，使用
+`PhotoViewPicker` / `cameraPicker` / `DocumentViewPicker`
+实现相册、相机和文件选择。在 `KuiklyViewDelegate.ets` 注册模块，并在 Kotlin
+`createExternalModules()` 中合并 `chatAttachmentPickerExternalModules()`。
+使用相机时宿主 `module.json5` 需声明 `ohos.permission.CAMERA`。
+
+Compose Chat 内置 SVG 图标需执行 `bash scripts/sync-kuikly-chat-ohos-assets.sh`
+同步到 `ohosApp/entry/src/main/resources/resfile/common/`。
+
 ---
 
 ## 三、剪贴板接入（`LlmClipboard`）
