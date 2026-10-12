@@ -24,7 +24,7 @@ moduleExport(KRChatByteCacheModule.MODULE_NAME) {
 
 Kotlin 侧还需在 `createExternalModules()` 合并 `chatByteCacheExternalModules()`。
 
-内置图标资源随 `KuiklyChat` KMP AAR 的 `assets/common/` 自动合并，无需在宿主手抄 SVG。
+内置图标资源随 `kuiklychat-compose` / 伞形 `KuiklyChat` KMP AAR 的 `assets/common/` 自动合并，无需在宿主手抄 SVG。
 
 ## 自定义图片加载
 

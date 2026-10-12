@@ -9,7 +9,7 @@ Compose SDK 模型在 `compose/core/`；Legacy 会话模型在 `model/`（经 ad
 
 ## ChatMessage
 
-- 定义：[ChatMessage.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt)
+- 定义：[ChatMessage.kt](mdc:kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt)
 - 字段：`id`、`author`（`ChatUser`）、`parts`、`status`、`createdAt`、`replyToId`、`metadata`
 - `parts` 为 `MessagePart` 列表（对齐 Flyer 多类型消息，但用 part 组合而非 sealed Message 子类）
 
@@ -19,7 +19,7 @@ Compose SDK 模型在 `compose/core/`；Legacy 会话模型在 `model/`（经 ad
 |------|------|------------|
 | `Text` | 纯文本 / Markdown | `TextMessage` |
 | `Attachment` | 图片/文件（在气泡内按 part 渲染） | `ImageMessage` / `FileMessage` |
-| `AgentCardContent` | 结构化 Agent 卡片 | `CustomMessage` + 卡片包 |
+| `AgentCardContent` | 结构化 Agent 卡片（短期保留，不要加深；中期可走 `Custom`） | `CustomMessage` + 卡片包 |
 | `Custom` | 宿主扩展 type + payload | `CustomMessage` |
 | `SystemNotice` | 可见系统提示条 | `SystemMessage` |
 
@@ -37,5 +37,5 @@ Compose SDK 模型在 `compose/core/`；Legacy 会话模型在 `model/`（经 ad
 
 ## 映射入口
 
-- Legacy → Compose：[AgUiChatMessageMapper.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgUiChatMessageMapper.kt)
-- LLM 往返：[LlmChatAdapter.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt)
+- Legacy → Compose：[AgUiChatMessageMapper.kt](mdc:kuiklychat-agui/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgUiChatMessageMapper.kt)
+- LLM 往返：[LlmChatAdapter.kt](mdc:kuiklychat-agui/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt)

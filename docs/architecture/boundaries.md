@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-03
+last_updated: 2026-09-23
 status: active
 owner: @kuikly-chat-team
 ---
@@ -12,15 +12,16 @@ owner: @kuikly-chat-team
 
 ## 协议边界
 - 所有后端协议（AG-UI 事件、SSE/WebSocket）只存在于 `chat/agui/` 包内。
-- UI 层（`bubble/`、`session/` 等）禁止直接 import 协议类型或解析逻辑；通过 `ChatMessage` / `AgentCard` 模型解耦。
+- UI 层（`session/controller/`、`channel/`、`compose/ui/`）禁止直接 import 协议类型或解析逻辑；通过 `ChatMessage` / `AgentCard` 模型解耦。
 
 ## 数据边界
 - 业务后端通过 `ChatRepository` 接口接入（`chat/model/ChatRepository.kt`），组件库不绑定任何具体后端（参考 Stream Chat 强绑定的反面案例）。
 
 ## 双渲染层边界
 - `agentcard/`（Kuikly DSL）与 `compose/agentcard/`（Compose DSL）必须语义对齐：新增一种卡片须两套都实现并在映射器/工厂注册。
-- 两者不得互相依赖；新 `compose/adapter/AgentCardComposeBridge` 只复用 `agentcard` 的 `AgentCard` 数据契约和 `compose/agentcard` 的 Compose Renderer。
-- 新 Compose Chat UI 与旧 `session/` UI 并行迁移，不能把旧 UI 类型反向引入 `compose/core`。
+- 两者不得互相依赖。共享数据只有 core 里的 `AgentCard`；不要再加一套消息模型。
+- `MessagePart.AgentCardContent` 先保持，不要往 Core 再堆卡片字段。
+- 新 Compose Chat UI 与 `session/` UI 并行存在，不能把旧 UI 类型反向引入 `compose/core`。
 
 ## 禁止项
 - 禁止在 `commonMain` 使用 `android.*` / `platform.*` / `kotlinx.cinterop` 等平台符号。

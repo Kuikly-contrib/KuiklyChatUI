@@ -9,10 +9,10 @@ alwaysApply: true
 
 - **Performance** — 列表 sticky-bottom、stable key、避免在 `commonMain` 引入 JVM-only 测试依赖
 - **Customization** — `ChatTheme` + `ChatSlots` + `MessageRendererRegistry` + `resolveUser`
-- **Modularity** — Compose core/ui/adapter/agentcard 分层；协议仅在 `agui/` 与 `adapter/`
-- **Platform support** — `commonMain` 平台无关；多 target 编译门禁（Android + JS 等）
+- **Modularity** — 按需模块：core / compose / compat / agui / agentcard / ai；testing 不进伞形
+- **Platform support** — `commonMain` 平台无关；工蜂跑 Android + iosSimulatorArm64 + Ohos 库编译
 - **Resource cleanup** — `ChatController.dispose()` 取消进行中的发送 Job
-- **Dual parity** — Kuikly DSL `agentcard/` 与 `compose/agentcard/` 语义对齐
+- **Dual parity** — Kuikly DSL 与 Compose 两套渲染，一套 `ChatMessage` / `AgentCard` 模型
 
 ## Key Architectural Decisions
 
@@ -25,18 +25,21 @@ alwaysApply: true
 | 媒体缓存 | `ChatCrossCache`（Android/Apple 文件、Web IndexedDB）+ `rememberAsyncImagePainter` | `cross_cache` |
 | 列表布局 | 正向列表 + 滚底按钮（list chrome 计划真 LazyColumn entry） | 支持 reversed |
 | 协议边界 | `agui/`、`compose/adapter/` | 无内置 AG-UI |
+| 发布 | 0.x experimental，不要标 Stable | — |
 
-## 硬性门禁（必须本地跑）
+## 硬性门禁
 
 ```bash
-bash scripts/check-layer-deps.sh
-./gradlew :KuiklyChat:compileDebugKotlinAndroid :KuiklyChat:compileDebugUnitTestKotlinAndroid
-./gradlew :KuiklyChat:testDebugUnitTest
+bash scripts/ci-gates.sh            # layer + Android
+# bash scripts/ci-gates.sh ios      # iosSimulatorArm64
+# bash scripts/ci-gates.sh ohos     # :kuiklychat-core Ohos
 ```
 
-- 单文件 ≤ 400 行（新增超标阻断）
+- 单文件 ≤ 400 行（新增超标阻断；存量只告警）
 - `compose/core` 不得 import `compose/ui`
 - UI 层禁止直接耦合 AG-UI 协议
 - 禁止合入裸 `println` / `console.log`
+- 伞形 `:KuiklyChat` 不得 `api(:kuiklychat-testing)`
+- `MessagePart.AgentCardContent` 先保持，不要再加深
 
-详见 [AGENTS.md](mdc:AGENTS.md) 与 [mechanical-rules.md](mdc:docs/conventions/mechanical-rules.md)。
+详见 [AGENTS.md](mdc:AGENTS.md)、[host-integration.md](mdc:docs/api/host-integration.md) 与 [mechanical-rules.md](mdc:docs/conventions/mechanical-rules.md)。

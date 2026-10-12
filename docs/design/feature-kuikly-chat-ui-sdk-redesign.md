@@ -1,7 +1,7 @@
 ---
 title: Kuikly Chat UI SDK 重构设计：Compose DSL 优先
 status: in_progress
-last_updated: 2026-08-03
+last_updated: 2026-09-23
 ---
 
 # Kuikly Chat UI SDK 重构设计：Compose DSL 优先
@@ -44,7 +44,7 @@ last_updated: 2026-08-03
 本阶段不做以下事项：
 
 - 不将 AG-UI 事件类型直接暴露给 Compose UI。
-- 不把 `KuiklyAiChatView` 继续扩展成新的总入口。
+- `KuiklyAiChatView` 与旧 `ChatSession` 已从代码删除。现行入口是 `ChatController` + `ChatScreen`，以及同一控制器的 `ChatControllerSession`。
 - 不先实现传统 Kuikly DSL 再反向适配 Compose。
 - 不在首期承诺完整媒体编辑、语音通话、富文本编辑器、复杂动画和所有 Flutter 插件能力。
 - 不为了兼容旧 API 而让新核心模型承担旧模型的全部历史包袱；兼容适配放在边界层。
@@ -450,10 +450,9 @@ AG-UI Event Stream
 
 ### 9.2 现有模块处理
 
-- `legacy/ai/KuiklyAiChatView.kt`：不再作为新 SDK 的核心设计入口；后续改为旧 API 适配器或宿主示例。
+- `legacy/ai/`、`bubble/`、`legacy/composer/`、`indicator/`、`navigation/` 已删除，不再做适配层。
 - `compose/agentcard/ComposeAgentCardList.kt`：保留现有 Agent 卡片能力，逐步拆出为 renderer，并接入新消息列表。
-- `agentcard/`：继续作为 Kuikly DSL 目标迁移层，保持与 Compose renderer 的语义对齐。
-- `bubble/`、`legacy/composer/`、`legacy/ai/`、`indicator/`、`navigation/`：已有能力先盘点，能复用的迁入新 `compose/`；不能复用的通过适配层逐步替换。
+- `agentcard/`：继续作为 Kuikly DSL 卡片渲染层，和 Compose renderer 语义对齐。
 - `model/`：收敛为跨 DSL 的领域模型、主题、仓库和工厂，禁止引入 Compose UI 类型。
 
 ## 10. 分阶段实施计划
@@ -467,7 +466,7 @@ AG-UI Event Stream
 - 定义 Flutter 对照能力矩阵和 P0 验收用例。
 - 确认 Kuikly Compose 列表、输入框、滚动、状态和动画可用 API。
 
-**完成标准**：契约文档评审通过；不再新增依赖旧 `KuiklyAiChatView` 的核心逻辑。
+**完成标准**：旧 `KuiklyAiChatView` 已删除，核心逻辑不再依赖它。
 
 ### Phase 1：Compose Core + 基础消息列表 ✅ 已完成
 
@@ -565,7 +564,7 @@ bash scripts/check-layer-deps.sh
 ## 13. 决策记录
 
 1. **首发 DSL**：Compose DSL。理由是当前明确需要补齐 Compose，并且更适合先建立组合式、可插槽的 UI 结构。
-2. **核心入口**：`ChatController + ChatScreen`，而不是继续扩展 `KuiklyAiChatView`。
+2. **核心入口**：`ChatController` + `ChatScreen`，DSL 会话页是 `ChatControllerSession`。
 3. **消息扩展方式**：`MessagePart` + `MessageRendererRegistry`，避免每新增消息类型都修改主列表。
 4. **协议边界**：AG-UI 只在 `agui/` 和适配层出现，UI 消费通用消息状态。
 5. **迁移顺序**：先 Core，再 Compose 基础 UI，再发送闭环，再 AG-UI，再高级消息，最后 Kuikly DSL。

@@ -1,6 +1,12 @@
+---
+last_updated: 2026-09-23
+status: reference
+owner: @kuikly-chat-team
+---
+
 # Flyer Chat UI SDK 组件参考文档
 
-> 基于本仓库源码整理，适用于 `flutter_chat_ui` monorepo。  
+> 这是 Flutter `flutter_chat_ui` 的外部组件对照，不是 KuiklyChat 现行 API。Compose 设计稿用章节号引用它。KuiklyChat 入口见 `docs/api/chat-ui.md`。
 > 官方在线文档：[flyer.chat/docs/flutter/introduction](https://flyer.chat/docs/flutter/introduction)
 
 ---

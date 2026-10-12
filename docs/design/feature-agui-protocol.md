@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-03
+last_updated: 2026-09-23
 status: active
 owner: @kuikly-chat-team
 ---
@@ -28,7 +28,7 @@ Status: ✅ Implemented
 - 不直接提供 UI 组件（只产出 `ChatMessage` / `AgentCard` 模型）；Compose UI 通过 `chat/compose/adapter/` 接入，不在协议层依赖 UI。
 
 ## 依赖
-- 无（基础设施层，被 `session/` 与 `agentcard/` 依赖）。
+- 依赖被 `agentcard/` 与 `compose/adapter/` 使用。协议层不渲染 UI。
 
 ## 相关
-`README.md`「AG-UI 协议集成」、`AGUI_INTEGRATION_GUIDE.md`。
+`README.md`「AG-UI 协议集成」、`docs/api/chat-ui.md`。

@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-05
+last_updated: 2026-09-23
 status: active
 owner: @kuikly-chat-team
 ---
@@ -9,7 +9,7 @@ owner: @kuikly-chat-team
 > Compose DSL Chat UI SDK 首期落地。Status 取值：✅ Done / 🔄 In Progress / 📋 Planned。
 
 ## 目标
-先完成 Compose DSL 的可运行 Chat UI Core、基础交互和 AG-UI/AgentCard 适配，再迁移到传统 Kuikly DSL。
+先完成 Compose DSL 的 Chat UI，再提供同一 `ChatController` 的 Kuikly DSL 会话页 `ChatControllerSession`。宿主 Demo 入口是 `ChatComponentDemoPage`（`chat_component_demo`）。
 
 ## 任务
 - ✅ 建立 `compose/core`：消息模型、状态、Intent、Effect、Controller、主题和 Renderer Registry

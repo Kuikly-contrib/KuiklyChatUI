@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-07
+last_updated: 2026-09-23
 status: implemented
 owner: @kuikly-chat-team
 ---
@@ -52,17 +52,11 @@ KuiklyChatOhos/          # 鸿蒙原生桥（ohpm：@kuikly-open/chat-cache）
 shared/                  # Demo 宿主页，依赖 project(:KuiklyChat)
 androidApp/              # Android Demo，额外依赖 project(:KuiklyChatAndroid)
 iosApp/                  # iOS Demo，Podfile 引入 KuiklyChatIOS
+```
+
 ## Demo
 
-宿主 Demo 提供独立页面 `compose_chat_cache_demo`（`ComposeChatCacheDemoPage`）：
-
-- 继承 `ComposeChatDemoContainer`，自动注册 `chatByteCacheExternalModules()`
-- 使用 `rememberChatCrossCache` + 默认 `ChatCrossCache`（非自定义 loader）
-- 顶部状态栏轮询 `cache.contains`，展示远程图片是否已写入 Module 缓存
-- 路由入口：`router` 页 → **Compose Chat Cache Module Demo**
-
-原有 `compose_chat_sdk_demo` 仍演示自定义 `DemoChatMediaLoader`，两者互不干扰。
-```
+`compose_chat_cache_demo` 与 `compose_chat_sdk_demo` 已从宿主 Demo 移除。保留的聊天入口是 Router 的 **Chat component demo**（`chat_component_demo` / `ChatComponentDemoPage`）。缓存能力仍通过 `chatByteCacheExternalModules()` 与 `rememberChatCrossCache` 接入。
 
 发布：`publish-maven.sh` 会依次发布 `KuiklyChat`（KMP）与 `KuiklyChatAndroid`（Android JVM）。
 

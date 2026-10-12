@@ -167,7 +167,7 @@ major 版本交付，并保留旧 `StreamingMarkdownView` forwarding wrapper。
 ## 依赖
 
 - `feature-compose-message-row.md`、`feature-compose-bubble-grouping-shape.md`（✅）。
-- `feature-streaming-ai-text.md`（✅，复用 parser/view 的实现经验，但修复上述契约缺口）。
+- Compose 文本渲染见本文；旧 `AiMessageText` DSL 组件已删除。
 - `feature-compose-theme-and-slots.md`（统一文本 slot 与 Markdown token）。
 - `com.tencent.kuiklybase:KuiklyMarkdownCompose`（`MarkdownView` + `MarkdownConfig`）。
 

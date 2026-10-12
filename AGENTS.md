@@ -3,40 +3,43 @@
 ## 项目简介
 KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组件库，内置 AG-UI 协议接入，可被 Android / iOS / 鸿蒙 / H5 / 小程序等宿主复用。
 
+当前发布线是 **0.x experimental**，不要把 public dump 标成 Stable。宿主按需依赖子模块；`:KuiklyChat` 是过渡伞，**不**再 `api()` testing。接入说明：`docs/api/host-integration.md`。
+
 ## 快速导航
 | 你想做什么 | 去哪里看 |
 |-----------|---------|
-| 了解模块构成、目录职责、使用方式 | `README.md` |
-| 了解 AG-UI 协议与接入流程 | `AGUI_INTEGRATION_GUIDE.md` |
-| 新增/修改消息卡片（Kuikly DSL 渲染层） | `KuiklyChat/src/commonMain/.../chat/agentcard/` |
-| 新增/修改 Compose Chat SDK | `KuiklyChat/src/commonMain/.../chat/compose/`（core/ui/adapter/agentcard） |
-| 新增/修改消息卡片（Compose DSL 渲染层） | `KuiklyChat/src/commonMain/.../chat/compose/agentcard/` |
-| 处理 AG-UI 事件解析、会话编排 | `KuiklyChat/src/commonMain/.../chat/agui/` |
-| 数据模型、主题、组件工厂、仓库 | `KuiklyChat/src/commonMain/.../chat/model/` |
-| 会话页与配置（ChatSession） | `KuiklyChat/src/commonMain/.../chat/session/` |
-| 气泡、频道、输入区、指示器、导航 | `.../chat/bubble/` `channel/` `legacy/composer/` `indicator/` `navigation/` |
+| 了解模块构成、目录职责、使用方式 | `README.md`、`docs/api/host-integration.md`、`docs/api/chat-ui.md` |
+| 了解 AG-UI 协议与接入流程 | `README.md`「AG-UI 协议集成」、`docs/design/feature-agui-protocol.md` |
+| 新增/修改消息卡片（Kuikly DSL 渲染层） | `kuiklychat-agentcard/src/commonMain/.../chat/agentcard/` |
+| 新增/修改 Compose Chat SDK | `kuiklychat-compose/` + `kuiklychat-core/` |
+| 新增/修改消息卡片（Compose DSL 渲染层） | `kuiklychat-agentcard/src/commonMain/.../chat/compose/agentcard/` |
+| 处理 AG-UI 事件解析、会话编排 | `kuiklychat-agui/src/commonMain/.../chat/agui/` |
+| 数据模型、主题、仓库 | `kuiklychat-core/`、`kuiklychat-compat/.../model/` |
+| Kuikly DSL 会话页 | `kuiklychat-compat/.../session/controller/`（`ChatControllerSession`） |
+| 频道列表 | `kuiklychat-compat` 的 `channel/` |
 | 构建/版本/发布到 Maven | `build.gradle.kts`、`buildSrc/`、`publish-maven.sh` |
 | 各端宿主 App 集成示例 | `androidApp/` `iosApp/` `ohosApp/` `shared/` |
 | 主观约定如何机械落地 | `docs/conventions/mechanical-rules.md` |
+| 工蜂门禁怎么开 | `docs/conventions/ci.md`、`.tgit-ci.yml` |
 | 周期性卫生清理任务（Prompt） | `docs/plans/code-hygiene-cleanup.md` |
-| 架构 + 文件大小门禁（本地可跑） | `scripts/check-layer-deps.sh` |
-| 文档新鲜度检查（本地可跑） | `scripts/check-doc-freshness.sh` |
-| CI 护栏配置（见下方「CI 现状」） | `.github/workflows/agent-guardrails.yml` |
+| 架构 + 文件大小门禁 | `scripts/check-layer-deps.sh` |
+| 文档新鲜度检查 | `scripts/check-doc-freshness.sh` |
 
-> 路径前缀：`KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/`
+> 库源码前缀：各 `kuiklychat-*` 模块的 `src/commonMain/kotlin/com/tencent/kuiklybase/chat/`
 
 ## 架构要点
-- 核心库 `:KuiklyChat` 是 KMP library（js/android/ios/macos），通过 `:shared`、`:androidApp`、`:h5App`、`:miniApp` 及各端 App 复用。
-- 消息卡片有**两套并行渲染层**：`agentcard/`（传统 Kuikly DSL）与 `compose/agentcard/`（Compose DSL），语义必须对齐。
-- 数据流：`agui/`（事件解析）→ 卡片映射 → `session/` 会话渲染；后端协议细节只存在于 `agui/`，不向下游 UI 泄漏。
+- 可发布库按模块拆分：`:kuiklychat-core` / `:kuiklychat-compose` / `:kuiklychat-compat` / `:kuiklychat-agui` / `:kuiklychat-agentcard` / `:kuiklychat-ai`；`:kuiklychat-testing` 仅 Preview/Mock；`:KuiklyChat` 是不含 testing 的过渡伞。
+- 消息卡片有**两套并行渲染层**（产品选择，不是债务）：`agentcard/` 与 `compose/agentcard/`。债务是两套消息模型，已经拆掉——共用 `compose.core.ChatMessage` + `AgentCard`。新卡片只扩这一套模型。
+- `MessagePart.AgentCardContent` 短期保留，不要再往 Core 塞卡片字段。
+- 数据流：`agui/`（事件解析）→ 卡片映射 → 会话渲染；后端协议细节只存在于 `agui/` 与 `compose/adapter/`。
 
 ## 硬性规则（必须遵守）
 1. `commonMain` 必须平台无关；平台相关逻辑只能放在 `androidMain` / `iosMain` / `macosMain`。
 2. 新增消息卡片须**同时在 `agentcard/` 与 `compose/agentcard/` 实现**，并在对应映射器/工厂注册，缺一不可。
-3. 所有后端协议对接走 `agui/` 或 `compose/adapter/` 边界，禁止在 `bubble/`、`session/`、`compose/ui/` 等 UI 层直接耦合 AG-UI 协议细节。
+3. 所有后端协议对接走 `agui/` 或 `compose/adapter/` 边界，禁止在 `session/controller/`、`channel/`、`compose/ui/` 等 UI 层直接耦合 AG-UI 协议细节。
 4. 单文件 ≤ 400 行；超大文件优先拆分为职责单一的子文件，而非继续堆砌。存量超标文件登记在 `scripts/file-size-baseline.txt`（仅告警），**新增超标文件直接阻断**。
 5. 使用结构化日志，调试遗留的裸 `println` / `console.log` 不得合入。
-6. 以上规则由 `scripts/check-layer-deps.sh` 强制校验（零依赖，本地与 CI 同一条命令），违规阻断合入。
+6. 以上规则由 `scripts/check-layer-deps.sh` 强制校验（零依赖，本地与工蜂同一条命令），违规阻断合入。
 
 ## 提交规范
 - `feat:` 新功能/新卡片
@@ -47,13 +50,13 @@ KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组
 - `chore:` 构建/依赖/发布
 
 ## 复现与验证
-改动后按顺序跑这三条，全绿才提交（等价于 CI 门禁）：
+改动后跑工蜂同一套入口（开发机默认 layer + android）：
 
 ```bash
-bash scripts/check-layer-deps.sh                      # 架构 + 文件大小，~0.5s
-./gradlew :KuiklyChat:compileDebugKotlinAndroid \
-          :KuiklyChat:compileDebugUnitTestKotlinAndroid
-./gradlew :KuiklyChat:testDebugUnitTest               # 174 个用例，报告见 build/reports/tests/
+bash scripts/ci-gates.sh            # layer + Android compile/test
+# 本机有工具链时再跑：
+bash scripts/ci-gates.sh ios        # iosSimulatorArm64
+bash scripts/ci-gates.sh ohos       # :kuiklychat-core Ohos 编译
 ```
 
 - 本模块**没有 `jvm()` target**（只有 android / js / iosX64 / iosArm64 / iosSimulatorArm64 / macosX64 / macosArm64），
@@ -62,12 +65,10 @@ bash scripts/check-layer-deps.sh                      # 架构 + 文件大小，
   会让 js / ios / macos 各 target 的测试编译全部失败。
 - 在隔离 worktree 中验证某个分支：`bash scripts/agent-verify.sh <branch>`
 - 构建库：`./gradlew :KuiklyChat:build`
-- 发布 Maven：`./publish-maven.sh`（参数 `mavenVersion` / `groupId` / `mavenRepoUrl` / `mavenUsername` / `mavenPassword`）
+- 发布 Maven：`./publish-maven.sh`（参数 `mavenVersion` / `groupId` / `mavenRepoUrl` / `mavenUsername` / `mavenPassword`）；会发布各 `kuiklychat-*` 模块 + 伞形 `KuiklyChat`
 - 运行宿主：Android 用 `:androidApp`，其余见各端目录。
 
-## 门禁在哪里执行（重要）
-**当前不接 CI，门禁完全靠本地执行**——提交前跑上面「复现与验证」的三条命令即可，全绿才提交。
+## 门禁在哪里执行
+工蜂配置文件是 [`.tgit-ci.yml`](.tgit-ci.yml)，打开方式见 [`docs/conventions/ci.md`](docs/conventions/ci.md)。
 
-仓库 remote 是 `git.woa.com`（工蜂），`.github/workflows/` 下的 workflow 不会被触发，
-保留它们只是作为门禁定义的书面参考（哪些 Gate、各自校验什么）。不要以为改了 yml 就会生效，
-也不要因为「CI 会拦」而跳过本地校验。真正可执行的只有 `scripts/` 下的两个脚本。
+`.github/workflows/` 不会被工蜂触发，只作书面对照。本地未配工蜂 runner 时，提交前仍须跑 `bash scripts/ci-gates.sh`。

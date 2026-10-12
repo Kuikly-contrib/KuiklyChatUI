@@ -21,8 +21,8 @@ owner: @kuikly-chat-team
 ### 涉及的模块
 - `chat/model/`：新增 XXX 数据模型 / Repository 接口
 - `chat/agui/`：新增 XXX 事件解析（如需对接协议）
-- `chat/bubble/` 或 `chat/agentcard/`：新增 XXX UI 组件
-- `chat/session/`：将新组件接入 `ChatSession`
+- `chat/agentcard/`：新增卡片 UI
+- `chat/session/controller/`：会话页入口是 `ChatControllerSession`，不要再接回已删除的 `ChatSession`
 
 ### 数据模型变更
 ```kotlin

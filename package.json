@@ -20,6 +20,7 @@
     "shelljs": "^0.8.3"
   },
   "dependencies": {
+    "@tencent/beacon-node-new-sdk": "^4.2.11",
     "big-integer": "^1.6.48",
     "console-error": "0.0.4",
     "console-info": "0.0.5",

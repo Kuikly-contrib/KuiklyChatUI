@@ -29,7 +29,7 @@ modules.putAll(chatByteCacheExternalModules())
 modules.putAll(chatAttachmentPickerExternalModules())
 ```
 
-`ComposeChatDemoContainer` 已默认注册上述 Kotlin Module；宿主只需提供 ArkTS 原生实现。
+宿主在页面的 `createExternalModules()` 中按上面的方式合并 Module，并提供 ArkTS 原生实现。
 
 4. 相机来源需在 `module.json5` 声明 `ohos.permission.CAMERA`。相册与文档选择走系统 Picker，无需额外存储权限。
 

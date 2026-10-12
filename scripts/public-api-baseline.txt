@@ -1,0 +1,239 @@
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/history/LlmChatSerializer.kt::public object LlmChatSerializer {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/ChatAttachmentPickerModule.kt::public fun chatAttachmentPickerExternalModules(): Map<String, Module> =
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/ChatAttachmentPickerModule.kt::public fun createChatAttachmentPicker(pager: IPager): LlmAttachmentPicker? {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmAttachmentPicker.kt::public enum class LlmAttachmentSource {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmAttachmentPicker.kt::public interface LlmAttachmentPicker {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmClipboard.kt::public data class LlmChatPlatformServices(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmClipboard.kt::public fun interface LlmClipboard {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmClipboard.kt::public object LlmChatPlatformRegistry {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmSpeechRecognizer.kt::public data class LlmSpeechResult(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmSpeechRecognizer.kt::public interface LlmSpeechListener {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmSpeechRecognizer.kt::public interface LlmSpeechRecognizer {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/platform/LlmSpeechRecognizer.kt::public interface LlmSpeechSession {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/AgUiScriptedScenarios.kt::public object AgUiScriptedScenarios {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/BaseLlmProvider.kt::public fun interface LlmClock {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/EchoLlmProvider.kt::public class EchoLlmProvider(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmChatMessage.kt::public data class LlmAttachment(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmChatMessage.kt::public data class LlmChatMessage(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmChatMessage.kt::public enum class LlmAttachmentKind {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmChatMessage.kt::public enum class LlmMessageOrigin {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmChatMessage.kt::public enum class LlmMessageState {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmProvider.kt::public class LlmProviderException(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmProvider.kt::public enum class LlmErrorCode {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmProvider.kt::public fun interface LlmHistoryListener {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmProvider.kt::public fun interface LlmSubscription {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmProvider.kt::public interface LlmProvider {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmProviderCapabilities.kt::public data class LlmProviderCapabilities(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmTransport.kt::public class SseDecoder(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmTransport.kt::public data class LlmHttpRequest(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmTransport.kt::public fun LlmTransport.streamAsFlow(request: LlmHttpRequest): Flow<String> = callbackFlow {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmTransport.kt::public fun interface LlmTransport {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmTransport.kt::public interface LlmStreamSink {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/OpenAiCompatibleProvider.kt::public class OpenAiCompatibleProvider(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/ScriptedSseLlmTransport.kt::public class ScriptedSseLlmTransport(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/runtime/LlmChatController.kt::public class LlmChatController internal constructor(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/runtime/LlmChatEditState.kt::public sealed interface LlmChatEditState {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/runtime/LlmChatError.kt::public data class LlmChatError(
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/runtime/LlmChatUiEvent.kt::public sealed interface LlmChatUiEvent {
+kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/runtime/RememberLlmChatController.kt::public fun rememberLlmChatController(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelHeaderView.kt::public class ChatChannelHeaderConfig {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelHeaderView.kt::public fun ViewContainer<*, *>.ChatChannelHeader(init: ChatChannelHeaderConfig.() -> Unit) {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public class ChannelListSlots {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public class ChannelListTheme {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public class ChatChannelListConfig {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public typealias ChannelDividerSlot = (container: ViewContainer<*, *>, index: Int) -> Unit
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public typealias ChannelItemSlot = (container: ViewContainer<*, *>, channel: ChatChannel, config: ChatChannelListConfig) -> Unit
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public typealias ChannelListEmptySlot = (container: ViewContainer<*, *>) -> Unit
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public typealias ChannelListHeaderSlot = (container: ViewContainer<*, *>, config: ChatChannelListConfig) -> Unit
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public typealias ChannelListLoadingSlot = (container: ViewContainer<*, *>) -> Unit
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListConfig.kt::public typealias ChannelTimeFormatter = (timestamp: Long) -> String
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelListView.kt::public fun ViewContainer<*, *>.ChatChannelList(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/channel/ChatChannelMemberView.kt::public fun ViewContainer<*, *>.ChatChannelMemberList(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/composer/ChatDockComposer.kt::public class ChatDockComposerConfig {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/composer/ChatDockComposer.kt::public fun ViewContainer<*, *>.ChatDockComposer(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/experience/ChatExperienceComponents.kt::public class ChatExperienceOptions {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/experience/ChatExperienceComponents.kt::public class ChatWelcomeStateConfig {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/experience/ChatExperienceComponents.kt::public data class ChatSuggestion(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/experience/ChatExperienceComponents.kt::public fun ViewContainer<*, *>.ChatLoadingState(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/experience/ChatExperienceComponents.kt::public fun ViewContainer<*, *>.ChatSuggestionBar(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/experience/ChatExperienceComponents.kt::public fun ViewContainer<*, *>.ChatWelcomeState(config: ChatWelcomeStateConfig.() -> Unit = {}) {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatAttachment.kt::public data class Attachment(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatAttachment.kt::public data class MessageAction(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatChannel.kt::public data class ChatChannel(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatChannel.kt::public data class ChatChannelMember(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatChannel.kt::public enum class ChannelType {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatChannel.kt::public enum class MemberRole {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatChannel.kt::public enum class OnlineStatus {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatChannel.kt::public object ChatChannelHelper {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatComponentFactory.kt::public interface ChatComponentFactory {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public class DefaultChannelNameFormatter : ChannelNameFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public class DefaultDateSeparatorHandler : DateSeparatorHandler {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public class DefaultMessagePositionHandler : MessagePositionHandler {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public class DefaultMessagePreviewFormatter : MessagePreviewFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public class DefaultMessageTextFormatter : MessageTextFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public class DefaultTimestampFormatter : TimestampFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public enum class MessagePosition {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public fun interface ChannelNameFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public fun interface MessagePreviewFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public fun interface MessageTextFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public fun interface TimestampFormatter {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public interface DateSeparatorHandler {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatHandlers.kt::public interface MessagePositionHandler {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public const val DEFAULT_TIME_GROUP_INTERVAL: Long = 5 * 60 * 1000L
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public data class MessageContext(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public fun sessionChatMessage(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public typealias ChatMessage = CoreChatMessage
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public typealias ReactionItem = CoreReactionItem
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.attachments: List<Attachment>
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.content: String
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.extra: Map<String, String> get() = metadata
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.isRead: Boolean get() = readBy.isNotEmpty()
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.isSelf: Boolean get() = outgoing
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.quotedMessage: ChatMessage?
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.senderAvatar: String get() = author.avatar
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.senderId: String get() = author.id
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.senderName: String get() = author.name
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.sessionStatus: MessageStatus
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.timestamp: Long get() = createdAt
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessage.kt::public val ChatMessage.type: MessageType
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageCoreMapping.kt::public fun ChatMessage.toCore(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageCoreMapping.kt::public fun CoreChatMessage.toSessionMessage(currentUserId: String): ChatMessage {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageEnums.kt::public enum class AttachmentType {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageEnums.kt::public enum class MessageType {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageEnums.kt::public typealias MessageStatus = com.tencent.kuiklybase.chat.compose.core.MessageStatus
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageHelper.kt::public object ChatMessageHelper {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatMessageParts.kt::public fun ChatMessage.primaryTextContent(): String {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatRepository.kt::public data class ChatChannelsResponse(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatRepository.kt::public data class ChatMessagesResponse(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatRepository.kt::public interface ChatRepository {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatTheme.kt::public data class ChatThemeColors(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatTheme.kt::public enum class ChatThemeMode {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatTheme.kt::public fun resolveThemeColors(mode: ChatThemeMode): ChatThemeColors {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatTheme.kt::public val DarkThemeColors: ChatThemeColors = ChatThemeColors(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatTheme.kt::public val LightThemeColors: ChatThemeColors = ChatThemeColors()
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt::public data class CodeBlockInfo(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt::public data class CommandInfo(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt::public data class FileEditInfo(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt::public data class LoadingInfo(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt::public data class ToolCallInfo(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt::public object RichCardPayload {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichMessageKind.kt::public object ActivityState {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichMessageKind.kt::public object AgUiExtraKeys {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichMessageKind.kt::public object CommandState {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichMessageKind.kt::public object FileOperation {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichMessageKind.kt::public object LoadingStyle {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichMessageKind.kt::public object RichMessageKind {
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/session/controller/ChatControllerSessionView.kt::public fun ViewContainer<*, *>.ChatControllerSession(
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/session/controller/ChatConversationHost.kt::public class ChatConversationHost(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/InlineMarkdown.kt::public fun parseInlineMarkdown(text: String): AnnotatedString {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/LucideSvgIcon.kt::public fun LucideSvgIcon(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatByteCache.kt::public class ChatCacheMissException(key: String) :
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatByteCache.kt::public class MemoryChatByteCache : ChatByteCache {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatByteCache.kt::public const val DEFAULT_CHAT_MEDIA_CACHE_NAMESPACE: String = "kuikly_chat_media"
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatByteCache.kt::public interface ChatByteCache {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatByteCacheHostIntegration.kt::public fun chatByteCacheExternalModules(): Map<String, Module> =
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatCrossCache.kt::public class ChatCrossCache(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatCrossCache.kt::public interface ChatMediaFetcher {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ModuleChatByteCache.kt::public class ModuleChatByteCache(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ModuleChatByteCache.kt::public fun createChatByteCache(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/AttachmentFormat.kt::public fun attachmentDisplaySource(attachment: MessagePart.Attachment): String {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/AttachmentFormat.kt::public fun formatFileSize(bytes: Long): String {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/AttachmentFormat.kt::public fun isDisplayableImageSource(source: String): Boolean {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/AttachmentFormat.kt::public fun isImageMimeType(mimeType: String): Boolean = mimeType.startsWith("image/")
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/BubbleShape.kt::public data class BubbleCornerRadii(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/BubbleShape.kt::public fun bubbleCornerRadii(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/BubbleShape.kt::public fun groupedBubbleShape(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/BubbleShape.kt::public fun messageRowTopPadding(groupStatus: MessageGroupStatus): Dp =
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatAttachmentCommandSheet.kt::public enum class ChatAttachmentCommandTile {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatAttachmentPickerIntegration.kt::public data class ChatAttachmentPickerIntegration(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatAvatar.kt::public fun avatarInitial(user: ChatUser): String {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatAvatar.kt::public fun shouldReserveAvatarSpace(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatAvatar.kt::public fun shouldShowAvatar(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatComposerAttachmentGallery.kt::public fun ChatComposerAttachmentPreviewStrip(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatListScroll.kt::public class ChatListScrollState(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatListScroll.kt::public fun firstVisibleMessageKey(visibleKeys: List<Any?>, messages: List<String>): String? {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatListScroll.kt::public fun isNearBottomByRemaining(remainingPx: Int, thresholdPx: Int): Boolean =
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatListScroll.kt::public fun isNearBottomOfLazyItems(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatListScroll.kt::public fun lazyIndexOfMessageKey(messages: List<String>, key: String?): Int? {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatListScroll.kt::public fun remainingScrollDistance(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatMediaConfig.kt::public data class ChatMediaConfig(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatMediaConfig.kt::public fun interface ChatMediaRequestResolver {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatMediaConfig.kt::public fun rememberChatCrossCache(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatScreen.kt::public fun ChatScreen(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatScreen.kt::public fun ChatScreen(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatScreen.kt::public fun defaultChatRendererRegistry(): MessageRendererRegistry =
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatSlots.kt::public data class ChatCallbacks(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatSlots.kt::public data class ChatScreenConfig(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatSlots.kt::public data class ChatSlots(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatUserResolutionConfig.kt::public data class ChatUserResolutionConfig(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/ChatUserState.kt::public fun rememberUserCache(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageRenderer.kt::public class MessageRendererRegistry(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageRenderer.kt::public const val AGENT_CARD_RENDERER_KEY: String = "__agent_card__"
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageRenderer.kt::public fun interface MessageRenderer {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageTimeAndStatus.kt::public enum class TimeAndStatusPosition {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageTimeAndStatus.kt::public fun formatMessageTime(timestamp: Long, pattern: String = "HH:mm"): String =
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageTimeAndStatus.kt::public fun shouldShowTimeAndStatus(
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/MessageTimeAndStatus.kt::public fun statusLabel(status: MessageStatus, strings: ChatStrings): String? = when (status) {
+kuiklychat-compose/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/ui/UnknownCustomRenderer.kt::public fun unknownCustomRenderer(): MessageRenderer = MessageRenderer { message, _, theme, modifier ->
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public data class ChartPoint(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public data class PlanStep(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public data class SearchItem(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public data class TodoProgressItem(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public enum class ChartType {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public enum class ExecState {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public enum class FileOp {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public enum class LoadingStyle {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public enum class PlanStepStatus {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public enum class ToolState {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agentcard/AgentCard.kt::public sealed class AgentCard {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/AttachmentUriCodec.kt::public object AttachmentUriCodec {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatClock.kt::public fun interface ChatClock {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt::public class ChatController(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatControllerConversation.kt::public fun ChatController.regenerateReply(messageId: String) {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatControllerConversation.kt::public fun ChatController.showConversation(messages: List<ChatMessage>) {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatConversationDirectory.kt::public class ChatConversationDirectory(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatConversationDirectory.kt::public class MemoryChatConversationStore : ChatConversationStore {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatConversationDirectory.kt::public data class ChatConversationSummary(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatConversationDirectory.kt::public interface ChatConversationStore {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatDateTimeFormatter.kt::public class LocalChatDateTimeFormatter private constructor(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatDateTimeFormatter.kt::public interface ChatDateTimeFormatter {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatDateTimeFormatter.kt::public object UtcChatDateTimeFormatter : ChatDateTimeFormatter {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMedia.kt::public data class ChatMediaRequest(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMedia.kt::public interface ChatMediaLoader {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMedia.kt::public sealed interface ChatMediaContext {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMedia.kt::public sealed interface ChatMediaLoadEvent {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMediaSource.kt::public fun decodeInlineMediaSource(source: String): ByteArray? {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMediaSource.kt::public fun isLocalMediaFileSource(source: String): Boolean {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMediaSource.kt::public fun isNetworkMediaSource(source: String): Boolean {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public const val DEFAULT_GROUPING_WINDOW_MILLIS: Long = 5 * 60 * 1000L
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public data class ChatMessage(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public data class ChatUser(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public data class QuotedPreview(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public data class ReactionItem(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public enum class MessageGroupStatus {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public enum class MessageStatus {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public enum class TextFormat {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public fun ChatMessage.countsAsUnread(): Boolean = !containsSystemNotice
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public fun ChatMessage.groupStatus(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public sealed interface MessagePart {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public val ChatMessage.containsSystemNotice: Boolean
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public val ChatMessage.systemNoticeOrNull: MessagePart.SystemNotice?
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatMessage.kt::public val SYSTEM_CHAT_USER: ChatUser = ChatUser(id = "__system__", name = "")
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public data class ChatError(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public data class ChatHistoryPage(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public data class ChatState(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public fun interface ChatHistoryLoader {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public fun interface ChatMessageSender {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public sealed interface ChatEffect {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public sealed interface ChatIntent {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt::public sealed interface ChatStreamEvent {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTextRenderConfig.kt::public data class ChatTextRenderConfig(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTextRenderConfig.kt::public enum class StreamingMarkdownMode {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTextRenderConfig.kt::public enum class TextPartDisplayMode {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTextRenderConfig.kt::public fun resolveTextPartDisplayMode(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTheme.kt::public data class ChatStrings(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatTheme.kt::public data class ChatTheme(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatUserResolver.kt::public fun interface ChatUserResolver {
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/DisplayUser.kt::public fun resolveDisplayUser(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/UserCache.kt::public class UserCache(
+kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/UserCacheKey.kt::public const val DEFAULT_USER_CACHE_NAMESPACE: String = "default"

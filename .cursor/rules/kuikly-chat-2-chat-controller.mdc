@@ -5,7 +5,7 @@ alwaysApply: true
 ---
 # KuiklyChat - Chat Controller
 
-`ChatController`（[ChatController.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt)）是 Compose Chat UI 的单一状态源，对齐 Flyer `ChatController`。
+`ChatController`（[ChatController.kt](mdc:kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt)）是 Compose Chat UI 的单一状态源，对齐 Flyer `ChatController`。
 
 ## Core Responsibilities
 
@@ -16,9 +16,9 @@ alwaysApply: true
 
 ## 发送与流式
 
-- `ChatMessageSender` 注入发送能力；返回 `Flow<ChatStreamEvent>`（[ChatState.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt)）
+- `ChatMessageSender` 注入发送能力；返回 `Flow<ChatStreamEvent>`（[ChatState.kt](mdc:kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt)）
 - 事件类型：`TextDelta`、`ReplaceMessage`、`Completed`、`Failed`
-- 默认 LLM 路径：`rememberLlmChatUiController` + [LlmChatAdapter.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt)
+- 默认 LLM 路径：`rememberLlmChatUiController` + [LlmChatAdapter.kt](mdc:kuiklychat-agui/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt)
 
 ## 历史与外部消息
 

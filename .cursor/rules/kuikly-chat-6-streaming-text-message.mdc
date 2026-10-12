@@ -14,20 +14,20 @@ alwaysApply: false
 3. `MessageStatus.STREAMING` 直到 `Completed` 或 `Failed`
 4. 新 assistant 消息在非近底时不抢滚动；近底时 sticky-bottom
 
-定义见 [ChatState.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt)、[ChatController.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt)。
+定义见 [ChatState.kt](mdc:kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatState.kt)、[ChatController.kt](mdc:kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core/ChatController.kt)。
 
 ## LLM / AG-UI 适配
 
-- [LlmChatAdapter.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt) — `AgUiLlmProvider` → `Flow<ChatStreamEvent>`
-- [AgentCardComposeBridge.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgentCardComposeBridge.kt) — AG-UI 卡片事件 Upsert 为 `MessagePart.AgentCardContent`
+- [LlmChatAdapter.kt](mdc:kuiklychat-agui/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/LlmChatAdapter.kt) — `AgUiLlmProvider` → `Flow<ChatStreamEvent>`
+- [AgentCardComposeBridge.kt](mdc:kuiklychat-agui/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/adapter/AgentCardComposeBridge.kt) — AG-UI 卡片事件 Upsert 为 `MessagePart.AgentCardContent`
 - Demo：`ScriptedSseLlmTransport` + `ComposeChatSdkDemoPage`
 
 ## UI 渲染层
 
 | 场景 | 组件 | 说明 |
 |------|------|------|
-| 普通流式 Markdown | [StreamingMarkdownView.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/StreamingMarkdownView.kt) | Compose 解析 + 布局 |
-| 高性能流式 | [NativeMarkdownView.kt](mdc:KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/NativeMarkdownView.kt) | 流式中优先原生测量 |
+| 普通流式 Markdown | [StreamingMarkdownView.kt](mdc:kuiklychat-agentcard/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/StreamingMarkdownView.kt) | Compose 解析 + 布局 |
+| 高性能流式 | [NativeMarkdownView.kt](mdc:kuiklychat-agentcard/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/NativeMarkdownView.kt) | 流式中优先原生测量 |
 | Tool / Thinking 卡片 | `compose/agentcard/*` | `MessageStatus.STREAMING` 映射自卡片状态 |
 
 库**不规定**外部 AI SDK 如何管理 stream；宿主实现 `ChatMessageSender` 或复用 `AgUiLlmProvider`。

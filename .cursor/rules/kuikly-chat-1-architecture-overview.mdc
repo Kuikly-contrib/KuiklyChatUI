@@ -5,36 +5,33 @@ alwaysApply: true
 ---
 # KuiklyChat - Project Architecture Overview
 
-Gradle 多模块结构，核心是可发布的 KMP 库 `:KuiklyChat`，由各端宿主复用：
+Gradle 多模块。产品库按需发布；`:KuiklyChat` 是不含 testing 的过渡伞：
 
-- `KuiklyChat/` — 核心 Chat UI 库（`commonMain` 必须平台无关）
-- `shared/` — Kuikly 宿主 Demo 页（含 `ComposeChatSdkDemoPage`）
-- `androidApp/`、`iosApp/`、`ohosApp/`、`h5App/`、`miniApp/` — 各端集成示例
+- `kuiklychat-core` / `kuiklychat-compose` / `kuiklychat-compat` / `kuiklychat-agui` / `kuiklychat-agentcard` / `kuiklychat-ai`
+- `kuiklychat-testing` — Preview/Mock，宿主显式依赖
+- `shared/` — Demo 页；`androidApp/`、`iosApp/`、`ohosApp/`、`h5App/`、`miniApp/` — 各端示例
+
+宿主接入见 [host-integration.md](mdc:docs/api/host-integration.md)。0.x experimental，不要标 Stable。
 
 ## Compose Chat SDK（对齐 Flyer 的 core + ui）
 
-路径前缀：`KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/`
+| 层 | 模块 / 目录 | 职责 |
+|----|-------------|------|
+| Core | `kuiklychat-core` `compose/core/` | 模型、`ChatController`、`ChatTheme`、Renderer Registry |
+| UI | `kuiklychat-compose` `compose/ui/` | `ChatScreen`、消息列表、气泡、Composer、`ChatSlots` |
+| Adapter | `kuiklychat-agui` `compose/adapter/` | AG-UI / LLM / AgentCard 与 Core 的边界 |
+| AgentCard UI | `kuiklychat-agentcard` `compose/agentcard/` | Compose 卡片渲染（与 Kuikly DSL 语义对齐） |
 
-| 层 | 目录 | 职责 |
-|----|------|------|
-| Core | `compose/core/` | 模型、`ChatController`、`ChatTheme`、Renderer Registry、`UserCache` |
-| UI | `compose/ui/` | `ChatScreen`、消息列表、气泡、Composer、`ChatSlots` |
-| Adapter | `compose/adapter/` | AG-UI / LLM / AgentCard 与 Core 的边界（禁止协议泄漏到 UI） |
-| AgentCard UI | `compose/agentcard/` | Compose 版消息卡片（与 legacy `agentcard/` 语义对齐） |
+## 并行渲染层（产品选择，不是债务）
 
-## 并行渲染层（Kuikly 特有）
-
-- **Compose DSL**：`compose/`（新 SDK，Flyer 对齐目标）
-- **Kuikly DSL**：`session/`、`bubble/`、`agentcard/`（传统 `ChatSession` 路径）
-- 新增消息卡片须**同时在** `agentcard/` 与 `compose/agentcard/` 实现并注册。
+- **Compose DSL** 与 **Kuikly DSL** 两套渲染层会继续保留。
+- 债务是两套消息模型，已经拆掉：共用 `compose.core.ChatMessage` + `AgentCard`。
+- 新卡片只扩这一套模型，再在两套渲染层实现并注册。
+- `MessagePart.AgentCardContent` 短期保留，不要再往 Core 加卡片字段。
 
 ## 协议与数据流
 
-- `agui/` — AG-UI 事件解析与会话编排；协议细节只在此层与 `compose/adapter/`
-- `model/` — Legacy 会话模型（`ChatMessage`、`MessageType` 等），经 adapter 映射到 Compose 模型
-
-## Key Goal
-
-支持 Android / iOS / macOS / JS（H5）等 KMP target；平台逻辑仅放在 `androidMain` / `iosMain` / `macosMain` / `jsMain`，`commonMain` 禁止 `java.time`、裸平台 API。
+- `agui/` — 协议细节只在此层与 `compose/adapter/`
+- Kuikly 会话 `model.ChatMessage` 是 core 的 typealias，不是第二套信封
 
 更多导航见 [AGENTS.md](mdc:AGENTS.md)。

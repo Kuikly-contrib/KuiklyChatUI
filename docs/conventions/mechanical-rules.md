@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-03
+last_updated: 2026-09-21
 status: active
 owner: @kuikly-chat-team
 ---
@@ -21,7 +21,13 @@ owner: @kuikly-chat-team
 | 文件要短 | 单文件 ≤ 400 行 | `check-layer-deps.sh` 规则 5 + `scripts/file-size-baseline.txt` | ✅ 脚本已强制（存量豁免，新增阻断） |
 | Provider 保持 UI 无关 | `kuiklyai/provider` 与 `history` 不依赖 Compose/UI 包 | `check-layer-deps.sh` 规则 6 | ✅ 脚本已强制 |
 | AI Provider 不绑定厂商 | `kuiklyai` 不引厂商 SDK 或具体网络栈 | `check-layer-deps.sh` 规则 7 | ✅ 脚本已强制 |
-| 文档不过期 | 设计文档 `last_updated` ≤ 60 天 | `scripts/check-doc-freshness.sh`（PR Gate 7 + 每周定时） | ✅ 脚本已强制（仅告警） |
+| SDK 只暴露 keep-set | Composer 叶子、ContentBlock、AttachmentDraft、内置 Renderer 必须 internal | `check-layer-deps.sh` 规则 10 + `scripts/check-public-api.sh` | ✅ 脚本已强制 |
+| explicitApi 严格模式 | 库模块必须 `explicitApi()`，不得再用 Warning 或 `-PexplicitApi` 挡住 | `check-layer-deps.sh` 规则 14 | ✅ 脚本已强制 |
+| Ohos 真模块 | 各库 `build.ohos.gradle.kts` 声明 `ohosArm64()`，伞形禁止 fat-source | `check-layer-deps.sh` 规则 15 | ✅ 脚本已强制 |
+| 伞形不含 testing | `:KuiklyChat` 不得 `api(:kuiklychat-testing)` | `check-layer-deps.sh` 规则 17 | ✅ 脚本已强制 |
+| 列表懒加载 | `ChatMessageList` 必须 `items()` + message id key，滚动锚点走 message key | `check-layer-deps.sh` 规则 16 | ✅ 脚本已强制 |
+| 工蜂跑同一套门禁 | layer + Android + iosSimulatorArm64 + Ohos 库编译 | `.tgit-ci.yml` → `scripts/ci-gates.sh` | ✅ yaml 已落地（需打开仓库 CI） |
+| 文档不过期 | 设计文档 `last_updated` ≤ 60 天 | `scripts/check-doc-freshness.sh` | ✅ 脚本已强制（仅告警） |
 | 组件要纯 | UI 组件不直接调后端 | 由「`agui` 不依赖 UI」反向保证；UI 直连后端目前无检查 | ⚠️ 仅约定 |
 | API 调用要统一 | 禁止直接网络调用，走 `ChatRepository` | 无自动校验 | ⚠️ 仅约定 |
 | 错误要有上下文 | Error 须带 code / 类型 | `AgUiEvent.RunError` + `docs/reference/error-codes.md` 分类 | ⚠️ 仅约定 |

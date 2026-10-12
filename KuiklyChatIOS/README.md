@@ -47,8 +47,9 @@ pod 'shared', :path => '../shared'         # 你的 KMP 宿主页模块
 ### 2. Kotlin（commonMain）
 
 ```kotlin
-implementation("com.tencent.kuiklybase:KuiklyChat:<version>")
-// 本地：api(project(":KuiklyChat"))
+implementation("com.tencent.kuiklybase:kuiklychat-compose:<version>")
+// 或过渡伞（不含 testing）：implementation("com.tencent.kuiklybase:KuiklyChat:<version>")
+// 本地：implementation(project(":kuiklychat-compose"))
 ```
 
 在 `createExternalModules()` 合并所需的 Kotlin Module：

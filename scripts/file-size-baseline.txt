@@ -5,11 +5,5 @@
 # 拆分完成后请把对应行删掉——门禁会在文件已达标却仍留在清单里时报错，防止清单腐化。
 # 拆分任务见 docs/plans/backlog.md。
 
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/agentcard/ToolCallCard.kt
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agui/AgUiSession.kt
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/agui/RichCardPayload.kt
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/bubble/ChatBubbleView.kt
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/bubble/ChatMessageOptionsView.kt
-KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatPreviewData.kt
-KuiklyChat/src/commonTest/kotlin/com/tencent/kuiklybase/chat/agui/AgUiEventParserTest.kt
-KuiklyChat/src/commonTest/kotlin/com/tencent/kuiklybase/chat/agui/AgUiSessionTest.kt
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt
+kuiklychat-testing/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatPreviewData.kt

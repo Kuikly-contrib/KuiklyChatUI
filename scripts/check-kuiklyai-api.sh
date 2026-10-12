@@ -4,30 +4,28 @@
 
 set -u
 ERRORS=0
-ROOT="KuiklyChat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai"
+AI_ROOT="kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai"
 
 check_internal() {
   local file="$1"
   local declaration="$2"
   local symbol="$3"
-  if grep -Eq "^[[:space:]]*(public[[:space:]]+)?${declaration}" "$ROOT/$file"; then
+  if [ ! -f "$file" ]; then
+    echo "❌ KuiklyAI API 校验找不到 $file"
+    echo "✅ FIX: 恢复文件或更新 scripts/check-kuiklyai-api.sh"
+    echo "📖 See: docs/design/feature-kuiklyai-toolkit.md"
+    ERRORS=$((ERRORS + 1))
+    return
+  fi
+  if grep -Eq "^[[:space:]]*(public[[:space:]]+)?${declaration}" "$file"; then
     echo "❌ KuiklyAI 内部实现 $symbol 未声明为 internal。"
-    echo "✅ FIX: 在声明前添加 internal，公共入口只保留 KuiklyAiChatView 和扩展契约。"
+    echo "✅ FIX: 在声明前添加 internal，公共入口只保留 Provider 和平台契约。"
     echo "📖 See: docs/design/feature-kuiklyai-toolkit.md"
     ERRORS=$((ERRORS + 1))
   fi
 }
 
-check_internal "../legacy/ai/LlmChatInput.kt" "fun[[:space:]]+LlmChatInput[[:space:]]*\\(" "LlmChatInput"
-check_internal "../legacy/ai/LlmMessageList.kt" "fun[[:space:]]+LlmMessageList[[:space:]]*\\(" "LlmMessageList"
-check_internal "../legacy/ai/LlmWelcomeSection.kt" "fun[[:space:]]+LlmWelcomeSection[[:space:]]*\\(" "LlmWelcomeSection"
-check_internal "../legacy/ai/LlmAttachmentRow.kt" "fun[[:space:]]+LlmAttachmentRow[[:space:]]*\\(" "LlmAttachmentRow"
-check_internal "../legacy/ai/LlmMessageBubbles.kt" "fun[[:space:]]+LlmUserBubble[[:space:]]*\\(" "LlmUserBubble"
-check_internal "../legacy/ai/LlmMessageBubbles.kt" "fun[[:space:]]+LlmResponseBubble[[:space:]]*\\(" "LlmResponseBubble"
-check_internal "../legacy/ai/LlmImagePreviewDialog.kt" "fun[[:space:]]+LlmImagePreviewDialog[[:space:]]*\\(" "LlmImagePreviewDialog"
-check_internal "../legacy/ai/LlmImagePreviewDialog.kt" "data[[:space:]]+class[[:space:]]+LlmImageTransformState[[:space:]]*\\(" "LlmImageTransformState"
-check_internal "provider/LlmTransport.kt" "class[[:space:]]+SseDecoder[[:space:]]*\\(" "SseDecoder"
-check_internal "provider/BaseLlmProvider.kt" "class[[:space:]]+LlmIdGenerator[[:space:]]*\\(" "LlmIdGenerator"
+check_internal "$AI_ROOT/provider/BaseLlmProvider.kt" "class[[:space:]]+LlmIdGenerator[[:space:]]*\\(" "LlmIdGenerator"
 
 if [ "$ERRORS" -gt 0 ]; then
   echo "发现 $ERRORS 个 KuiklyAI API 暴露问题，请修复后重试。"
