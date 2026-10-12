@@ -265,7 +265,12 @@ public class ChatController(
                     if (token != requestToken) return@collect
                     when (event) {
                         is ChatStreamEvent.TextDelta -> applyTextDelta(event)
-                        is ChatStreamEvent.ReplaceMessage -> updateMessage(event.message)
+                        is ChatStreamEvent.ReplaceMessage -> event.message.let { message ->
+                            if (message.author.id != currentUser.id &&
+                                (message.status == MessageStatus.STREAMING || message.status == MessageStatus.SENDING)
+                            ) activeAssistantId = message.id
+                            updateMessage(message)
+                        }
                         ChatStreamEvent.Completed -> completeLatestAssistant()
                         is ChatStreamEvent.Failed -> fail(event.error.message, event.error.code, event.error)
                     }

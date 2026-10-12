@@ -58,6 +58,7 @@ class ChatControllerRegressionTest {
         val assistant = controller.state.messages.last()
         assertEquals(listOf(attachment), assistant.parts.filterIsInstance<MessagePart.Attachment>())
         assertEquals("answer", assistant.text)
+        assertEquals(MessageStatus.SENT, assistant.status)
     }
 
     @Test
