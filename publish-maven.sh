@@ -52,6 +52,15 @@ PUBLISH_TASK=publishAllPublicationsToMavenRepository
 MODULE_ANDROID="KuiklyChatAndroid"
 ANDROID_PUBLISH_TASK="publishReleasePublicationToMavenRepository"
 
+# 默认发布全部库模块；-n 指定单个模块时只发那一个
+KMP_PUBLISH_MODULES=(
+  kuiklychat-core
+  kuiklychat-compose
+  kuiklychat-ai
+  kuiklychat-compat
+  kuiklychat-testing
+)
+
 # ====== 组件模块配置（从 gradle.properties 的 MODULE_NAME 读取） ======
 MODULE_KMP=""
 
@@ -262,10 +271,17 @@ function publishAll() {
       build_version="${BASE_VERSION}-${kt_version}"
     fi
 
-    # 发布跨端模块
-    if ! publishModule "${MODULE_KMP}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
-      return 1
+    # 发布跨端模块（默认全部 kuiklychat-* + 伞形；-n 指定时只发该模块）
+    local modules=("${KMP_PUBLISH_MODULES[@]}")
+    if [ "${MODULE_KMP}" != "KuiklyChat" ]; then
+      modules=("${MODULE_KMP}")
     fi
+    local kmp_module
+    for kmp_module in "${modules[@]}"; do
+      if ! publishModule "${kmp_module}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
+        return 1
+      fi
+    done
 
     # 发布 Android 原生模块
     if ! publishModule "${MODULE_ANDROID}" "${ANDROID_PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
@@ -290,9 +306,16 @@ function publishAll() {
         build_version="${BASE_VERSION}-${kt_version}"
       fi
 
-      if ! publishModule "${MODULE_KMP}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "true"; then
-        return 1
+      local modules=("${KMP_PUBLISH_MODULES[@]}")
+      if [ "${MODULE_KMP}" != "KuiklyChat" ]; then
+        modules=("${MODULE_KMP}")
       fi
+      local kmp_module
+      for kmp_module in "${modules[@]}"; do
+        if ! publishModule "${kmp_module}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "true"; then
+          return 1
+        fi
+      done
 
       if [[ -z "${final_versions}" ]]; then
         final_versions="${build_version}"

@@ -31,7 +31,11 @@ dependencyResolutionManagement {
 rootProject.name = "KuiklyChat"
 include(":androidApp")
 include(":shared")
-include(":KuiklyChat")
+include(":kuiklychat-core")
+include(":kuiklychat-compose")
+include(":kuiklychat-compat")
+include(":kuiklychat-ai")
+include(":kuiklychat-testing")
 include(":KuiklyChatAndroid")
 include(":h5App")
 include(":miniApp")

@@ -61,8 +61,9 @@ kotlin {
             dependencies {
                 implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
                 implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
-                // 聊天会话组件
-                api(project(":KuiklyChat"))
+                api(project(":kuiklychat-compose"))
+                api(project(":kuiklychat-compat"))
+                api(project(":kuiklychat-ai"))
             }
         }
         val commonTest by getting {
