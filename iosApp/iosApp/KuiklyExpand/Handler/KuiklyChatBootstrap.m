@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <KuiklyChatIOS/KRChatImageExpandHandler.h>
+#import "../ChatZoomImage.h"
 
 /// Ensures KuiklyChat image/SVG handler is registered even when +load in the pod is not linked.
 @interface KuiklyChatBootstrap : NSObject
@@ -12,6 +13,7 @@
     NSLog(@"[KuiklyChatImage] KuiklyChatBootstrap +load");
 #endif
     [KRChatImageExpandHandler registerDefaultHandler];
+    (void)[ChatZoomImage class];
 }
 
 @end

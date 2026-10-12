@@ -21,6 +21,7 @@ import com.kuikly.kuiklychat.adapter.KRRouterAdapter
 import com.kuikly.kuiklychat.adapter.KRThreadAdapter
 import com.kuikly.kuiklychat.adapter.KRUncaughtExceptionHandlerAdapter
 import com.kuikly.kuiklychat.module.KRBridgeModule
+import com.kuikly.kuiklychat.view.ChatZoomImageView
 import com.kuikly.kuiklychat.module.KRShareModule
 import com.tencent.kuiklybase.chat.android.KRChatByteCacheModule
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
@@ -110,14 +111,23 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
     override fun registerExternalRenderView(kuiklyRenderExport: IKuiklyRenderExport) {
         super.registerExternalRenderView(kuiklyRenderExport)
         with(kuiklyRenderExport) {
-
+            renderViewExport("ChatZoomImage", { context ->
+                ChatZoomImageView(context)
+            })
         }
     }
 
     private fun createPageData(): Map<String, Any> {
         val param = argsToMap()
         param["appId"] = 1
+        param["statusBarHeight"] = statusBarHeightDp()
         return param
+    }
+
+    private fun statusBarHeightDp(): Float {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId <= 0) return 0f
+        return resources.getDimensionPixelSize(resourceId) / resources.displayMetrics.density
     }
 
     private fun argsToMap(): MutableMap<String, Any> {

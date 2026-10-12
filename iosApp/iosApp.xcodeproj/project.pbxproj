@@ -18,6 +18,7 @@
 		FF6B714529A2A174009349F1 /* HRBridgeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6B714129A2A173009349F1 /* HRBridgeModule.m */; };
 		FF6B714729A2A315009349F1 /* KuiklyRenderViewPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6B714629A2A315009349F1 /* KuiklyRenderViewPage.swift */; };
 		FF6B715229A2A700009349F1 /* KuiklyChatBootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6B715129A2A700009349F1 /* KuiklyChatBootstrap.m */; };
+		A1C0E0012A00000100C0FF01 /* ChatZoomImage.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C0E0022A00000100C0FF01 /* ChatZoomImage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,8 @@
 		FF6B714629A2A315009349F1 /* KuiklyRenderViewPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KuiklyRenderViewPage.swift; sourceTree = "<group>"; };
 		FF6B714C29A2A45D009349F1 /* iosApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iosApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		FF6B715129A2A700009349F1 /* KuiklyChatBootstrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KuiklyChatBootstrap.m; sourceTree = "<group>"; };
+		A1C0E0022A00000100C0FF01 /* ChatZoomImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatZoomImage.m; sourceTree = "<group>"; };
+		A1C0E0032A00000100C0FF01 /* ChatZoomImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatZoomImage.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +138,8 @@
 			isa = PBXGroup;
 			children = (
 				FF6B714D29A2A6BA009349F1 /* Handler */,
+				A1C0E0032A00000100C0FF01 /* ChatZoomImage.h */,
+				A1C0E0022A00000100C0FF01 /* ChatZoomImage.m */,
 				FF6B714329A2A174009349F1 /* KuiklyRenderViewController.h */,
 				FF6B713F29A2A173009349F1 /* KuiklyRenderViewController.m */,
 				FF6B714029A2A173009349F1 /* Modules */,
@@ -301,6 +306,7 @@
 				FF6B714729A2A315009349F1 /* KuiklyRenderViewPage.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				FF6B715229A2A700009349F1 /* KuiklyChatBootstrap.m in Sources */,
+				A1C0E0012A00000100C0FF01 /* ChatZoomImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
