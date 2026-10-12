@@ -36,13 +36,15 @@ private const val LIST_DEPTH_KEY = "markdown_list_depth"
 internal fun sessionMarkdownConfig(theme: ChatTheme, outgoing: Boolean = false): MarkdownConfig {
     val textColor = if (outgoing) theme.outgoingTextColor else theme.incomingTextColor
     val mutedColor = if (outgoing) 0xCCFFFFFF else theme.systemTextColor
-    val body = TextStyleConfig(fontSize = 14f, color = textColor, lineHeight = 20f)
-    val code = TextStyleConfig(fontSize = 13f, color = textColor, fontFamily = "monospace", lineHeight = 18f)
-    fun heading(size: Float, lineHeight: Float, weight: FontWeight) = TextStyleConfig(
-        fontSize = size,
+    // Markdown follows the theme's body size so it matches plain text bubbles.
+    val size = theme.fontSize
+    val body = TextStyleConfig(fontSize = size, color = textColor, lineHeight = size + 8f)
+    val code = TextStyleConfig(fontSize = size - 1f, color = textColor, fontFamily = "monospace", lineHeight = size + 6f)
+    fun heading(delta: Float, weight: FontWeight) = TextStyleConfig(
+        fontSize = size + delta,
         fontWeight = weight,
         color = textColor,
-        lineHeight = lineHeight,
+        lineHeight = size + delta + 8f,
     )
     return MarkdownConfig(
         colors = MarkdownColors(
@@ -64,12 +66,12 @@ internal fun sessionMarkdownConfig(theme: ChatTheme, outgoing: Boolean = false):
             list = body,
             quote = body.copy(color = mutedColor, fontStyle = FontStyle.Italic),
             textLink = body,
-            h1 = heading(17f, 24f, FontWeight.Bold),
-            h2 = heading(17f, 24f, FontWeight.Bold),
-            h3 = heading(15f, 22f, FontWeight.Bold),
-            h4 = heading(14f, 20f, FontWeight.SemiBold),
-            h5 = heading(14f, 20f, FontWeight.SemiBold),
-            h6 = heading(14f, 20f, FontWeight.SemiBold),
+            h1 = heading(4f, FontWeight.Bold),
+            h2 = heading(3f, FontWeight.Bold),
+            h3 = heading(2f, FontWeight.Bold),
+            h4 = heading(1f, FontWeight.SemiBold),
+            h5 = heading(0f, FontWeight.SemiBold),
+            h6 = heading(0f, FontWeight.SemiBold),
             code = code,
             inlineCode = code,
             table = code,
@@ -209,7 +211,12 @@ private fun ViewContainer<*, *>.sessionMarkdownListItem(
             }
         }
         View {
-            attr { alignSelfStretch() }
+            // Kuikly measures non-flex Row children without a width limit, so long items
+            // would run past the bubble; flex(1) gives the text the width after the bullet.
+            attr {
+                alignSelfStretch()
+                flex(1f)
+            }
             child.children.forEach { nestedChild ->
                 when (nestedChild.type) {
                     MarkdownElementTypes.ORDERED_LIST,
