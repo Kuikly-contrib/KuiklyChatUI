@@ -5,9 +5,8 @@
 > **0.x experimental。** 当前 public 面（卡片工厂、Slot、AG-UI 映射）仍偏大，不要当 Stable 冻结。按需依赖子模块；旧 `KuiklyChat` 坐标是过渡伞，**不再传递 testing**。完整说明见 [`docs/api/host-integration.md`](docs/api/host-integration.md)。
 
 <div align="center">
-  <img src="assets/chat.png" alt="聊天界面" width="220">
-  <img src="assets/channel.png" alt="频道列表" width="220">
-  <img src="assets/ai_chat.png" alt="AI 聊天" width="220">
+  <img src="assets/chat-agent-card.jpg" alt="Agent 卡片聊天演示" width="280">
+  <img src="assets/chat-sse.jpg" alt="SSE 流式聊天演示" width="280">
 </div>
 
 ## 接入指南

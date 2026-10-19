@@ -17,7 +17,7 @@ Kuikly 的
 - [KuiklyUI 主干 SSE Demo](https://github.com/Tencent-TDS/KuiklyUI/blob/main/demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/demo/SSETypewriterDemoPage.kt)
 
 <div align="center">
-  <img src="../../assets/chat.png" alt="Kuikly Chat 流式消息演示" width="320">
+  <img src="../../assets/chat-sse.jpg" alt="Kuikly Chat SSE 流式消息演示" width="320">
 </div>
 
 ## Kuikly 仓库中的实现位置
