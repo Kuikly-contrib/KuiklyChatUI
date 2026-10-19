@@ -5,16 +5,17 @@ import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ViewBuilder
 import com.tencent.kuikly.core.layout.FlexDirection
+import com.tencent.kuikly.core.module.NetworkModule
 import com.tencent.kuikly.core.views.View
 import com.tencent.kuiklybase.chat.compose.core.ChatController
-import com.tencent.kuiklybase.chat.compose.core.ChatConversationDirectory
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatMessageSender
 import com.tencent.kuiklybase.chat.compose.core.ChatStreamEvent
 import com.tencent.kuiklybase.chat.compose.core.ChatTheme
 import com.tencent.kuiklybase.chat.compose.core.ChatUser
 import com.tencent.kuiklybase.chat.compose.core.TextFormat
-import com.tencent.kuiklybase.chat.session.controller.ChatConversationHost
+import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmProvider
+import com.tencent.kuiklybase.chat.kuiklyai.provider.OpenAiCompatibleProvider
 import com.tencent.kuiklybase.chat.session.controller.ChatControllerSession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,24 +31,19 @@ import kotlinx.coroutines.flow.flow
 @Page("chat_component_demo", supportInLocal = true)
 internal class ChatComponentDemoPage : BasePager() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var liveProvider: LlmProvider? = null
     private val controller = ChatController(
         currentUser = ChatUser(id = "me", name = "我"),
         scope = scope,
-        sender = ChatMessageSender { message -> scriptedReply(message) },
+        sender = ChatMessageSender { message -> reply(message) },
     )
-    private lateinit var conversationHost: ChatConversationHost
 
     override fun created() {
         super.created()
-        conversationHost = ChatConversationHost(
-            controller = controller,
-            directory = ChatConversationDirectory(demoChatConversationStore()),
-        )
-        conversationHost.restore()
+        liveProvider = createLiveProvider()
     }
 
     override fun pageWillDestroy() {
-        conversationHost.rememberCurrent()
         controller.dispose()
         scope.cancel()
         super.pageWillDestroy()
@@ -66,10 +62,36 @@ internal class ChatComponentDemoPage : BasePager() {
                     controller = ctx.controller,
                     theme = CHAT_COMPONENT_DEMO_THEME,
                     composerBottomInset = ctx.pagerData.safeAreaInsets.bottom,
-                    headerTitle = "Chat",
-                    conversationHost = ctx.conversationHost,
+                    headerTitle = if (ctx.liveProvider == null) "Chat" else "Chat · SSE",
                 )
             }
+        }
+    }
+
+    private fun createLiveProvider(): LlmProvider? {
+        val baseUrl = pageData.params.optString("llmBaseUrl").trim()
+        val model = pageData.params.optString("llmModel").trim()
+        if (baseUrl.isEmpty() || model.isEmpty()) return null
+
+        return OpenAiCompatibleProvider(
+            transport = KuiklyNetworkLlmTransport(
+                acquireModule<NetworkModule>(NetworkModule.MODULE_NAME),
+            ),
+            baseUrl = baseUrl,
+            model = model,
+            apiKey = pageData.params.optString("llmApiKey"),
+            systemPrompt = pageData.params.optString("llmSystemPrompt")
+                .ifBlank { "You are a helpful assistant. Reply in the user's language." },
+        )
+    }
+
+    private fun reply(message: ChatMessage): Flow<ChatStreamEvent> {
+        val provider = liveProvider ?: return scriptedReply(message)
+        return flow {
+            provider.generateStream(message.text).collect { delta ->
+                emit(ChatStreamEvent.TextDelta(text = delta, format = TextFormat.MARKDOWN))
+            }
+            emit(ChatStreamEvent.Completed)
         }
     }
 }

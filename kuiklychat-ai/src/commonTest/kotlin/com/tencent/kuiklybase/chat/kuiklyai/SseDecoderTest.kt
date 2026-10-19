@@ -66,6 +66,14 @@ class SseDecoderTest {
     }
 
     @Test
+    fun handlesCrLfSplitAcrossChunks() {
+        val decoder = SseDecoder()
+        assertEquals(emptyList(), decoder.decode("data: split\r"))
+        assertEquals(listOf("split"), decoder.decode("\n\r"))
+        assertEquals(emptyList(), decoder.decode("\n"))
+    }
+
+    @Test
     fun stopsAtDoneMarker() {
         val decoder = SseDecoder()
         val payloads = decoder.decode("data: last\n\ndata: [DONE]\n\ndata: ignored\n\n")

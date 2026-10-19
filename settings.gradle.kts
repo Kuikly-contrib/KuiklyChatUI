@@ -28,6 +28,19 @@ dependencyResolutionManagement {
     }
 }
 
+providers.environmentVariable("KUIKLY_UI_SOURCE").orNull
+    ?.takeIf { file(it).isDirectory }
+    ?.let { kuiklyUiSource ->
+        includeBuild(kuiklyUiSource) {
+            dependencySubstitution {
+                substitute(module("com.tencent.kuikly:core"))
+                    .using(project(":core"))
+                substitute(module("com.tencent.kuikly:core-render-android"))
+                    .using(project(":core-render-android"))
+            }
+        }
+    }
+
 rootProject.name = "KuiklyChat"
 include(":androidApp")
 include(":shared")

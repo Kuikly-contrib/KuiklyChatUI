@@ -101,6 +101,7 @@ public class SseDecoder(
     private val eventData = StringBuilder()
     private var firstLine = true
     private var finished = false
+    private var skipLeadingLf = false
 
     /** 是否已收到结束标记 */
     public val isFinished: Boolean get() = finished
@@ -111,6 +112,10 @@ public class SseDecoder(
     public fun decode(chunk: String): List<String> {
         if (finished) return emptyList()
         buffer.append(chunk)
+        if (skipLeadingLf && buffer.isNotEmpty()) {
+            if (buffer[0] == '\n') buffer.deleteAt(0)
+            skipLeadingLf = false
+        }
 
         val payloads = mutableListOf<String>()
         while (true) {
@@ -136,6 +141,7 @@ public class SseDecoder(
             consumeLine(buffer.toString())
         }
         buffer.clear()
+        skipLeadingLf = false
         val payload = dispatchEvent() ?: return emptyList()
         if (payload == doneMarker) {
             finished = true
@@ -149,7 +155,9 @@ public class SseDecoder(
         while (index < buffer.length) {
             if (buffer[index] == '\n' || buffer[index] == '\r') {
                 val line = buffer.substring(0, index)
-                val skip = if (buffer[index] == '\r' && index + 1 < buffer.length && buffer[index + 1] == '\n') 2 else 1
+                val isCr = buffer[index] == '\r'
+                val skip = if (isCr && index + 1 < buffer.length && buffer[index + 1] == '\n') 2 else 1
+                skipLeadingLf = isCr && index + 1 == buffer.length
                 buffer.deleteRange(0, index + skip)
                 return line
             }
