@@ -1,3 +1,9 @@
+---
+last_updated: 2026-10-20
+status: active
+owner: @kuikly-chat-team
+---
+
 # Kuikly Chat 的 SSE 长连接与流式输出
 
 Kuikly 的
@@ -90,23 +96,25 @@ native 实现负责跨 chunk UTF-8 解码、空闲超时、HTTP 错误、资源�
 
 ## Chat Demo 的完整链路
 
-### 1. NetworkModule 适配到 LlmTransport
+### 1. KRSseModule 适配到 LlmTransport
 
 [KuiklyNetworkLlmTransport](../../shared/src/commonMain/kotlin/com/kuikly/kuiklychat/dsl/chat/KuiklyNetworkLlmTransport.kt)
-把 Kuikly `NetworkModule` 的 bridge 契约适配到 Kuikly Chat 已有的 `LlmTransport`：
+把宿主 `KRSseModule` 适配到 Kuikly Chat 已有的 `LlmTransport`。当前发布的 Kuikly `2.15`
+`NetworkModule` 还没有 `httpStreamRequest`，所以 Demo 不走它，而是调用从 KuiklyUI 主干
+`KRNetworkModule` 流式实现拷出的 `KRSseModule`（Kotlin + Android / iOS / 鸿蒙三端）：
 
 ```text
 LlmHttpRequest
   -> KuiklyNetworkLlmTransport
-     -> NetworkModule/httpStreamRequest
+     -> KRSseModule/httpStreamRequest
         -> data       -> LlmStreamSink.onChunk
         -> complete   -> LlmStreamSink.onComplete
         -> error      -> LlmStreamSink.onError
         -> cancel     -> closeStreamRequest
 ```
 
-适配器不复制各平台网络代码。真正的连接、持续读取和取消由 Kuikly renderer 完成。适配器
-只转换 URL、POST JSON、header 和超时，保留多次回调，并把 HTTP 状态映射成 LLM 错误。
+连接、持续读取和取消由宿主注册的 native `KRSseModule` 完成。适配器只转换 URL、POST JSON、
+header 和超时，保留多次回调，并把 HTTP 状态映射成 LLM 错误。
 
 ### 2. callback 转成可取消 Flow
 
@@ -118,8 +126,8 @@ LlmHttpRequest
 ChatController 取消发送 Job
   -> streamAsFlow.awaitClose
   -> LlmSubscription.cancel()
-  -> NetworkModule closeStreamRequest
-  -> renderer 关闭连接并释放资源
+  -> KRSseModule closeStreamRequest
+  -> native KRSseModule 关闭连接并释放资源
 ```
 
 ### 3. 正确处理 SSE 分片
@@ -172,19 +180,46 @@ ChatStreamEvent.TextDelta(
 README、提交记录或安装包。更合适的生产架构是由 App 请求业务网关，网关保存模型密钥、
 验证用户身份和控制额度，再将模型 SSE 响应转发给客户端。
 
-调试直连时至少需要以下配置：
+### 在 Demo 里接入真实 SSE
+
+首页「Chat 组件 Demo」只打开 `chat_component_demo`，不带模型参数，所以走本地脚本回复，
+标题是「Chat」。
+
+真实流式要同时带上页面参数 `llmBaseUrl` 和 `llmModel`。两个都不为空时，
+`ChatComponentDemoPage` 才会创建 `OpenAiCompatibleProvider`，向
+`{llmBaseUrl}/chat/completions` 发 `stream: true`，再把 SSE 的
+`choices[0].delta.content` 追加进同一个气泡。标题会变成「Chat · SSE」。
+
+`llmApiKey` 和 `llmSystemPrompt` 可选。有 key 时带 `Authorization: Bearer …`；内网网关
+不需要鉴权就留空。`llmBaseUrl` 是端点前缀，不含 `/chat/completions`，尾部斜杠可有可无。
+端点需要兼容 OpenAI Chat Completions 的 SSE。
+
+调试直连时的页面参数：
 
 ```json
 {
-  "llmBaseUrl": "https://your-gateway.example.com/v1",
-  "llmModel": "your-model",
+  "llmBaseUrl": "https://api.deepseek.com/v1",
+  "llmModel": "deepseek-v4.1",
   "llmApiKey": "runtime-only-token",
   "llmSystemPrompt": "You are a helpful assistant."
 }
 ```
 
-其中 `llmBaseUrl` 和 `llmModel` 用于启用真实 SSE，`llmApiKey` 与 `llmSystemPrompt` 可按
-网关要求传入。API Key 仅通过运行时页面参数提供，不写入源码或提交记录。
+Android 真机可以直接打开这一页：
+
+```bash
+adb shell am start -n com.kuikly.kuiklychat/.KuiklyRenderActivity \
+  --es pageName chat_component_demo \
+  --es pageData '{"llmBaseUrl":"https://api.deepseek.com/v1","llmModel":"deepseek-v4.1","llmApiKey":"sk-your-key"}'
+```
+
+路由跳转用同一组参数，`&` 后面是页面参数：
+
+```text
+chat_component_demo&llmBaseUrl=https://api.deepseek.com/v1&llmModel=deepseek-v4.1&llmApiKey=sk-your-key
+```
+
+API Key 仅通过运行时页面参数提供，不写入源码或提交记录。
 
 Demo 不保存任何会话历史。若产品需要多轮上下文，应由业务明确选择需要发送的历史消息，
 并在宿主存储层处理，而不是让演示页面默认持久化。
@@ -193,8 +228,10 @@ Demo 不保存任何会话历史。若产品需要多轮上下文，应由业务
 
 **页面一直处于发送中**
 
-确认 common `NetworkModule.kt` 和 Android `KRNetworkModule.kt` 都包含流式请求实现。
-只有 common 侧适配器，而 native renderer 没有对应方法时，连接不会建立。
+确认 Kotlin `KRSseModule` 已在 `createExternalModules()` 注册，并且当前平台的 native
+`KRSseModule` 也已注册（Android `registerExternalModule`、iOS 类名 `KRSseModule`、鸿蒙
+`getCustomRenderModuleCreatorRegisterMap`）。只有 Kotlin 调用、native 没有对应方法时，
+连接不会建立，也不会收到 error。
 
 **HTTP 200 但最后一次性显示全文**
 
@@ -216,6 +253,7 @@ Demo 不保存任何会话历史。若产品需要多轮上下文，应由业务
 
 ## 相关代码
 
+- [KRSseModule.kt](../../shared/src/commonMain/kotlin/com/kuikly/kuiklychat/module/KRSseModule.kt)
 - [KuiklyNetworkLlmTransport.kt](../../shared/src/commonMain/kotlin/com/kuikly/kuiklychat/dsl/chat/KuiklyNetworkLlmTransport.kt)
 - [LlmTransport.kt](../../kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/LlmTransport.kt)
 - [OpenAiCompatibleProvider.kt](../../kuiklychat-ai/src/commonMain/kotlin/com/tencent/kuiklybase/chat/kuiklyai/provider/OpenAiCompatibleProvider.kt)

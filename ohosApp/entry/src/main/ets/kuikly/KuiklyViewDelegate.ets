@@ -7,7 +7,7 @@ import { KRMyView } from './components/KRMyView';
 import { ChatZoomImage } from './components/ChatZoomImage';
 import { KRBridgeModule } from './modules/KRBridgeModule';
 import { KRMyModule } from './modules/KRMyModule';
-import { KRChatAttachmentPickerModule, KRChatByteCacheModule } from '@kuikly-open/chat-cache';
+import { KRChatAttachmentPickerModule, KRChatByteCacheModule, KRSseModule } from '@kuikly-open/chat-cache';
 
 export class KuiklyViewDelegate extends IKuiklyViewDelegate {
   getCustomRenderViewCreatorRegisterMap(): Map<string, KRRenderViewExportCreator> {
@@ -22,6 +22,7 @@ export class KuiklyViewDelegate extends IKuiklyViewDelegate {
     map.set(KRBridgeModule.MODULE_NAME, () => new KRBridgeModule());
     map.set(KRMyModule.MODULE_NAME, () => new KRMyModule())
     map.set(KRChatByteCacheModule.MODULE_NAME, () => new KRChatByteCacheModule())
+    map.set(KRSseModule.MODULE_NAME, () => new KRSseModule())
     map.set(KRChatAttachmentPickerModule.MODULE_NAME, () => new KRChatAttachmentPickerModule())
     return map;
   }

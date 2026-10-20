@@ -5,7 +5,7 @@ import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ViewBuilder
 import com.tencent.kuikly.core.layout.FlexDirection
-import com.tencent.kuikly.core.module.NetworkModule
+import com.kuikly.kuiklychat.module.KRSseModule
 import com.tencent.kuikly.core.views.View
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
@@ -75,7 +75,7 @@ internal class ChatComponentDemoPage : BasePager() {
 
         return OpenAiCompatibleProvider(
             transport = KuiklyNetworkLlmTransport(
-                acquireModule<NetworkModule>(NetworkModule.MODULE_NAME),
+                acquireModule<KRSseModule>(KRSseModule.MODULE_NAME),
             ),
             baseUrl = baseUrl,
             model = model,

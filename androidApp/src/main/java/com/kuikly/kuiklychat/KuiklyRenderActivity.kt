@@ -24,6 +24,7 @@ import com.kuikly.kuiklychat.module.KRBridgeModule
 import com.kuikly.kuiklychat.view.ChatZoomImageView
 import com.kuikly.kuiklychat.module.KRShareModule
 import com.tencent.kuiklybase.chat.android.KRChatByteCacheModule
+import com.tencent.kuiklybase.chat.android.KRSseModule
 import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
 import com.tencent.kuiklybase.chat.kuiklyai.platform.android.AndroidLlmPlatformRegistry
 import org.json.JSONObject
@@ -104,6 +105,9 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
             }
             moduleExport(KRChatByteCacheModule.MODULE_NAME) {
                 KRChatByteCacheModule()
+            }
+            moduleExport(KRSseModule.MODULE_NAME) {
+                KRSseModule()
             }
         }
     }

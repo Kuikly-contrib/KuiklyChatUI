@@ -4,6 +4,7 @@ import com.tencent.kuikly.core.pager.Pager
 import com.tencent.kuikly.core.module.Module
 import com.tencent.kuikly.core.nvi.serialization.json.JSONObject
 import com.tencent.kuikly.core.reactive.handler.*
+import com.kuikly.kuiklychat.module.KRSseModule
 import com.tencent.kuiklybase.chat.compose.core.chatByteCacheExternalModules
 
 internal abstract class BasePager : Pager() {
@@ -12,6 +13,7 @@ internal abstract class BasePager : Pager() {
     override fun createExternalModules(): Map<String, Module>? {
         val externalModules = hashMapOf<String, Module>()
         externalModules[BridgeModule.MODULE_NAME] = BridgeModule()
+        externalModules[KRSseModule.MODULE_NAME] = KRSseModule()
         externalModules.putAll(chatByteCacheExternalModules())
         return externalModules
     }
