@@ -1,6 +1,6 @@
 def mavenVersion = findProperty("mavenVersion") ?: findProperty("MAVEN_VERSION") ?: "1.0.0"
 def groupIdValue = findProperty("groupId") ?: findProperty("GROUP_ID") ?: "com.tencent.kuiklybase"
-def mavenRepoUrl = findProperty("mavenRepoUrl") ?: findProperty("MAVEN_REPO_URL") ?: "https://mirrors.tencent.com/repository/maven-tencent/"
+def mavenRepoUrl = findProperty("mavenRepoUrl") ?: findProperty("MAVEN_REPO_URL") ?: "https://mirrors.tencent.com/nexus/repository/maven-tencent/"
 def mavenUsername = findProperty("mavenUsername") ?: findProperty("MAVEN_USERNAME") ?: ""
 def mavenPassword = findProperty("mavenPassword") ?: findProperty("MAVEN_PASSWORD") ?: ""
 

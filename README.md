@@ -23,7 +23,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
+            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
     }
 }
@@ -39,7 +39,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
+            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
     }
 }
