@@ -118,6 +118,30 @@ ChatScreen(controller = controller)
 
 `sendText` 在文本为空或正在发送时返回 `false`。页面销毁时调用 `controller.dispose()` 并取消 `scope`。
 
+### 本地 Demo 的真实 SSE
+
+宿主 Demo 页是 `ChatComponentDemoPage`（`chat_component_demo`）。首页「Chat 组件 Demo」不带模型参数，走本地脚本回复，标题是「Chat」。
+
+真实流式要同时带上页面参数 `llmBaseUrl` 和 `llmModel`。两个都不为空时，页面才会创建 `OpenAiCompatibleProvider`，向 `{llmBaseUrl}/chat/completions` 发 `stream: true`，再把 SSE 的 `choices[0].delta.content` 追加进同一个气泡。标题会变成「Chat · SSE」。
+
+`llmApiKey` 和 `llmSystemPrompt` 可选。有 key 时带 `Authorization: Bearer …`；内网网关不需要鉴权就留空。Key 只通过运行时页面参数传入，不要写进源码或提交记录。
+
+Android 真机可以直接打开这一页：
+
+```bash
+adb shell am start -n com.kuikly.kuiklychat/.KuiklyRenderActivity \
+  --es pageName chat_component_demo \
+  --es pageData '{"llmBaseUrl":"https://api.deepseek.com/v1","llmModel":"deepseek-chat","llmApiKey":"sk-your-key"}'
+```
+
+路由跳转用同一组参数，`&` 后面是页面参数：
+
+```text
+chat_component_demo&llmBaseUrl=https://api.deepseek.com/v1&llmModel=deepseek-chat&llmApiKey=sk-your-key
+```
+
+`llmBaseUrl` 不含 `/chat/completions`，尾部斜杠可有可无。端点需要兼容 OpenAI Chat Completions 的 SSE。
+
 ---
 
 ## AG-UI 协议集成
