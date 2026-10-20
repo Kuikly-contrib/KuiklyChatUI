@@ -52,7 +52,7 @@ implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2-KBA-003")
 仓库（根 `settings.gradle.kts`）：
 
 ```kotlin
-maven { url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/") }
+maven { url = uri("https://mirrors.tencent.com/repository/maven-tencent/") }
 ```
 
 ### 平台初始化（宿主）
