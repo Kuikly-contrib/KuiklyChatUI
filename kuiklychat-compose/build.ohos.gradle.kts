@@ -26,10 +26,10 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":kuiklychat-core"))
-                implementation("com.tencent.kuikly:core:${Version.getKuiklyOhosVersion()}")
-                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyOhosVersion()}")
-                api("com.tencent.kuikly:compose:${Version.getKuiklyOhosVersion()}")
-                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-internal-2.0.21-mini-009")
+                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
+                api("com.tencent.kuikly-open:compose:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-2.0.21-ohos")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-KBA-002")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1-KBA-003")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2-KBA-003")
@@ -43,7 +43,7 @@ kotlin {
         val markdownEngineMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation("com.tencent.kuiklybase:KuiklyMarkdownCompose:1.0.10-internal")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdownCompose:1.0.6-2.1.21")
             }
         }
         val androidMain by getting {

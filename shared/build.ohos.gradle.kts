@@ -45,8 +45,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuikly:core:${Version.getKuiklyOhosVersion()}")
-                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
+                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
                 implementation(project(":kuiklychat-compose"))
                 implementation(project(":kuiklychat-compat"))
                 implementation(project(":kuiklychat-ai"))
@@ -60,7 +60,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                api("com.tencent.kuikly:core-render-android:${Version.getKuiklyOhosVersion()}")
+                api("com.tencent.kuikly-open:core-render-android:${Version.getKuiklyOhosVersion()}")
             }
         }
 
@@ -105,7 +105,7 @@ ksp {
 }
 
 dependencies {
-    compileOnly("com.tencent.kuikly:core-ksp:${Version.getKuiklyOhosVersion()}") {
+    compileOnly("com.tencent.kuikly-open:core-ksp:${Version.getKuiklyOhosVersion()}") {
         add("kspAndroid", this)
         add("kspIosArm64", this)
         add("kspIosX64", this)

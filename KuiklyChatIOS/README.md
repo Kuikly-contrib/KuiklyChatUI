@@ -98,5 +98,5 @@ cocoapods {
 
 ## 版本对齐
 
-- `OpenKuiklyIOSRender` 主版本需与 `com.tencent.kuikly:core` 一致（当前 `2.17.x`）。
+- `OpenKuiklyIOSRender` 主版本需与 `com.tencent.kuikly-open:core` 一致（当前 `2.15.0`）。
 - `KuiklyChat` 与 `KuiklyChatIOS` 使用同一发布版本号。

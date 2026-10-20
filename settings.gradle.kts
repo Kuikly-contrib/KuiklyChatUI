@@ -5,7 +5,7 @@ pluginManagement {
         mavenCentral()
         mavenLocal()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
     }
 }
@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         gradlePluginPortal()
         mavenLocal()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
         maven {
             url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")
@@ -33,9 +33,9 @@ providers.environmentVariable("KUIKLY_UI_SOURCE").orNull
     ?.let { kuiklyUiSource ->
         includeBuild(kuiklyUiSource) {
             dependencySubstitution {
-                substitute(module("com.tencent.kuikly:core"))
+                substitute(module("com.tencent.kuikly-open:core"))
                     .using(project(":core"))
-                substitute(module("com.tencent.kuikly:core-render-android"))
+                substitute(module("com.tencent.kuikly-open:core-render-android"))
                     .using(project(":core-render-android"))
             }
         }

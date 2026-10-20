@@ -31,10 +31,10 @@ kotlin {
             dependencies {
                 api(project(":kuiklychat-core"))
                 api(project(":kuiklychat-ai"))
-                implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
-                api("com.tencent.kuikly:compose:${Version.getKuiklyVersion()}")
-                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
-                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-internal-2.1.21")
+                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
+                api("com.tencent.kuikly-open:compose:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
             }
         }

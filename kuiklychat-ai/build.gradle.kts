@@ -30,9 +30,9 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":kuiklychat-core"))
-                implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
-                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
-                api("com.tencent.kuikly:compose:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
+                api("com.tencent.kuikly-open:compose:${Version.getKuiklyVersion()}")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             }
@@ -45,7 +45,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("com.tencent.kuikly:core-render-android:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly-open:core-render-android:${Version.getKuiklyVersion()}")
                 implementation("androidx.core:core-ktx:1.12.0")
             }
         }

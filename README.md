@@ -23,7 +23,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
         maven {
             url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")
@@ -48,7 +48,7 @@ dependencyResolutionManagement {
             url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
         }
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
     }
 }

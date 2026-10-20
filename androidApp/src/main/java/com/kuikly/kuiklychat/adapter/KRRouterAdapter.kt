@@ -12,7 +12,6 @@ object KRRouterAdapter : IKRRouterAdapter {
         context: Context,
         pageName: String,
         pageData: JSONObject,
-        hotReloadIp: String,
     ) {
         KuiklyRenderActivity.start(context, pageName, pageData)
     }

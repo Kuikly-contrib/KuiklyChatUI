@@ -5,7 +5,7 @@ pluginManagement {
         mavenCentral()
         mavenLocal()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
         maven {
             url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")
@@ -29,7 +29,7 @@ dependencyResolutionManagement {
         gradlePluginPortal()
         mavenLocal()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+            url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
         maven {
             url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")

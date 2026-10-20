@@ -7,7 +7,7 @@ plugins {
     id("com.android.library")
     id("com.google.devtools.ksp")
     id("maven-publish")
-    id("kuikly")
+    id("com.tencent.kuikly-open.kuikly")
 
 }
 
@@ -59,8 +59,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuikly:core:${Version.getKuiklyVersion()}")
-                implementation("com.tencent.kuikly:core-annotations:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
+                implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
                 api(project(":kuiklychat-compose"))
                 api(project(":kuiklychat-compat"))
                 api(project(":kuiklychat-ai"))
@@ -73,7 +73,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                api("com.tencent.kuikly:core-render-android:${Version.getKuiklyVersion()}")
+                api("com.tencent.kuikly-open:core-render-android:${Version.getKuiklyVersion()}")
             }
         }
 
@@ -118,7 +118,7 @@ ksp {
 }
 
 dependencies {
-    compileOnly("com.tencent.kuikly:core-ksp:${Version.getKuiklyVersion()}") {
+    compileOnly("com.tencent.kuikly-open:core-ksp:${Version.getKuiklyVersion()}") {
         add("kspAndroid", this)
         add("kspIosArm64", this)
         add("kspIosX64", this)
