@@ -8,7 +8,7 @@ owner: @kuikly-chat-team
 
 当前发布线是 **0.x experimental**，不是 Stable。卡片工厂、Slot、AG-UI 映射仍然偏大；先让真实宿主按模块坐标接入，再按他们实际用到的 API 砍 keep-set。不要把现在的 public dump 标成 Stable，也不要再拆 Gradle 模块或改一轮 Config API。
 
-版本坐标示例：`0.1.0-experimental-2.1.21`（标准平台）/ `0.1.0-experimental-2.0.21-mini-009`（鸿蒙）。以 `gradle.properties` 的 `MAVEN_VERSION` + Kotlin 版本为准。
+版本坐标示例：`0.1.0-experimental-2.1.21`（标准平台）/ `0.1.0-experimental-2.0.21-KBA-010`（鸿蒙）。以 `gradle.properties` 的 `MAVEN_VERSION` + Kotlin 版本为准。
 
 ## 选模块
 
@@ -50,7 +50,7 @@ kotlin {
 }
 ```
 
-鸿蒙把版本换成 `0.1.0-experimental-2.0.21-mini-009`，Maven 仓库与 `README.md` 鸿蒙段相同。
+鸿蒙把版本换成 `0.1.0-experimental-2.0.21-KBA-010`，Maven 仓库与 `README.md` 鸿蒙段相同。
 
 本地工程：`implementation(project(":kuiklychat-compose"))` 等同替换即可。
 

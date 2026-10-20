@@ -8,7 +8,7 @@ owner: @kuikly-chat-team
 
 > Assumptions: this is a Kotlin library, not an HTTP service. There is no base URL, bearer token, or REST route in the source. The sections below are public entry points taken from the current source. Version `0.1.0-experimental` comes from `gradle.properties` (`MAVEN_VERSION`). It is not a Stable API.
 >
-> Coordinates: `com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.1.21` and `com.tencent.kuiklybase:kuiklychat-compat:0.1.0-experimental-2.1.21`. HarmonyOS uses `0.1.0-experimental-2.0.21-mini-009`.
+> Coordinates: `com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.1.21` and `com.tencent.kuiklybase:kuiklychat-compat:0.1.0-experimental-2.1.21`. HarmonyOS uses `0.1.0-experimental-2.0.21-KBA-010`.
 
 ## Table of Contents
 

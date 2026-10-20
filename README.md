@@ -42,12 +42,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/tencentvideo")
-        }
-        maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
-        }
-        maven {
             url = uri("https://mirrors.tencent.com/repository/maven-tencent/")
         }
     }
@@ -56,7 +50,7 @@ dependencyResolutionManagement {
 
 ### 2. 添加依赖（按需，不要默认全家桶）
 
-版本示例：`0.1.0-experimental-2.1.21`（标准）/ `0.1.0-experimental-2.0.21-mini-009`（鸿蒙）。
+版本示例：`0.1.0-experimental-2.1.21`（标准）/ `0.1.0-experimental-2.0.21-KBA-010`（鸿蒙）。
 
 | 你要什么 | Maven 坐标 |
 |----------|------------|
@@ -91,7 +85,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.0.21-mini-009")
+                implementation("com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.0.21-KBA-010")
             }
         }
     }

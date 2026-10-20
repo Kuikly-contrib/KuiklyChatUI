@@ -13,12 +13,6 @@ pluginManagement {
         maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
-        maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/tencentvideo")
-        }
-        maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
-        }
     }
 }
 
@@ -36,12 +30,6 @@ dependencyResolutionManagement {
         }
         maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
-        }
-        maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/tencentvideo")
-        }
-        maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
         }
     }
 }
