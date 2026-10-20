@@ -30,7 +30,7 @@ kotlin {
                 implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
                 api("com.tencent.kuikly-open:compose:${Version.getKuiklyOhosVersion()}")
                 implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
-                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.4-2.0.21-ohos")
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.0.21-ohos")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-KBA-002")
             }
         }
