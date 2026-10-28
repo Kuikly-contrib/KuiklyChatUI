@@ -1,6 +1,6 @@
 # KuiklyChat
 
-基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙多端运行。
+基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙多端运行。Android 上的 A2UI 卡片使用已发布的 [KuiklyUI-A2UI](https://github.com/Tencent-TDS/KuiklyUI-A2UI)（`com.tencent.kuikly-a2ui-open:a2ui:1.0.0-2.1.21` 与 `a2ui-render-android:1.0.0-2.1.21`），不在本仓库内编译 A2UI 源码。
 
 > **0.x experimental。** 当前 public 面（卡片工厂、Slot、AG-UI 映射）仍偏大，不要当 Stable 冻结。按需依赖子模块；旧 `KuiklyChat` 坐标是过渡伞，**不再传递 testing**。完整说明见 [`docs/api/host-integration.md`](docs/api/host-integration.md)。
 

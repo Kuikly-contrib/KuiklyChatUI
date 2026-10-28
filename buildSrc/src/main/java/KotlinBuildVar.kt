@@ -1,6 +1,7 @@
 object Version {
 
-    private const val KUIKLY_VERSION = "2.15.0"
+    private const val KUIKLY_VERSION = "2.30.0"
+    private const val KUIKLY_OHOS_VERSION = "2.15.0"
     private const val KOTLIN_VERSION = "2.1.21"
     private const val KOTLIN_OHOS_VERSION = "2.0.21-ohos"
 
@@ -16,8 +17,16 @@ object Version {
      * 获取 Kuikly Ohos版本号
      */
     fun getKuiklyOhosVersion(): String {
-        return "$KUIKLY_VERSION-$KOTLIN_OHOS_VERSION"
+        return "$KUIKLY_OHOS_VERSION-$KOTLIN_OHOS_VERSION"
     }
+}
+
+object A2ui {
+    const val VERSION = "1.0.0-2.1.21"
+
+    fun core(): String = "com.tencent.kuikly-a2ui-open:a2ui:$VERSION"
+
+    fun renderAndroid(): String = "com.tencent.kuikly-a2ui-open:a2ui-render-android:$VERSION"
 }
 
 object BuildPlugin {

@@ -3,6 +3,17 @@ plugins {
     kotlin("android")
 }
 
+fun localKimiSetting(name: String): String = System.getenv(name)
+    ?: project.rootProject.file("local.properties")
+        .takeIf { it.exists() }
+        ?.readLines()
+        ?.firstOrNull { it.startsWith("$name=") }
+        ?.substringAfter('=')
+        ?.trim()
+        .orEmpty()
+
+fun String.asBuildConfigString(): String = "\"${replace("\\", "\\\\").replace("\"", "\\\"")}\""
+
 android {
     namespace = "com.kuikly.kuiklychat"
     compileSdk = 34
@@ -12,6 +23,9 @@ android {
         targetSdk = 30
         versionCode = 1
         versionName = "1.0"
+        // Key stays in gitignored local.properties. An empty value keeps the offline sample card.
+        buildConfigField("String", "KIMI_API_KEY", localKimiSetting("KIMI_API_KEY").asBuildConfigString())
+        buildConfigField("String", "KIMI_MODEL", localKimiSetting("KIMI_MODEL").ifEmpty { "kimi-k2.6" }.asBuildConfigString())
     }
 
     buildTypes {
@@ -34,6 +48,8 @@ android {
 dependencies {
     implementation(project(":shared"))
     implementation(project(":KuiklyChatAndroid"))
+    implementation(A2ui.core())
+    implementation(A2ui.renderAndroid())
 
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.appcompat:appcompat:1.3.1")
