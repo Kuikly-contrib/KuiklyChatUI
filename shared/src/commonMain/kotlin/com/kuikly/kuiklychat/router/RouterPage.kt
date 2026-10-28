@@ -81,6 +81,36 @@ internal class RouterPage : BasePager() {
                 }
             }
 
+            View {
+                attr {
+                    allCenter()
+                    marginLeft(20f)
+                    marginRight(20f)
+                    marginBottom(20f)
+                }
+                View {
+                    attr {
+                        size(220f, 48f)
+                        borderRadius(8f)
+                        backgroundColor(Color(0xFF176B5B))
+                        allCenter()
+                    }
+                    Text {
+                        attr {
+                            text("A2UI Demo")
+                            fontSize(17f)
+                            fontWeightSemisolid()
+                            color(Color.WHITE)
+                        }
+                    }
+                    event {
+                        click {
+                            ctx.jumpPage("agent_card_demo")
+                        }
+                    }
+                }
+            }
+
         }
 
     }

@@ -20,6 +20,7 @@ import com.kuikly.kuiklychat.adapter.KRLogAdapter
 import com.kuikly.kuiklychat.adapter.KRRouterAdapter
 import com.kuikly.kuiklychat.adapter.KRThreadAdapter
 import com.kuikly.kuiklychat.adapter.KRUncaughtExceptionHandlerAdapter
+import com.kuikly.kuiklychat.a2ui.A2uiHostSupport
 import com.kuikly.kuiklychat.module.KRBridgeModule
 import com.kuikly.kuiklychat.view.ChatZoomImageView
 import com.kuikly.kuiklychat.module.KRShareModule
@@ -119,11 +120,14 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
                 ChatZoomImageView(context)
             })
         }
+        A2uiHostSupport.attach(kuiklyRenderExport)
     }
 
     private fun createPageData(): Map<String, Any> {
         val param = argsToMap()
         param["appId"] = 1
+        param["kimiApiKey"] = BuildConfig.KIMI_API_KEY
+        param["kimiModel"] = BuildConfig.KIMI_MODEL
         param["statusBarHeight"] = statusBarHeightDp()
         return param
     }

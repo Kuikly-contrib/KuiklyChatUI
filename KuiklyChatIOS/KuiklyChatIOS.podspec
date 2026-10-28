@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
   spec.public_header_files      = 'Sources/**/*.h'
   # Bundles as App.app/common/kuikly_chat_ic_*.svg for assets://common/... URLs.
   spec.resources                = ['Resources/common']
-  spec.dependency 'OpenKuiklyIOSRender', '~> 2.17.0'
+  spec.dependency 'OpenKuiklyIOSRender', '2.30.0'
   spec.dependency 'SDWebImage', '~> 5.0'
   spec.dependency 'SDWebImageSVGCoder', '~> 1.0'
   spec.frameworks               = 'Foundation', 'UIKit', 'PhotosUI', 'UniformTypeIdentifiers'

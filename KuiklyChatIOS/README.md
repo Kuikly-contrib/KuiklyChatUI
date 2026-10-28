@@ -34,7 +34,7 @@ KuiklyChatIOS/
 ### 1. Podfile
 
 ```ruby
-pod 'OpenKuiklyIOSRender', '~> 2.17.0'   # 与 Kuikly core 版本对齐
+pod 'OpenKuiklyIOSRender', '2.30.0'   # 与 Kuikly core 版本对齐
 pod 'KuiklyChatIOS', :path => '../KuiklyChatIOS'  # 本地开发
 
 # 发布后（podspec 在子目录）：
@@ -98,5 +98,5 @@ cocoapods {
 
 ## 版本对齐
 
-- `OpenKuiklyIOSRender` 主版本需与 `com.tencent.kuikly-open:core` 一致（当前 `2.15.0`）。
+- `OpenKuiklyIOSRender` 主版本需与 `com.tencent.kuikly-open:core` 一致（当前 `2.30.0`）。
 - `KuiklyChat` 与 `KuiklyChatIOS` 使用同一发布版本号。
