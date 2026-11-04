@@ -1,0 +1,9 @@
+# scripts/file-size-baseline.txt
+# 单文件 ≤ 400 行门禁的存量豁免清单。
+#
+# 这里列出的文件在门禁引入之前就已超标，仅告警、不阻断；不在清单里的文件超标会直接阻断合入。
+# 拆分完成后请把对应行删掉——门禁会在文件已达标却仍留在清单里时报错，防止清单腐化。
+# 拆分任务见 docs/plans/backlog.md。
+
+kuiklychat-compat/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/RichCardPayload.kt
+kuiklychat-testing/src/commonMain/kotlin/com/tencent/kuiklybase/chat/model/ChatPreviewData.kt

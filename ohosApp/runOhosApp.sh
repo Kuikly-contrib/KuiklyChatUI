@@ -8,6 +8,7 @@ SDK_HOME=/Applications/DevEco-Studio.app/Contents
 export DEVECO_SDK_HOME=$SDK_HOME/sdk
 export PATH=$DEVECO_SDK_HOME:$SDK_HOME/jbr/Contents/Home/bin:$SDK_HOME/tools/node/bin:$SDK_HOME/tools/ohpm/bin:$SDK_HOME/tools/hvigor/bin:$PATH
 
+bash ../scripts/sync-kuikly-chat-ohos-assets.sh
 $SDK_HOME/tools/ohpm/bin/ohpm install --all
 $SDK_HOME/tools/node/bin/node $SDK_HOME/tools/hvigor/bin/hvigorw.js --sync -p product=default --analyze=normal --parallel
 $SDK_HOME/tools/node/bin/node $SDK_HOME/tools/hvigor/bin/hvigorw.js --mode module -p module=entry@default -p product=default -p requiredDeviceType=phone assembleHap --analyze=normal --parallel

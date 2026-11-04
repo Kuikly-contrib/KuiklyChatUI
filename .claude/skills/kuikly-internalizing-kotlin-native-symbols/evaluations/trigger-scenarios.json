@@ -1,0 +1,46 @@
+[
+  {
+    "name": "export-surface-reduction-request",
+    "skills": ["kuikly-internalizing-kotlin-native-symbols"],
+    "query": "这个 Kotlin Native 模块导出的 public 顶级声明太多了，我想尽量收紧成 internal，但又不想误伤真正对外暴露的符号。请给我一个安全的执行路径。",
+    "expected_behavior": [
+      "识别这是导出面收缩和批量 public-to-internal 收紧问题",
+      "要求先建立基于真实导出证据的 keep 集，而不是按包名或入口命名猜测",
+      "给出 dry-run -> apply -> compile -> classify -> fix -> re-run 的执行闭环",
+      "明确指出 apply 只能在干净源码上执行"
+    ]
+  },
+  {
+    "name": "visibility-error-triage",
+    "skills": ["kuikly-internalizing-kotlin-native-symbols"],
+    "query": "我把一批 Kotlin 顶级声明收紧之后，编译里出现了 'public API exposes its internal type' 和 'public-API inline function cannot access non-public-API'。下一步该怎么排查？",
+    "expected_behavior": [
+      "识别这是收紧可见性后的错误收敛场景",
+      "优先建议按错误类别归并，而不是逐条零散修复",
+      "区分脚本误判与真实暴露链未闭合两类问题",
+      "对 inline 和暴露链问题给出收紧暴露方或恢复 contract 的判断思路"
+    ]
+  },
+  {
+    "name": "keep-set-derivation-from-exports",
+    "skills": ["kuikly-internalizing-kotlin-native-symbols"],
+    "query": "我现在最不确定的是 keep 集怎么建。哪些符号必须继续保持 public，哪些可以安全 internal？",
+    "expected_behavior": [
+      "识别这是 keep 集设计问题",
+      "建议优先使用生成导出头文件或等价导出清单作为证据来源",
+      "同时考虑桥接调用点、代码生成依赖、显式保留规则和 expect/actual 配对约束",
+      "明确反对按包层级整体保留 public"
+    ]
+  },
+  {
+    "name": "mismatch-after-batch-shrink",
+    "skills": ["kuikly-internalizing-kotlin-native-symbols"],
+    "query": "批量改写后出现了 'actual has no corresponding expected declaration'，而且同类错误分布在很多文件里。我应该先继续手工修，还是先修脚本？",
+    "expected_behavior": [
+      "识别这是批量改写后的规则层缺陷判断问题",
+      "当同类错误跨多个文件重复出现时，优先回到脚本或规则修复",
+      "指出 expect/actual 必须成对检查和统一可见性",
+      "避免建议直接在脏树上持续手工补洞"
+    ]
+  }
+]

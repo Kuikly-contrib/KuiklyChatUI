@@ -1,0 +1,41 @@
+# 工蜂 CI：把本地三条门禁接到合入检查。
+# 仓库 Settings → CI/CD → CI configuration file 填 `.tgit-ci.yml`。
+# runner tag 需与本仓库工蜂机器一致（下面默认 linux / macos）。
+# 说明见 docs/conventions/ci.md。
+
+variables:
+  GIT_DEPTH: "0"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g"
+
+stages:
+  - lint
+  - compile
+  - test
+
+layer_deps:
+  stage: lint
+  tags:
+    - linux
+  script:
+    - bash scripts/ci-gates.sh layer
+
+android_compile_test:
+  stage: test
+  tags:
+    - linux
+  script:
+    - bash scripts/ci-gates.sh android
+
+ios_simulator:
+  stage: compile
+  tags:
+    - macos
+  script:
+    - bash scripts/ci-gates.sh ios
+
+ohos_lib:
+  stage: compile
+  tags:
+    - linux
+  script:
+    - bash scripts/ci-gates.sh ohos

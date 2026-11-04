@@ -1,0 +1,68 @@
+---
+last_updated: 2026-07-27
+status: draft
+owner: @kuikly-chat-team
+---
+
+# AG-UI 协议 API 规范（概要）
+# 详见 https://docs.ag-ui.com/concepts/events
+# 本文件为 KuiklyChat 消费端的契约摘要，非完整服务端规范。
+
+openapi: 3.0.3
+info:
+  title: KuiklyChat AG-UI Consumer Contract
+  version: 1.0.0-internal
+servers:
+  - url: https://your-agent-server
+paths:
+  /agent:
+    post:
+      summary: 发起一次 Agent Run（SSE 流式）
+      operationId: runAgent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunAgentInput'
+      responses:
+        '200':
+          description: SSE 事件流（text/event-stream）
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/AgUiEvent'
+components:
+  schemas:
+    RunAgentInput:
+      type: object
+      properties:
+        threadId: { type: string }
+        runId: { type: string }
+        messages:
+          type: array
+          items: { $ref: '#/components/schemas/AgUiMessage' }
+        tools: { type: array, items: { type: object } }
+    AgUiMessage:
+      type: object
+      properties:
+        id: { type: string }
+        role:
+          type: string
+          enum: [user, assistant, system, tool, developer, activity, reasoning]
+        content: { type: string }
+        toolCalls: { type: array, items: { type: object } }
+    AgUiEvent:
+      type: object
+      description: >-
+        16+ 事件类型，由 type 字段区分：
+        RUN_STARTED / RUN_FINISHED / RUN_ERROR / TEXT_MESSAGE_START /
+        TEXT_MESSAGE_CONTENT / TEXT_MESSAGE_END / TOOL_CALL_START /
+        TOOL_CALL_ARGS / TOOL_CALL_END / TOOL_CALL_RESULT / STATE_*
+        / STEP_* / MESSAGES_SNAPSHOT / ACTIVITY_* / REASONING_*
+        / CUSTOM / META / RAW ...
+      properties:
+        type: { type: string }
+        messageId: { type: string }
+        delta: { type: string }
+        rawEvent: { type: object }

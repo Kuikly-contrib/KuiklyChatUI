@@ -14,6 +14,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         mavenLocal()
         maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
@@ -26,8 +27,20 @@ rootProject.name = "KuiklyChat"
 val buildFileName = "build.ohos.gradle.kts"
 rootProject.buildFileName = buildFileName
 
-include(":androidApp")
 include(":shared")
-include(":KuiklyChat")
-project(":shared").buildFileName = buildFileName
-project(":KuiklyChat").buildFileName = "build.ohos.gradle.kts"
+include(":kuiklychat-core")
+include(":kuiklychat-compose")
+include(":kuiklychat-compat")
+include(":kuiklychat-ai")
+include(":kuiklychat-testing")
+
+listOf(
+    ":shared",
+    ":kuiklychat-core",
+    ":kuiklychat-compose",
+    ":kuiklychat-compat",
+    ":kuiklychat-ai",
+    ":kuiklychat-testing",
+).forEach { name ->
+    project(name).buildFileName = buildFileName
+}

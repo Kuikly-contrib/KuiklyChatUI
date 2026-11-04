@@ -1,0 +1,32 @@
+---
+last_updated: 2026-09-23
+status: active
+owner: @kuikly-chat-team
+---
+
+# Feature: Agent 卡片系统
+Status: ✅ Implemented
+
+## 目标
+独立于会话页，用富卡片展示 AI Agent 的事件与状态（代码块、命令执行、文件编辑、工具调用、思考过程等）。
+
+## 范围
+- 数据模型 `AgentCard`（sealed 子类）与构造器 `RichCardPayload`。
+- 双渲染层：`agentcard/`（共享模型 + Kuikly DSL 的 `AgentCardList`）与 `compose/agentcard/`（Compose 的 `ComposeAgentCardList`）。
+- `AgUiCardSession`：AG-UI 事件流自动映射为 `AgentCard` 列表。
+- 主题：`AgentCardTheme` / `ComposeCardTheme`。
+- 新 Compose Chat UI 接入：`AgentCardComposeBridge` 将强类型卡片包装为 `MessagePart.AgentCardContent`，由 `MessageRendererRegistry` 调用现有 `ComposeRenderCard`。
+
+## 新增卡片（三步 + 注册）
+1. `RichMessageKind` 增加常量；2. `RichCardPayload` 增加构造器；3. 实现 `MessageRendererFactory`；4. 注册到 `agUiRichRenderers()`（双渲染层都要）。
+
+## 非目标
+- 不替代 `ChatControllerSession` / `ChatScreen` 的普通消息渲染。
+- 不做后端协议解析（由 `agui` 负责事件 → `AgentCard` 映射）。
+- 不处理传输层。
+
+## 依赖
+- `feature-agui-protocol`（✅ 已实现）：`AgUiCardSession` 将 AG-UI 事件流映射为 `AgentCard`。
+
+## 相关
+`README.md`「Agent 卡片」。卡片渲染和会话页分开：DSL 用 `AgentCardList`，Compose 用 `ComposeAgentCardList`。

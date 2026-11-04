@@ -2,6 +2,7 @@ import com.tencent.kuikly.gradle.config.KuiklyConfig
 
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.compose")
     kotlin("native.cocoapods")
     id("com.android.library")
     id("com.google.devtools.ksp")
@@ -60,8 +61,9 @@ kotlin {
             dependencies {
                 implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
                 implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
-                // 聊天会话组件
-                implementation(project(":KuiklyChat"))
+                api(project(":kuiklychat-compose"))
+                api(project(":kuiklychat-compat"))
+                api(project(":kuiklychat-ai"))
             }
         }
         val commonTest by getting {
@@ -72,6 +74,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("com.tencent.kuikly-open:core-render-android:${Version.getKuiklyVersion()}")
+                implementation(A2ui.core())
             }
         }
 

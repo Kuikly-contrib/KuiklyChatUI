@@ -47,6 +47,9 @@ kotlin {
             dependencies {
                 implementation("com.tencent.kuikly-open:core:${Version.getKuiklyOhosVersion()}")
                 implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyOhosVersion()}")
+                implementation(project(":kuiklychat-compose"))
+                implementation(project(":kuiklychat-compat"))
+                implementation(project(":kuiklychat-ai"))
 
             }
         }

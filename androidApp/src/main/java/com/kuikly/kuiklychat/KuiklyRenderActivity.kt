@@ -15,13 +15,19 @@ import com.tencent.kuikly.core.render.android.expand.KuiklyRenderViewBaseDelegat
 import com.tencent.kuikly.core.render.android.expand.KuiklyRenderViewBaseDelegator
 import com.kuikly.kuiklychat.adapter.KRColorParserAdapter
 import com.kuikly.kuiklychat.adapter.KRFontAdapter
-import com.kuikly.kuiklychat.adapter.KRImageAdapter
+import com.tencent.kuiklybase.chat.android.KuiklyChatAndroid
 import com.kuikly.kuiklychat.adapter.KRLogAdapter
 import com.kuikly.kuiklychat.adapter.KRRouterAdapter
 import com.kuikly.kuiklychat.adapter.KRThreadAdapter
 import com.kuikly.kuiklychat.adapter.KRUncaughtExceptionHandlerAdapter
+import com.kuikly.kuiklychat.a2ui.A2uiHostSupport
 import com.kuikly.kuiklychat.module.KRBridgeModule
+import com.kuikly.kuiklychat.view.ChatZoomImageView
 import com.kuikly.kuiklychat.module.KRShareModule
+import com.tencent.kuiklybase.chat.android.KRChatByteCacheModule
+import com.tencent.kuiklybase.chat.android.KRSseModule
+import com.tencent.kuiklybase.chat.kuiklyai.platform.LlmChatPlatformRegistry
+import com.tencent.kuiklybase.chat.kuiklyai.platform.android.AndroidLlmPlatformRegistry
 import org.json.JSONObject
 
 class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorDelegate {
@@ -44,18 +50,39 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         setContentView(R.layout.activity_hr)
         setupImmersiveMode()
         hrContainerView = findViewById(R.id.hr_container)
         loadingView = findViewById(R.id.hr_loading)
         errorView = findViewById(R.id.hr_error)
+        LlmChatPlatformRegistry.install(AndroidLlmPlatformRegistry.install(this))
         kuiklyRenderViewDelegator.onAttach(hrContainerView, "", pageName, createPageData())
     }
 
     override fun onDestroy() {
+        AndroidLlmPlatformRegistry.clear()
+        LlmChatPlatformRegistry.clear()
         super.onDestroy()
         kuiklyRenderViewDelegator.onDetach()
+    }
+
+    @Deprecated("Use Activity Result APIs when the host migrates the render activity")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (!AndroidLlmPlatformRegistry.dispatchActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (!AndroidLlmPlatformRegistry.dispatchPermissionResult(requestCode, grantResults)) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 
     override fun onPause() {
@@ -77,20 +104,38 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
             moduleExport(KRShareModule.MODULE_NAME) {
                 KRShareModule()
             }
+            moduleExport(KRChatByteCacheModule.MODULE_NAME) {
+                KRChatByteCacheModule()
+            }
+            moduleExport(KRSseModule.MODULE_NAME) {
+                KRSseModule()
+            }
         }
     }
 
     override fun registerExternalRenderView(kuiklyRenderExport: IKuiklyRenderExport) {
         super.registerExternalRenderView(kuiklyRenderExport)
         with(kuiklyRenderExport) {
-
+            renderViewExport("ChatZoomImage", { context ->
+                ChatZoomImageView(context)
+            })
         }
+        A2uiHostSupport.attach(kuiklyRenderExport)
     }
 
     private fun createPageData(): Map<String, Any> {
         val param = argsToMap()
         param["appId"] = 1
+        param["kimiApiKey"] = BuildConfig.KIMI_API_KEY
+        param["kimiModel"] = BuildConfig.KIMI_MODEL
+        param["statusBarHeight"] = statusBarHeightDp()
         return param
+    }
+
+    private fun statusBarHeightDp(): Float {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId <= 0) return 0f
+        return resources.getDimensionPixelSize(resourceId) / resources.displayMetrics.density
     }
 
     private fun argsToMap(): MutableMap<String, Any> {
@@ -128,7 +173,7 @@ class KuiklyRenderActivity : AppCompatActivity(), KuiklyRenderViewBaseDelegatorD
 
         private fun initKuiklyAdapter() {
             with(KuiklyRenderAdapterManager) {
-                krImageAdapter = KRImageAdapter(KRApplication.application)
+                KuiklyChatAndroid.registerDefaultImageAdapter(KRApplication.application)
                 krLogAdapter = KRLogAdapter
                 krUncaughtExceptionHandlerAdapter = KRUncaughtExceptionHandlerAdapter
                 krFontAdapter = KRFontAdapter
