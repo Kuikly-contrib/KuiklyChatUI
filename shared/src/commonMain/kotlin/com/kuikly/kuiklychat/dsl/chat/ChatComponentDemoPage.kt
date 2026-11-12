@@ -5,7 +5,7 @@ import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ViewBuilder
 import com.tencent.kuikly.core.layout.FlexDirection
-import com.kuikly.kuiklychat.module.KRSseModule
+import com.tencent.kuikly.core.module.NetworkModule
 import com.tencent.kuikly.core.views.View
 import com.tencent.kuiklybase.chat.compose.core.ChatController
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
@@ -61,7 +61,6 @@ internal class ChatComponentDemoPage : BasePager() {
                 ChatControllerSession(
                     controller = ctx.controller,
                     theme = CHAT_COMPONENT_DEMO_THEME,
-                    composerBottomInset = ctx.pagerData.safeAreaInsets.bottom,
                     headerTitle = if (ctx.liveProvider == null) "Chat" else "Chat · SSE",
                 )
             }
@@ -73,10 +72,9 @@ internal class ChatComponentDemoPage : BasePager() {
         val model = pageData.params.optString("llmModel").trim()
         if (baseUrl.isEmpty() || model.isEmpty()) return null
 
+        val networkModule = acquireModule<NetworkModule>(NetworkModule.MODULE_NAME)
         return OpenAiCompatibleProvider(
-            transport = KuiklyNetworkLlmTransport(
-                acquireModule<KRSseModule>(KRSseModule.MODULE_NAME),
-            ),
+            transport = KuiklyNetworkLlmTransport(networkModule),
             baseUrl = baseUrl,
             model = model,
             apiKey = pageData.params.optString("llmApiKey"),

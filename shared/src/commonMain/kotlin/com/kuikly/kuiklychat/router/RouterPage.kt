@@ -97,7 +97,7 @@ internal class RouterPage : BasePager() {
                     }
                     Text {
                         attr {
-                            text("A2UI Demo")
+                            text("Agent Card Demo")
                             fontSize(17f)
                             fontWeightSemisolid()
                             color(Color.WHITE)

@@ -1,14 +1,14 @@
 ---
-last_updated: 2026-09-23
+last_updated: 2026-11-09
 status: active
 owner: @kuikly-chat-team
 ---
 
 # KuiklyChat UI — API Reference
 
-> Assumptions: this is a Kotlin library, not an HTTP service. There is no base URL, bearer token, or REST route in the source. The sections below are public entry points taken from the current source. Version `0.1.0-experimental` comes from `gradle.properties` (`MAVEN_VERSION`). It is not a Stable API.
+> Assumptions: this is a Kotlin library, not an HTTP service. There is no base URL, bearer token, or REST route in the source. The sections below are public entry points taken from the current source. Base version `1.0.5` comes from `gradle.properties` (`MAVEN_VERSION`); it is a release line, not a binary ABI guarantee.
 >
-> Coordinates: `com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.1.21` and `com.tencent.kuiklybase:kuiklychat-compat:0.1.0-experimental-2.1.21`. HarmonyOS uses `0.1.0-experimental-2.0.21-KBA-010`.
+> Coordinates: `com.tencent.kuiklybase:kuiklychat-compose:1.0.5-2.1.21` and `com.tencent.kuiklybase:kuiklychat-compat:1.0.5-2.1.21`. HarmonyOS uses `1.0.5-2.0.21-KBA-010`. Artifacts are published to `https://mirrors.tencent.com/repository/maven/kuikly-open/`.
 
 ## Table of Contents
 
@@ -25,6 +25,8 @@ owner: @kuikly-chat-team
 - [Kuikly Compose DSL](#kuikly-compose-dsl)
   - [ChatScreen](#chatscreen)
 - [ChatMessage](#chatmessage)
+- [Additional Public API](#additional-public-api)
+- [Complete Public Surface](#complete-public-surface)
 
 ## Authentication
 
@@ -146,12 +148,17 @@ Renders the AI chat page: header, message list, welcome state, scroll-to-bottom 
 | `theme` | argument | `ChatTheme` | no | Default `ChatTheme.Default`. |
 | `strings` | argument | `ChatStrings` | no | Default `ChatStrings.Default`. |
 | `showDateSeparators` | argument | `Boolean` | no | Default `true`. |
-| `composerBottomInset` | argument | `Float` | no | Safe-area inset passed to the dock. Demo uses `pagerData.safeAreaInsets.bottom`. |
+| `dateTimeFormatter` | argument | `ChatDateTimeFormatter` | no | Default `LocalChatDateTimeFormatter.Default`. |
+| `dateSeparatorClock` | argument | `ChatClock` | no | Default `ChatClock.System`. |
+| `composerBottomInset` | argument | `Float` | no | Optional bottom inset for the dock. Default `0f`; the demo does not apply a safe-area inset. |
+| `loadEarlierThreshold` | argument | `Float` | no | Default `100f`. |
 | `headerTitle` | argument | `String` | no | Default `"对话"`. |
 | `welcomeTitle` | argument | `String` | no | Default `"今天想聊点什么"`. |
 | `welcomeSubtitle` | argument | `String` | no | Default `"点一条日常提示，或自己写"`. |
 | `suggestions` | argument | `List<ChatSuggestion>` | no | Four built-in prompts when omitted. |
 | `onCopyToClipboard` | argument | `((String) -> Unit)?` | no | Handles `ChatEffect.CopyToClipboard`. |
+| `renderMessage` | argument | `(ViewContainer<*, *>.(ChatMessage) -> Boolean)?` | no | Return `true` to skip the default message body. |
+| `conversationHost` | argument | `ChatConversationHost?` | no | Enables the conversation drawer. |
 
 ```kotlin
 View {
@@ -159,10 +166,7 @@ View {
         flex(1f)
         flexDirection(FlexDirection.COLUMN)
     }
-    ChatControllerSession(
-        controller = controller,
-        composerBottomInset = pagerData.safeAreaInsets.bottom,
-    )
+    ChatControllerSession(controller = controller)
 }
 ```
 
@@ -174,13 +178,20 @@ Bottom input used inside `ChatControllerSession`. Hosts can also place it themse
 
 | Name | In | Type | Required | Description |
 |------|----|------|----------|-------------|
+| `theme` | config | `ChatTheme` | no | Default `ChatTheme.Default`. |
 | `placeholder` | config | `String` | no | Default `"输入消息"`. |
+| `expandedPlaceholder` | config | `String` | no | Default `"输入消息"`. |
 | `safeAreaBottom` | config | `Float` | no | Bottom inset. |
 | `maxAttachmentCount` | config | `Int` | no | Default `9`. |
+| `attachmentSource` | config | `LlmAttachmentSource` | no | Default `PHOTO_LIBRARY`. |
+| `attachmentPicker` | config | `LlmAttachmentPicker?` | no | Host-owned picker; enables the add button. |
 | `sending` | config | `() -> Boolean` | no | Return an observable-backed value so the button switches to stop. |
 | `onSend` | config | `(String, List<MessagePart.Attachment>) -> Boolean` | no | Return whether the send was accepted. |
 | `onStop` | config | `() -> Unit` | no | Stop control. |
-| `onPickAttachments` | config | lambda or null | no | Host picker. `null` hides the add button. |
+| `attachmentTitle` / `cameraLabel` / `galleryLabel` | config | `String` | no | Labels for the attachment sheet. |
+| `onPickAttachments` | config | `((remaining: Int, accept: (List<MessagePart.Attachment>) -> Unit) -> Unit)?` | no | Host picker. `null` hides the add button unless a picker is set. |
+| `onPreviewAttachment` | config | `(String) -> Unit` | no | Called when a draft attachment is previewed. |
+| `onKeyboardHeightChange` | config | `(Float) -> Unit` | no | Receives keyboard height changes. |
 
 ```kotlin
 ChatDockComposer {
@@ -193,7 +204,7 @@ ChatDockComposer {
 
 ### ChatWelcomeState
 
-Empty-state block. `ChatControllerSession` already shows one. `ChatSuggestion` fields are `text`, `prompt` (defaults to `text`), and optional `accentColor`.
+Empty-state block. `ChatControllerSession` already shows one. `ChatSuggestion` fields are `text`, `prompt` (defaults to `text`), and optional `accentColor`. `ChatWelcomeStateConfig` also accepts `heroText`, `primaryColor`, `surfaceColor`, `titleColor`, `subtitleColor`, and `borderColor`.
 
 ```kotlin
 ChatWelcomeState {
@@ -222,11 +233,14 @@ Compose entry bound to the same `ChatController`. Two overloads exist: one witho
 |------|----|------|----------|-------------|
 | `controller` | argument | `ChatController` | yes | Same controller as the DSL session. |
 | `userResolution` | argument | `ChatUserResolutionConfig` | no | Second overload only. |
+| `modifier` | argument | `Modifier` | no | Default `Modifier`. |
 | `theme` | argument | `ChatTheme` | no | Default `ChatTheme.Default`. |
 | `strings` | argument | `ChatStrings` | no | Default `ChatStrings.Default`. |
 | `config` | argument | `ChatScreenConfig` | no | Default `ChatScreenConfig.Default`. |
 | `slots` | argument | `ChatSlots` | no | Default `ChatSlots.Default`. |
 | `callbacks` | argument | `ChatCallbacks` | no | Default `ChatCallbacks.Empty`. |
+| `mediaConfig` | argument | `ChatMediaConfig` | no | Default `ChatMediaConfig.Default`. |
+| `textRenderConfig` | argument | `ChatTextRenderConfig` | no | Default `ChatTextRenderConfig.Default`. |
 | `rendererRegistry` | argument | `MessageRendererRegistry` | no | Default `defaultChatRendererRegistry()`. |
 
 ```kotlin
@@ -236,7 +250,7 @@ ChatScreen(
 )
 ```
 
-*Layout and slot fields beyond this signature live on `ChatScreenConfig` and `ChatSlots` in the same package. This page does not restate every token.*
+`ChatScreenConfig` controls sender names, avatars, grouped/time/status chrome, date separators, grouping windows, composer limits, bubble width ratio, and composer bottom inset. `ChatSlots` controls list, composer, and message-content slots. See the source and the [complete public surface](#complete-public-surface) for every declaration.
 
 ---
 
@@ -251,7 +265,14 @@ Package: `com.tencent.kuiklybase.chat.compose.core`.
 | `parts` | `List<MessagePart>` | `Text`, `Attachment`, `AgentCardContent`, `Custom`, `SystemNotice`. |
 | `status` | `MessageStatus` | `SENDING`, `STREAMING`, `SENT`, `FAILED`, `CANCELLED`. |
 | `createdAt` | `Long` | Epoch millis. |
+| `replyToId` | `String?` | Referenced message id. |
+| `metadata` | `Map<String, String>` | Host-owned metadata. |
 | `outgoing` | `Boolean` | True for the active user's own message. |
+| `reactions` | `List<ReactionItem>` | Reactions attached to the message. |
+| `threadCount` | `Int` | Thread reply count. |
+| `isEdited` / `isDeleted` / `isPinned` | `Boolean` | Message state flags. |
+| `readBy` | `List<String>` | User ids that have read the message. |
+| `quotedPreview` | `QuotedPreview?` | Cached quoted-message preview. |
 | `text` | `String` | Joined `MessagePart.Text` values. Not a constructor argument. |
 
 ```kotlin
@@ -264,3 +285,21 @@ ChatMessage(
     outgoing = true,
 )
 ```
+
+---
+
+## Additional Public API
+
+The host-facing entries above share `ChatController`. Other public groups are:
+
+- Conversation storage: `ChatConversationStore`, `MemoryChatConversationStore`, `ChatConversationSummary`, `ChatConversationDirectory`, `ChatConversationHost`, plus `ChatController.showConversation()` / `regenerateReply()`.
+- Kuikly DSL session and channel helpers: `sessionChatMessage()`, `ChatMessageHelper`, `ChatWelcomeStateConfig`, `ChatSuggestionBar()`, `ChatChannelList()`, `ChatChannelHeader()`, `ChatChannelMemberList()`, and the channel config/slot/theme types.
+- Compose extension points: `ChatSlots`, `ChatCallbacks`, `ChatScreenConfig`, `ChatUserResolutionConfig`, `MessageRendererRegistry`, `defaultChatRendererRegistry()`, and media/cache helpers.
+- KuiklyAI: `LlmProvider`, `LlmTransport`, `SseDecoder`, `LlmChatMessage`, `LlmChatController`, and `rememberLlmChatController()`.
+- Preview / Mock in `:kuiklychat-testing`: `ChatPreviewData` and `MockChatRepository`.
+
+Each entry is declared in the current source and gated by `explicitApi()`; the keep-set policy is documented in [`public-keep-set.md`](public-keep-set.md).
+
+## Complete Public Surface
+
+`scripts/public-api-baseline.txt` is the authoritative, machine-checked index of all 239 top-level public declarations in the `core`, `compose`, `compat`, and `ai` `commonMain` source sets. `bash scripts/check-public-api.sh` compares the current source against this baseline and fails on added or removed declarations. Generated Dokka / ABI output is not configured yet, so this text baseline plus the KDoc in source is the current API reference; it is not a binary compatibility guarantee.

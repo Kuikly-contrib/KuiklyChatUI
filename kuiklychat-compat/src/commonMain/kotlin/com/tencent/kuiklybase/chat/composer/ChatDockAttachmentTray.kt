@@ -42,7 +42,7 @@ internal fun ChatDockComposerView.renderAttachmentTray(container: ViewContainer<
                     paddingTop(8f)
                     paddingLeft(16f)
                     paddingRight(16f)
-                    paddingBottom(ctx.pagerData.safeAreaInsets.bottom + 8f)
+                    paddingBottom(8f)
                     flexDirection(FlexDirection.COLUMN)
                     alignItems(FlexAlign.CENTER)
                     transform(Translate(0f, if (presented) 0f else 1f))

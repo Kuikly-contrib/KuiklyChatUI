@@ -19,6 +19,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
             android:name=".KuiklyRenderActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:windowSoftInputMode="adjustNothing"
             android:exported="true">
             <intent-filter>

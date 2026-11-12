@@ -3,17 +3,17 @@
 ## 项目简介
 KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组件库，内置 AG-UI 协议接入，可被 Android / iOS / 鸿蒙 / H5 / 小程序等宿主复用。
 
-当前发布线是 **0.x experimental**，不要把 public dump 标成 Stable。宿主按需依赖子模块；`:KuiklyChat` 是过渡伞，**不**再 `api()` testing。接入说明：`docs/api/host-integration.md`。
+当前发布线是 **1.0.x**，当前版本是 `1.0.5`；public dump 仍是文本基线，不是 binary ABI 承诺。宿主按需依赖发布模块；接入说明：`docs/api/host-integration.md`，使用指南：`docs/api/usage.md`。
 
 ## 快速导航
 | 你想做什么 | 去哪里看 |
 |-----------|---------|
-| 了解模块构成、目录职责、使用方式 | `README.md`、`docs/api/host-integration.md`、`docs/api/chat-ui.md` |
-| 了解 AG-UI 协议与接入流程 | `README.md`「AG-UI 协议集成」、`docs/design/feature-agui-protocol.md` |
-| 新增/修改消息卡片（Kuikly DSL 渲染层） | `kuiklychat-agentcard/src/commonMain/.../chat/agentcard/` |
+| 了解模块构成、目录职责、使用方式 | `README.md`、`docs/api/host-integration.md`、`docs/api/usage.md`、`docs/api/chat-ui.md` |
+| 了解 AG-UI 协议设计 | `docs/design/feature-agui-protocol.md` |
+| 新增/修改消息卡片（Kuikly DSL 渲染层） | `kuiklychat-compat/src/commonMain/.../session/controller/` |
 | 新增/修改 Compose Chat SDK | `kuiklychat-compose/` + `kuiklychat-core/` |
-| 新增/修改消息卡片（Compose DSL 渲染层） | `kuiklychat-agentcard/src/commonMain/.../chat/compose/agentcard/` |
-| 处理 AG-UI 事件解析、会话编排 | `kuiklychat-agui/src/commonMain/.../chat/agui/` |
+| 新增/修改消息卡片（Compose DSL 渲染层） | `kuiklychat-compose/src/commonMain/.../compose/agentcard/` |
+| 处理流式传输与 provider | `kuiklychat-ai/src/commonMain/.../kuiklyai/` |
 | 数据模型、主题、仓库 | `kuiklychat-core/`、`kuiklychat-compat/.../model/` |
 | Kuikly DSL 会话页 | `kuiklychat-compat/.../session/controller/`（`ChatControllerSession`） |
 | 频道列表 | `kuiklychat-compat` 的 `channel/` |
@@ -28,15 +28,15 @@ KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组
 > 库源码前缀：各 `kuiklychat-*` 模块的 `src/commonMain/kotlin/com/tencent/kuiklybase/chat/`
 
 ## 架构要点
-- 可发布库按模块拆分：`:kuiklychat-core` / `:kuiklychat-compose` / `:kuiklychat-compat` / `:kuiklychat-agui` / `:kuiklychat-agentcard` / `:kuiklychat-ai`；`:kuiklychat-testing` 仅 Preview/Mock；`:KuiklyChat` 是不含 testing 的过渡伞。
-- 消息卡片有**两套并行渲染层**（产品选择，不是债务）：`agentcard/` 与 `compose/agentcard/`。债务是两套消息模型，已经拆掉——共用 `compose.core.ChatMessage` + `AgentCard`。新卡片只扩这一套模型。
+- 发布模块：`:kuiklychat-core` / `:kuiklychat-compose` / `:kuiklychat-compat` / `:kuiklychat-ai` / `:kuiklychat-testing`，以及 Android 原生模块 `:KuiklyChatAndroid`。
+- 消息模型只有一套：共用 `compose.core.ChatMessage` + `MessagePart.AgentCardContent` / `AgentCard`。新卡片只扩这一套模型。
 - `MessagePart.AgentCardContent` 短期保留，不要再往 Core 塞卡片字段。
-- 数据流：`agui/`（事件解析）→ 卡片映射 → 会话渲染；后端协议细节只存在于 `agui/` 与 `compose/adapter/`。
+- 数据流：`kuiklychat-ai` 的 provider / transport → `ChatController` → Kuikly DSL 或 Compose UI；后端协议细节不得进入 UI 层。
 
 ## 硬性规则（必须遵守）
 1. `commonMain` 必须平台无关；平台相关逻辑只能放在 `androidMain` / `iosMain` / `macosMain`。
-2. 新增消息卡片须**同时在 `agentcard/` 与 `compose/agentcard/` 实现**，并在对应映射器/工厂注册，缺一不可。
-3. 所有后端协议对接走 `agui/` 或 `compose/adapter/` 边界，禁止在 `session/controller/`、`channel/`、`compose/ui/` 等 UI 层直接耦合 AG-UI 协议细节。
+2. 新增共享消息卡片字段时，必须同时使用 `compose.core.ChatMessage` / `MessagePart`，并在 Kuikly DSL 与 Compose 两套 UI 中验证渲染。
+3. 所有后端协议对接走 `kuiklychat-ai` provider / transport 或宿主注入边界，禁止在 `session/controller/`、`channel/`、`compose/ui/` 等 UI 层直接耦合协议细节。
 4. 单文件 ≤ 400 行；超大文件优先拆分为职责单一的子文件，而非继续堆砌。存量超标文件登记在 `scripts/file-size-baseline.txt`（仅告警），**新增超标文件直接阻断**。
 5. 使用结构化日志，调试遗留的裸 `println` / `console.log` 不得合入。
 6. 以上规则由 `scripts/check-layer-deps.sh` 强制校验（零依赖，本地与工蜂同一条命令），违规阻断合入。
@@ -64,8 +64,8 @@ bash scripts/ci-gates.sh ohos       # :kuiklychat-core Ohos 编译
 - `commonTest` 是多平台共享源集，**只能用 `kotlin("test")`**；引入 JVM-only 依赖（JUnit、Konsist、Mockito 等）
   会让 js / ios / macos 各 target 的测试编译全部失败。
 - 在隔离 worktree 中验证某个分支：`bash scripts/agent-verify.sh <branch>`
-- 构建库：`./gradlew :KuiklyChat:build`
-- 发布 Maven：`./publish-maven.sh`（参数 `mavenVersion` / `groupId` / `mavenRepoUrl` / `mavenUsername` / `mavenPassword`）；会发布各 `kuiklychat-*` 模块 + 伞形 `KuiklyChat`
+- 构建库：按模块使用 `./gradlew :kuiklychat-core:build` 等任务
+- 发布 Maven：`./publish-maven.sh`（参数 `mavenVersion` / `groupId` / `mavenRepoUrl` / `mavenUsername` / `mavenPassword`）；会发布五个 `kuiklychat-*` 模块与 `KuiklyChatAndroid`
 - 运行宿主：Android 用 `:androidApp`，其余见各端目录。
 
 ## 门禁在哪里执行

@@ -1,9 +1,21 @@
 pluginManagement {
+    // Keep in sync with Version.getKuiklyVersion() in buildSrc.
+    val kuiklyPluginVersion = "2.30.0-2.1.21"
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.tencent.kuikly-open.kuikly") {
+                useModule("com.tencent.kuikly-open:core-gradle-plugin:$kuiklyPluginVersion")
+            }
+        }
+    }
     repositories {
         google()
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+        }
         maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
@@ -17,23 +29,16 @@ dependencyResolutionManagement {
         gradlePluginPortal()
         mavenLocal()
         maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly")
+        }
+        maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/tencent_public")
+        }
+        maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
     }
 }
-
-providers.environmentVariable("KUIKLY_UI_SOURCE").orNull
-    ?.takeIf { file(it).isDirectory }
-    ?.let { kuiklyUiSource ->
-        includeBuild(kuiklyUiSource) {
-            dependencySubstitution {
-                substitute(module("com.tencent.kuikly-open:core"))
-                    .using(project(":core"))
-                substitute(module("com.tencent.kuikly-open:core-render-android"))
-                    .using(project(":core-render-android"))
-            }
-        }
-    }
 
 rootProject.name = "KuiklyChat"
 include(":androidApp")

@@ -59,7 +59,7 @@ afterEvaluate {
         }
         repositories {
             maven {
-                url = uri(mavenRepoUrl ?: "https://mirrors.tencent.com/nexus/repository/maven-tencent/")
+                url = uri(mavenRepoUrl ?: "https://mirrors.tencent.com/repository/maven/kuikly-open/")
                 credentials {
                     username = mavenUsername ?: ""
                     password = mavenPassword ?: ""

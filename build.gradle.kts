@@ -9,6 +9,20 @@ plugins {
 
 }
 
+// KBA kotlinx artifacts pin an unpublished Kotlin dev build in their JS metadata.
+// Keep JS publication resolution on the Kotlin version used by this project.
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" &&
+                requested.version == "2.0.21-dev-107"
+            ) {
+                useVersion("2.1.21")
+            }
+        }
+    }
+}
+
 buildscript {
     dependencies {
         classpath(BuildPlugin.kuikly)

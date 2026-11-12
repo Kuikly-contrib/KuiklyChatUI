@@ -95,6 +95,12 @@ if ! bash scripts/check-public-api.sh; then
       "docs/api/public-keep-set.md"
 fi
 
+if ! bash scripts/check-api-docs.sh; then
+  err "API 文档版本或模块坐标与发布配置不一致。" \
+      "同步 README.md 与 docs/api 的版本、模块和仓库地址。" \
+      "docs/api/host-integration.md"
+fi
+
 # 规则9：compose/core 不得依赖 UI / 协议 / adapter
 if grep -rn --include='*.kt' -E "import[[:space:]]+com\.tencent\.kuiklybase\.chat\.(compose\.(ui|adapter)|agui|session|bubble|legacy)" \
   kuiklychat-core/src/commonMain/kotlin/com/tencent/kuiklybase/chat/compose/core 2>/dev/null; then

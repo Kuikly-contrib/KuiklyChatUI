@@ -1,6 +1,7 @@
 package com.kuikly.kuiklychat.dsl.chat
 
-import com.kuikly.kuiklychat.module.KRSseModule
+import com.tencent.kuikly.core.module.CallbackRef
+import com.tencent.kuikly.core.module.NetworkModule
 import com.tencent.kuikly.core.nvi.serialization.json.JSONObject
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmErrorCode
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmHttpRequest
@@ -9,13 +10,13 @@ import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmSubscription
 import com.tencent.kuiklybase.chat.kuiklyai.provider.LlmTransport
 
 /**
- * Demo adapter for [KRSseModule].
+ * Demo adapter for the streaming NetworkModule contract from KuiklyUI PR #1639.
  *
- * Published Kuikly 2.15 `NetworkModule` does not implement streaming HTTP, so the demo
- * calls the host `KRSseModule` copied from KuiklyUI main.
+ * Until a release containing the merged change is available, the host must build both Kuikly core
+ * and its native renderer from KuiklyUI main. An older renderer does not implement these methods.
  */
 internal class KuiklyNetworkLlmTransport(
-    private val sseModule: KRSseModule,
+    private val networkModule: NetworkModule,
 ) : LlmTransport {
 
     override fun openStream(request: LlmHttpRequest, sink: LlmStreamSink): LlmSubscription {
@@ -32,7 +33,7 @@ internal class KuiklyNetworkLlmTransport(
         }
 
         return KuiklyStreamCall(
-            module = sseModule,
+            module = networkModule,
             request = request,
             body = body,
             sink = sink,
@@ -41,53 +42,87 @@ internal class KuiklyNetworkLlmTransport(
 }
 
 private class KuiklyStreamCall(
-    private val module: KRSseModule,
+    private val module: NetworkModule,
     private val request: LlmHttpRequest,
     private val body: JSONObject?,
     private val sink: LlmStreamSink,
 ) {
-    private var handle: KRSseModule.StreamRequestHandle? = null
+    private val requestId = nextRequestId()
+    private var callbackRef: CallbackRef? = null
+    private var terminalBeforeRefAssigned = false
     private var closed = false
 
     fun open(): LlmSubscription {
-        val headers = request.headers.takeIf { it.isNotEmpty() }?.let { values ->
-            JSONObject().apply {
-                values.forEach { (name, value) -> put(name, value) }
+        val params = JSONObject().apply {
+            put("url", request.url)
+            put("method", request.method)
+            body?.let { put("param", it) }
+            if (request.headers.isNotEmpty()) {
+                put("headers", JSONObject().apply {
+                    request.headers.forEach { (name, value) -> put(name, value) }
+                })
             }
+            put("timeout", timeoutSeconds(request.timeoutMs))
+            put("requestId", requestId)
         }
-        handle = module.httpStreamRequest(
-            url = request.url,
-            method = request.method,
-            param = body,
-            headers = headers,
-            timeoutSeconds = timeoutSeconds(request.timeoutMs),
-        ) { event, data, statusCode ->
-            if (!closed) handleEvent(event, data, statusCode)
+
+        val returnValue = module.toNative(
+            keepCallbackAlive = true,
+            methodName = METHOD_HTTP_STREAM_REQUEST,
+            param = params.toString(),
+            callback = { event ->
+                if (event != null && !closed) handleEvent(event)
+            },
+            syncCall = false,
+        )
+        callbackRef = returnValue.callbackRef
+        if (terminalBeforeRefAssigned) {
+            callbackRef?.let(module::removeCallback)
+            callbackRef = null
         }
         return LlmSubscription { close() }
     }
 
-    private fun handleEvent(event: String, data: String, statusCode: Int) {
-        when (event) {
-            EVENT_DATA -> sink.onChunk(data)
+    private fun handleEvent(event: JSONObject) {
+        when (event.optString("event", "")) {
+            EVENT_DATA -> sink.onChunk(event.optString("data", ""))
             EVENT_COMPLETE -> {
-                closed = true
+                finish()
                 sink.onComplete()
             }
             EVENT_ERROR -> {
-                closed = true
-                val httpStatus = statusCode.takeIf { it > 0 }
-                val message = data.ifBlank { "Streaming request failed" }
-                sink.onError(errorCode(httpStatus, message), message)
+                val statusCode = event.optInt("statusCode", 0).takeIf { it > 0 }
+                val message = event.optString("data", "").ifBlank { "Streaming request failed" }
+                finish()
+                sink.onError(errorCode(statusCode, message), message)
             }
+        }
+    }
+
+    private fun finish() {
+        if (closed) return
+        closed = true
+        val ref = callbackRef
+        if (ref == null) {
+            terminalBeforeRefAssigned = true
+        } else {
+            module.removeCallback(ref)
+            callbackRef = null
         }
     }
 
     private fun close() {
         if (closed) return
         closed = true
-        handle?.close()
-        handle = null
+        module.toNative(
+            keepCallbackAlive = false,
+            methodName = METHOD_CLOSE_STREAM_REQUEST,
+            param = JSONObject().apply { put("requestId", requestId) }.toString(),
+            callback = null,
+            syncCall = false,
+        )
+        callbackRef?.let(module::removeCallback)
+        callbackRef = null
     }
 }
 
@@ -103,6 +138,15 @@ private fun errorCode(statusCode: Int?, message: String): LlmErrorCode = when {
     else -> LlmErrorCode.NETWORK
 }
 
+private var streamRequestCounter = 0L
+
+private fun nextRequestId(): String {
+    streamRequestCounter += 1
+    return "kuikly_chat_stream_$streamRequestCounter"
+}
+
+private const val METHOD_HTTP_STREAM_REQUEST = "httpStreamRequest"
+private const val METHOD_CLOSE_STREAM_REQUEST = "closeStreamRequest"
 private const val EVENT_DATA = "data"
 private const val EVENT_COMPLETE = "complete"
 private const val EVENT_ERROR = "error"

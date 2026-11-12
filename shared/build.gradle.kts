@@ -61,6 +61,8 @@ kotlin {
             dependencies {
                 implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
                 implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
+                // A2UI demo renders text segments between cards with the same Markdown engine as the session.
+                implementation("com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21")
                 api(project(":kuiklychat-compose"))
                 api(project(":kuiklychat-compat"))
                 api(project(":kuiklychat-ai"))

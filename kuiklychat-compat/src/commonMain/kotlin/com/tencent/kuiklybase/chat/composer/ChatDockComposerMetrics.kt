@@ -16,7 +16,7 @@ internal const val DOCK_MULTILINE_TEXT_TOP = 12f
 internal const val DOCK_TEXT_TOOLBAR_GAP = 4f
 internal const val DOCK_COMPACT_TOOLBAR_HEIGHT = 44f
 internal const val DOCK_COMPACT_TOOLBAR_BOTTOM = 8f
-internal const val DOCK_KEYBOARD_CLEARANCE = 20f
+internal const val DOCK_KEYBOARD_CLEARANCE = 10f
 internal const val DOCK_MAX_NAVIGATION_INSET = 48f
 internal const val DOCK_BOTTOM_GAP = 4f
 

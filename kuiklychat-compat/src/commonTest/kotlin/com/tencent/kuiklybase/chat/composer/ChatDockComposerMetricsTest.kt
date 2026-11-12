@@ -18,8 +18,14 @@ class ChatDockComposerMetricsTest {
     fun keyboardReplacesNavigationInset() {
         assertEquals(34f + DOCK_BOTTOM_GAP, composerDockBottom(0f, 34f))
         assertEquals(DOCK_MAX_NAVIGATION_INSET + DOCK_BOTTOM_GAP, composerDockBottom(0f, 80f))
-        assertEquals(320f + DOCK_BOTTOM_GAP, composerDockBottom(300f, 34f))
-        assertEquals(288f + DOCK_BOTTOM_GAP, composerDockBottom(300f, 80f))
+        assertEquals(
+            300f + DOCK_KEYBOARD_CLEARANCE + DOCK_BOTTOM_GAP,
+            composerDockBottom(300f, 34f),
+        )
+        assertEquals(
+            268f + DOCK_KEYBOARD_CLEARANCE + DOCK_BOTTOM_GAP,
+            composerDockBottom(300f, 80f),
+        )
     }
 
     @Test

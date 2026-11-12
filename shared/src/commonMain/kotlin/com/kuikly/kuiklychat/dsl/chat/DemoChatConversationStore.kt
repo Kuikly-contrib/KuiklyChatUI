@@ -15,6 +15,7 @@ import com.tencent.kuiklybase.chat.compose.core.TextFormat
 /** Demo persistence for [ChatConversationStore]. Text and custom parts round-trip. */
 internal class DemoChatConversationStore(
     private val prefs: () -> SharedPreferencesModule,
+    private val key: String = DEFAULT_KEY,
 ) : ChatConversationStore {
     override fun loadConversations(): List<ChatConversationSummary> {
         return read()
@@ -56,7 +57,7 @@ internal class DemoChatConversationStore(
     }
 
     private fun read(): List<Stored> {
-        val raw = prefs().getString(KEY)
+        val raw = prefs().getString(key)
         if (raw.isEmpty()) return emptyList()
         return runCatching {
             val array = JSONArray(raw)
@@ -67,18 +68,20 @@ internal class DemoChatConversationStore(
     private fun write(items: List<Stored>) {
         val array = JSONArray()
         items.forEach { array.put(encodeStored(it)) }
-        prefs().setString(KEY, array.toString())
+        prefs().setString(key, array.toString())
     }
 
     private companion object {
-        const val KEY = "chat_component_demo_conversations"
+        const val DEFAULT_KEY = "chat_component_demo_conversations"
     }
 }
 
 private data class Stored(val summary: ChatConversationSummary, val messages: List<ChatMessage>)
 
-internal fun Pager.demoChatConversationStore(): DemoChatConversationStore {
-    return DemoChatConversationStore { acquireModule(SharedPreferencesModule.MODULE_NAME) }
+internal fun Pager.demoChatConversationStore(
+    key: String = "chat_component_demo_conversations",
+): DemoChatConversationStore {
+    return DemoChatConversationStore(prefs = { acquireModule(SharedPreferencesModule.MODULE_NAME) }, key = key)
 }
 
 private fun decodeStored(json: JSONObject): Stored {

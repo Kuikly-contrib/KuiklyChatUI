@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
-
 /** Message state for one visible conversation. UI and protocol types stay outside. */
 public class ChatController(
     public val currentUser: ChatUser,
@@ -90,7 +89,6 @@ public class ChatController(
             _state.value = state.copy(unreadCount = 0)
         }
     }
-
     /** Adds a local message and starts the injected sender when one is available. */
     public fun sendText(rawText: String): Boolean = sendMessage(rawText, emptyList())
 
@@ -133,7 +131,6 @@ public class ChatController(
         }
         return true
     }
-
     public fun stopGeneration() {
         if (closed) return
         requestToken += 1
@@ -157,7 +154,6 @@ public class ChatController(
         pendingUserMessageId = null
         updateSendingState()
     }
-
     public fun retryMessage(messageId: String) {
         if (state.isSending) return
         val failed = state.messages.firstOrNull { it.id == messageId } ?: return
@@ -173,7 +169,6 @@ public class ChatController(
         }
         sendMessage(retryText, retryAttachments)
     }
-
     public fun deleteMessage(messageId: String) {
         if (state.messages.none { it.id == messageId }) return
         _state.value = state.copy(
@@ -185,7 +180,6 @@ public class ChatController(
     public fun clearError() {
         _state.value = state.copy(error = null)
     }
-
     /** Applies an external protocol/session message without exposing protocol types to UI. */
     public fun upsertExternalMessage(message: ChatMessage) {
         if (closed) return

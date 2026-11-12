@@ -26,7 +26,7 @@ internal fun ChatDockComposerView.renderDock(container: ViewContainer<*, *>) {
                 overflow(true)
                 borderRadius(16f)
                 backgroundColor(Color(theme.composerColor))
-                border(Border(0.5f, BorderStyle.SOLID, Color(theme.borderColor)))
+                border(Border(0.5f, BorderStyle.SOLID, Color(0x00000000)))
                 boxShadow(BoxShadow(0f, 2f, 8f, Color(0x14000000)))
             }
             event { click { } }

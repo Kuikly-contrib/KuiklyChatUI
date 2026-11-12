@@ -1,13 +1,29 @@
 # KuiklyChat
 
-基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙多端运行。Android 上的 A2UI 卡片使用已发布的 [KuiklyUI-A2UI](https://github.com/Tencent-TDS/KuiklyUI-A2UI)（`com.tencent.kuikly-a2ui-open:a2ui:1.0.0-2.1.21` 与 `a2ui-render-android:1.0.0-2.1.21`），不在本仓库内编译 A2UI 源码。
+基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙、JS / macOS。
 
-> **0.x experimental。** 当前 public 面（卡片工厂、Slot、AG-UI 映射）仍偏大，不要当 Stable 冻结。按需依赖子模块；旧 `KuiklyChat` 坐标是过渡伞，**不再传递 testing**。完整说明见 [`docs/api/host-integration.md`](docs/api/host-integration.md)。
+> 当前版本是 `1.0.5`。宿主按下面的模块依赖；接入和使用示例见 [`docs/api/usage.md`](docs/api/usage.md)，参数说明见 [`docs/api/chat-ui.md`](docs/api/chat-ui.md)。
 
 <div align="center">
-  <img src="assets/chat-agent-card.jpg" alt="Agent 卡片聊天演示" width="280">
-  <img src="assets/chat-sse.jpg" alt="SSE 流式聊天演示" width="280">
+  <img src="assets/chat.png" alt="聊天界面" width="220">
+  <img src="assets/ai_chat.png" alt="AI 聊天" width="220">
+  <img src="assets/a2ui.png" alt="A2UI 卡片" width="220">
 </div>
+
+## 模块
+
+| 模块 | Maven 坐标 | 内容 |
+|------|------------|------|
+| 模型与 `ChatController` | `com.tencent.kuiklybase:kuiklychat-core` | `ChatMessage`、`AgentCard`、发送与流式状态 |
+| Compose Chat UI | `com.tencent.kuiklybase:kuiklychat-compose` | `ChatScreen`。传递 `kuiklychat-core` |
+| Kuikly DSL 会话页 | `com.tencent.kuiklybase:kuiklychat-compat` | `ChatControllerSession`、频道列表、输入区。传递 `core` 和 `ai` |
+| KuiklyAI | `com.tencent.kuiklybase:kuiklychat-ai` | `LlmProvider`、`rememberLlmChatController` |
+| Preview / Mock | `com.tencent.kuiklybase:kuiklychat-testing` | 显式依赖，UI 模块不会带上它 |
+| Android 图片与字节缓存 | `com.tencent.kuiklybase:KuiklyChatAndroid` | 见 [`KuiklyChatAndroid/README.md`](KuiklyChatAndroid/README.md) |
+
+版本后缀跟 Kotlin 版本走：标准平台 `1.0.5-2.1.21`，鸿蒙 `1.0.5-2.0.21-KBA-010`。
+
+Compose Chat UI 的 Markdown 渲染使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.1`；鸿蒙对应 `0.4.1-ohos`。Kuikly DSL 会话页使用外网公开的 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`。Compose 组件和 DSL 组件同时接入时，Android 宿主需排除重复的 `org.jetbrains:markdown` parser，示例见 [`docs/api/usage.md`](docs/api/usage.md)。
 
 ## 接入指南
 
@@ -23,6 +39,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
+            url = uri("https://mirrors.tencent.com/repository/maven/kuikly-open/")
+        }
+        maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
     }
@@ -31,33 +50,9 @@ dependencyResolutionManagement {
 
 **鸿蒙平台（HarmonyOS）**
 
-在 `settings.ohos.gradle.kts` 中添加：
+在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.5-2.0.21-KBA-010`，公开 Markdown 依赖由 `markdown:0.4.1-ohos` 提供。`kuikly-open` 提供 ChatUI 与公开 Markdown 产物，`maven-tencent` 提供 KBA 专用 kotlinx 产物。
 
-```kotlin
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
-        }
-    }
-}
-```
-
-### 2. 添加依赖（按需，不要默认全家桶）
-
-版本示例：`0.1.0-experimental-2.1.21`（标准）/ `0.1.0-experimental-2.0.21-KBA-010`（鸿蒙）。
-
-| 你要什么 | Maven 坐标 |
-|----------|------------|
-| Compose Chat UI | `com.tencent.kuiklybase:kuiklychat-compose` |
-| Kuikly DSL 会话页 | `com.tencent.kuiklybase:kuiklychat-compat` |
-| AG-UI 协议 | `com.tencent.kuiklybase:kuiklychat-agui` |
-| Agent 卡片 | `com.tencent.kuiklybase:kuiklychat-agentcard` |
-| KuiklyAI | `com.tencent.kuiklybase:kuiklychat-ai` |
-| Preview / Mock | `com.tencent.kuiklybase:kuiklychat-testing`（**必须显式依赖**） |
-| 过渡伞（不含 testing） | `com.tencent.kuiklybase:KuiklyChat` |
+### 2. 添加依赖
 
 **标准平台（Android / iOS / JS / macOS）**
 
@@ -66,9 +61,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.1.21")
+                implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.5-2.1.21")
                 // 只要 Kuikly DSL 会话页时改用 kuiklychat-compat
-                // 协议 / 卡片 / AI 按需追加 kuiklychat-agui / kuiklychat-agentcard / kuiklychat-ai
+                // Preview / Mock：kuiklychat-testing
             }
         }
     }
@@ -77,19 +72,11 @@ kotlin {
 
 **鸿蒙平台（HarmonyOS）**
 
-```kotlin
-kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation("com.tencent.kuiklybase:kuiklychat-compose:0.1.0-experimental-2.0.21-KBA-010")
-            }
-        }
-    }
-}
-```
+把版本换成 `1.0.5-2.0.21-KBA-010`。
 
-聊天 UI 只有两套入口，共用 `ChatController`。完整参数表见 [`docs/api/chat-ui.md`](docs/api/chat-ui.md)。
+本地工程把坐标换成 `implementation(project(":kuiklychat-compose"))` 即可。
+
+聊天 UI 只有两套入口，共用 `ChatController`。
 
 - Kuikly DSL：`ChatControllerSession`（`kuiklychat-compat`）
 - Kuikly Compose DSL：`ChatScreen`（`kuiklychat-compose`）
@@ -106,10 +93,9 @@ val controller = ChatController(
     },
 )
 
-// Kuikly DSL
+// Kuikly DSL。父容器需要确定高度，例如 flex(1f)。
 ChatControllerSession(
     controller = controller,
-    composerBottomInset = pagerData.safeAreaInsets.bottom,
 )
 
 // Kuikly Compose DSL
@@ -118,72 +104,21 @@ ChatScreen(controller = controller)
 
 `sendText` 在文本为空或正在发送时返回 `false`。页面销毁时调用 `controller.dispose()` 并取消 `scope`。
 
-### 本地 Demo 的真实 SSE
-
-宿主 Demo 页是 `ChatComponentDemoPage`（`chat_component_demo`）。首页「Chat 组件 Demo」不带模型参数，走本地脚本回复，标题是「Chat」。
-
-真实流式要同时带上页面参数 `llmBaseUrl` 和 `llmModel`。两个都不为空时，页面才会创建 `OpenAiCompatibleProvider`，向 `{llmBaseUrl}/chat/completions` 发 `stream: true`，再把 SSE 的 `choices[0].delta.content` 追加进同一个气泡。标题会变成「Chat · SSE」。
-
-`llmApiKey` 和 `llmSystemPrompt` 可选。有 key 时带 `Authorization: Bearer …`；内网网关不需要鉴权就留空。Key 只通过运行时页面参数传入，不要写进源码或提交记录。
-
-Android 真机可以直接打开这一页：
-
-```bash
-adb shell am start -n com.kuikly.kuiklychat/.KuiklyRenderActivity \
-  --es pageName chat_component_demo \
-  --es pageData '{"llmBaseUrl":"https://api.deepseek.com/v1","llmModel":"deepseek-chat","llmApiKey":"sk-your-key"}'
-```
-
-路由跳转用同一组参数，`&` 后面是页面参数：
-
-```text
-chat_component_demo&llmBaseUrl=https://api.deepseek.com/v1&llmModel=deepseek-chat&llmApiKey=sk-your-key
-```
-
-`llmBaseUrl` 不含 `/chat/completions`，尾部斜杠可有可无。端点需要兼容 OpenAI Chat Completions 的 SSE。
-
 ---
 
-## AG-UI 协议集成
+## 消息与 Agent 卡片
 
-可选模块 `kuiklychat-agui`，包名 `com.tencent.kuiklybase.chat.agui`。协议解析和 `ChatController` 分开：会话 UI 不直接依赖 AG-UI 类型。事件说明见 [AG-UI events](https://docs.ag-ui.com/concepts/events)。
+消息模型在 `kuiklychat-core`：`ChatMessage` 加有序的 `MessagePart`（文本、附件、系统提示、`AgentCardContent`）。`AgentCard` 是共享卡片数据，类型包括代码块、命令、文件编辑、工具调用、思考、搜索、加载、错误、链接、表格、图表和计划。
 
-`AgUiSession` 把事件收成 `messages: MutableList<ChatMessage>`。要显示在聊天页里，把结果交给 `ChatController.upsertExternalMessage` 或 `replaceExternalMessages`，再由 `ChatControllerSession` / `ChatScreen` 渲染。
+两套 UI 目前都把卡片收成文字：Kuikly DSL 会话页用一行标签，Compose 气泡里显示卡片类型名。自定义渲染时，DSL 传 `ChatControllerSession` 的 `renderMessage`（返回 `true` 就跳过默认正文），Compose 换 `ChatScreen` 的 `rendererRegistry`。
 
-```kotlin
-val session = AgUiSession(threadId = "thread_001", selfSenderId = "user_001", aiSenderName = "AI 助手")
-session.dispatch(AgUiEvent.TextMessageContent(messageId = "m1", delta = "Hello"))
-AgUiEventParser.parseEvent("""{"type":"TEXT_MESSAGE_END","messageId":"m1"}""")
-    ?.let(session::dispatch)
-AgUiEventParser.parseSseData("""{"type":"RUN_FINISHED","runId":"r1"}""")
-    ?.let(session::dispatch)
-controller.replaceExternalMessages(session.messages.toList())
-```
-
-公开方法是 `dispatch`、`dispatchAll`、`upsertMessage`。JSON 和 SSE 行先走 `AgUiEventParser.parseEvent` / `parseSseData`。测试构造用 `AgUiSession.forTesting`。单测在 `kuiklychat-agui` 的 `commonTest`，用 Android 测试任务跑，本仓库没有 `jvm()` target。
-
-映射到 UI 消息时，用户消息 `outgoing = true`，助手消息 `outgoing = false`，正文放在 `MessagePart.Text`。不要再用已删除的 `content` / `isSelf` / `type` 构造 `ChatMessage`。
-
----
-
-## Agent 卡片
-
-模块 `kuiklychat-agentcard`。Kuikly DSL 入口是 `AgentCardList`，Compose 入口是 `ComposeAgentCardList`。卡片类型是共享的 `AgentCard`（代码块、命令、文件编辑、工具调用、思考、搜索、加载、错误、链接、表格、图表、计划等）。
-
-```kotlin
-AgentCardList(
-    cards = { cards },
-    theme = AgentCardTheme.Default,
-)
-```
-
-`ChatControllerSession` 当前把 `MessagePart.AgentCardContent` 收成一行文字，不渲染这些卡片视图。
+LLM 接入在 `kuiklychat-ai`。`LlmProvider` 负责请求，Compose 页面用 `rememberLlmChatController` 持有会话。`kuiklychat-compat` 已经传递这个模块。
 
 ---
 
 ## 引用回复
 
-`ChatMessage.replyToId` 指向被引用消息。展示用的摘要在 `quotedPreview`。`ChatMessageHelper.createTextMessage` 仍可用，它返回的是同一套 `compose.core.ChatMessage`。
+`ChatMessage.replyToId` 指向被引用消息，展示摘要放在 `quotedPreview`。`ChatMessageHelper.createTextMessage` 返回同一套 `ChatMessage`。
 
 ```kotlin
 val reply = ChatMessage(

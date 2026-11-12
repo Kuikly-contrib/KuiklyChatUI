@@ -12,6 +12,10 @@ fun localKimiSetting(name: String): String = System.getenv(name)
         ?.trim()
         .orEmpty()
 
+val kimiApiKey = localKimiSetting("KIMI_API_KEY")
+// kimi-k2.6 with thinking disabled starts streaming A2UI in ~1s.
+val kimiModel = localKimiSetting("KIMI_MODEL").ifEmpty { "kimi-k2.6" }
+
 fun String.asBuildConfigString(): String = "\"${replace("\\", "\\\\").replace("\"", "\\\"")}\""
 
 android {
@@ -23,9 +27,8 @@ android {
         targetSdk = 30
         versionCode = 1
         versionName = "1.0"
-        // Key stays in gitignored local.properties. An empty value keeps the offline sample card.
-        buildConfigField("String", "KIMI_API_KEY", localKimiSetting("KIMI_API_KEY").asBuildConfigString())
-        buildConfigField("String", "KIMI_MODEL", localKimiSetting("KIMI_MODEL").ifEmpty { "kimi-k2.6" }.asBuildConfigString())
+        buildConfigField("String", "KIMI_API_KEY", kimiApiKey.asBuildConfigString())
+        buildConfigField("String", "KIMI_MODEL", kimiModel.asBuildConfigString())
     }
 
     buildTypes {
@@ -43,6 +46,15 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+// KuiklyMarkdown 1.0.10-internal still depends on com.tencent.kuikly 2.21.
+// The app links com.tencent.kuikly-open 2.30, which uses the same packages.
+configurations.configureEach {
+    exclude(group = "com.tencent.kuikly")
+    // KuiklyMarkdown AAR already embeds org.intellij.markdown classes used by
+    // kuikly-compose-markdown's parser; keep one copy for the Android demo APK.
+    exclude(group = "org.jetbrains", module = "markdown")
 }
 
 dependencies {

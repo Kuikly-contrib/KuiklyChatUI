@@ -36,7 +36,7 @@ GROUP_ID=""
 MAVEN_URL="${mavenUrl:-}"
 
 # Maven 认证（从 gradle.properties 读取，也可通过环境变量传入）
-MAVEN_USERNAME="${mavenUserName:-}"
+MAVEN_USERNAME="${mavenUsername:-}"
 MAVEN_PASSWORD="${mavenPassword:-}"
 
 # Kotlin 版本列表（从 gradle.properties 读取，可通过 -k 参数覆盖）
@@ -49,6 +49,10 @@ DEFAULT_KUIKLY_CORE_VERSION="2.7.0"
 
 # publish 任务
 PUBLISH_TASK=publishAllPublicationsToMavenRepository
+LOCAL_PUBLISH_TASK=publishToMavenLocal
+LOCAL_OHOS_PUBLISH_TASK=publishOhosArm64PublicationToMavenLocal
+OHOS_ONLY="false"
+LOCAL_ONLY="false"
 MODULE_ANDROID="KuiklyChatAndroid"
 ANDROID_PUBLISH_TASK="publishReleasePublicationToMavenRepository"
 
@@ -135,6 +139,8 @@ function usage() {
   echo "  -k, --kotlin        指定编译的 Kotlin 版本列表, 使用 , 分割"
   echo "  -ok, --ohos-kotlin  指定鸿蒙 Kotlin 版本列表, 使用 , 分割"
   echo "  -s, --snapshot      指定是否 SNAPSHOT (true/false)"
+  echo "  -ohos-only          只发布当前模块的 OhosArm64 publication"
+  echo "  -local-only         只发布到本地 Maven 仓库（~/.m2/repository）"
   echo "  -l, --local-repo    指定是否发布到本地 repo (true/false)"
   echo "  -m, --maven-url     指定 Maven 仓库地址"
   echo "  -c, --clean         指定是否需要 clean 后编译 (true/false)"
@@ -262,41 +268,43 @@ function publishAll() {
   local build_version
 
   # ====== 标准平台 (Android + iOS + JS) ======
-  log_info "========== 开始发布标准平台产物 =========="
-  IFS=',' read -r -a VERSIONS <<<"${KOTLIN_VERSION_LIST}"
-  for kt_version in "${VERSIONS[@]}"; do
-    if [[ "${PUB_ENABLE_SNAPSHOT}" == 'true' ]]; then
-      build_version="${BASE_VERSION}-${kt_version}-SNAPSHOT"
-    else
-      build_version="${BASE_VERSION}-${kt_version}"
-    fi
+  if [[ "${OHOS_ONLY}" != 'true' && "${LOCAL_ONLY}" != 'true' ]]; then
+    log_info "========== 开始发布标准平台产物 =========="
+    IFS=',' read -r -a VERSIONS <<<"${KOTLIN_VERSION_LIST}"
+    for kt_version in "${VERSIONS[@]}"; do
+      if [[ "${PUB_ENABLE_SNAPSHOT}" == 'true' ]]; then
+        build_version="${BASE_VERSION}-${kt_version}-SNAPSHOT"
+      else
+        build_version="${BASE_VERSION}-${kt_version}"
+      fi
 
-    # 发布跨端模块（默认全部 kuiklychat-* + 伞形；-n 指定时只发该模块）
-    local modules=("${KMP_PUBLISH_MODULES[@]}")
-    if [ "${MODULE_KMP}" != "KuiklyChat" ]; then
-      modules=("${MODULE_KMP}")
-    fi
-    local kmp_module
-    for kmp_module in "${modules[@]}"; do
-      if ! publishModule "${kmp_module}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
+      # 发布跨端模块（默认全部 kuiklychat-*；-n 指定时只发该模块）
+      local modules=("${KMP_PUBLISH_MODULES[@]}")
+      if [ "${MODULE_KMP}" != "KuiklyChat" ]; then
+        modules=("${MODULE_KMP}")
+      fi
+      local kmp_module
+      for kmp_module in "${modules[@]}"; do
+        if ! publishModule "${kmp_module}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
+          return 1
+        fi
+      done
+
+      # 发布 Android 原生模块
+      if ! publishModule "${MODULE_ANDROID}" "${ANDROID_PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
         return 1
       fi
+
+      if [[ -z "${final_versions}" ]]; then
+        final_versions="${build_version}"
+      else
+        final_versions="${final_versions} | ${build_version}"
+      fi
     done
-
-    # 发布 Android 原生模块
-    if ! publishModule "${MODULE_ANDROID}" "${ANDROID_PUBLISH_TASK}" "${kt_version}" "${build_version}" "false"; then
-      return 1
-    fi
-
-    if [[ -z "${final_versions}" ]]; then
-      final_versions="${build_version}"
-    else
-      final_versions="${final_versions} | ${build_version}"
-    fi
-  done
+  fi
 
   # ====== 鸿蒙平台 ======
-  if [[ -n "${OHOS_KOTLIN_VERSION_LIST}" ]]; then
+  if [[ -n "${OHOS_KOTLIN_VERSION_LIST}" && "${LOCAL_ONLY}" != 'true' ]]; then
     log_info "========== 开始发布鸿蒙平台产物 =========="
     IFS=',' read -r -a OHOS_VERSIONS <<<"${OHOS_KOTLIN_VERSION_LIST}"
     for kt_version in "${OHOS_VERSIONS[@]}"; do
@@ -312,7 +320,13 @@ function publishAll() {
       fi
       local kmp_module
       for kmp_module in "${modules[@]}"; do
-        if ! publishModule "${kmp_module}" "${PUBLISH_TASK}" "${kt_version}" "${build_version}" "true"; then
+        local ohos_task="${PUBLISH_TASK}"
+        if [[ "${LOCAL_ONLY}" == 'true' ]]; then
+          ohos_task="${LOCAL_OHOS_PUBLISH_TASK}"
+        elif [[ "${OHOS_ONLY}" == 'true' ]]; then
+          ohos_task="publishOhosArm64PublicationToMavenRepository"
+        fi
+        if ! publishModule "${kmp_module}" "${ohos_task}" "${kt_version}" "${build_version}" "true"; then
           return 1
         fi
       done
@@ -323,6 +337,33 @@ function publishAll() {
         final_versions="${final_versions} | ${build_version}"
       fi
     done
+  fi
+
+  if [[ "${LOCAL_ONLY}" == 'true' ]]; then
+    log_info "========== 开始本地发布 =========="
+    local modules=("${KMP_PUBLISH_MODULES[@]}")
+    if [ "${MODULE_KMP}" != "KuiklyChat" ]; then
+      modules=("${MODULE_KMP}")
+    fi
+    local std_version="${KOTLIN_VERSION_LIST%%,*}"
+    local std_build_version="${BASE_VERSION}-${std_version}"
+    local ohos_version="${OHOS_KOTLIN_VERSION_LIST%%,*}"
+    local ohos_build_version="${BASE_VERSION}-${ohos_version}"
+    local kmp_module
+    for kmp_module in "${modules[@]}"; do
+      if ! publishModule "${kmp_module}" "${LOCAL_PUBLISH_TASK}" "${std_version}" "${std_build_version}" "false"; then
+        return 1
+      fi
+    done
+    if ! publishModule "${MODULE_ANDROID}" "publishReleasePublicationToMavenLocal" "${std_version}" "${std_build_version}" "false"; then
+      return 1
+    fi
+    for kmp_module in "${modules[@]}"; do
+      if ! publishModule "${kmp_module}" "${LOCAL_OHOS_PUBLISH_TASK}" "${ohos_version}" "${ohos_build_version}" "true"; then
+        return 1
+      fi
+    done
+    final_versions="${std_build_version} | ${ohos_build_version}"
   fi
 
   echo ""
@@ -357,6 +398,8 @@ while [[ "$#" -gt 0 ]]; do
   -k | --kotlin) shift; KOTLIN_VERSION_LIST="${1}" ;;
   -ok | --ohos-kotlin) shift; OHOS_KOTLIN_VERSION_LIST="${1}" ;;
   -s | --snapshot) shift; PUB_ENABLE_SNAPSHOT="$1" ;;
+  -ohos-only) OHOS_ONLY="true" ;;
+  -local-only) LOCAL_ONLY="true" ;;
   -l | --local-repo) shift; PUB_IS_LOCAL_REPO="$1" ;;
   -m | --maven-url) shift; MAVEN_URL="$1" ;;
   -c | --clean) shift; NEED_CLEAN="$1" ;;
@@ -382,6 +425,8 @@ log_info "Maven User:   ${MAVEN_USERNAME:+***已配置***}"
 log_info "Maven Pass:   ${MAVEN_PASSWORD:+***已配置***}"
 log_info "Clean:        ${NEED_CLEAN:-false}"
 log_info "Debug:        ${DEBUG:-false}"
+log_info "仅鸿蒙续发:   ${OHOS_ONLY}"
+log_info "仅本地发布:   ${LOCAL_ONLY}"
 log_info "=================================================="
 echo ""
 
