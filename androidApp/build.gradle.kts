@@ -48,8 +48,8 @@ android {
     }
 }
 
-// KuiklyMarkdown 1.0.10-internal still depends on com.tencent.kuikly 2.21.
-// The app links com.tencent.kuikly-open 2.30, which uses the same packages.
+// Kuikly DSL Markdown AAR ships com.tencent.kuikly packages; exclude the legacy
+// group so the app resolves one set of Kuikly classes from kuikly-open 2.30.
 configurations.configureEach {
     exclude(group = "com.tencent.kuikly")
     // KuiklyMarkdown AAR already embeds org.intellij.markdown classes used by
