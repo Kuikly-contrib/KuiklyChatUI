@@ -78,6 +78,11 @@ if ! grep -qF 'exclude(group = "org.jetbrains", module = "markdown")' docs/api/u
   fail "使用文档缺少 Android Markdown parser 去重配置。" "Compose 与 DSL 同时接入时排除 org.jetbrains:markdown。"
 fi
 
+if grep -nE 'implementation\("com\.tencent\.kuiklybase:(markdown|KuiklyMarkdown)' \
+  README.md docs/api/usage.md docs/api/host-integration.md docs/api/chat-ui.md; then
+  fail "宿主接入文档把 ChatUI 内部 Markdown 依赖写成了宿主依赖。" "只保留 kuiklychat-* 模块依赖；Markdown 组件由 POM / Gradle module 自动传递。"
+fi
+
 if grep -nE 'kuiklychat-agui|kuiklychat-agentcard|com\.tencent\.kuiklybase:KuiklyChat[`:]|:KuiklyChat`' README.md docs/api/chat-ui.md docs/api/host-integration.md docs/api/public-keep-set.md; then
   fail "发布文档仍列出当前未发布的模块。" "只保留 settings.gradle.kts / publish-maven.sh 中实际发布的模块。"
 fi

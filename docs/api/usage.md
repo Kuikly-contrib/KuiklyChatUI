@@ -32,6 +32,7 @@ dependencies {
 }
 
 // Compose 与 Kuikly DSL 同时接入时，Android 宿主排除重复的 Markdown parser。
+// 不要在宿主 dependencies 中手写 markdown / KuiklyMarkdown；它们由 ChatUI 模块传递。
 configurations.configureEach {
     exclude(group = "org.jetbrains", module = "markdown")
 }

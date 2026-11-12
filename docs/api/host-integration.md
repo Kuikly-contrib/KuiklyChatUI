@@ -10,7 +10,7 @@ owner: @kuikly-chat-team
 
 版本坐标：`1.0.5-2.1.21`（标准平台）/ `1.0.5-2.0.21-KBA-010`（鸿蒙）。patch 号依据已发布版本递增，以 `gradle.properties` 的 `MAVEN_VERSION` + Kotlin 版本为准。已发布构件见外网仓库 `https://mirrors.tencent.com/repository/maven/kuikly-open/`。
 
-标准平台 Compose Markdown 使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.1`；鸿蒙使用 `0.4.1-ohos`。Kuikly DSL 会话页使用外网公开的 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`。发布模块不得再携带 `*-internal*` 依赖。
+以下 Markdown 坐标是 ChatUI 模块的内部实现依赖，会随 `kuiklychat-compose` / `kuiklychat-compat` 的 POM / Gradle module 自动传递，宿主不要手写：标准平台 `com.tencent.kuiklybase:markdown:0.4.1`，鸿蒙 `0.4.1-ohos`，Kuikly DSL `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`。发布模块不得再携带 `*-internal*` 依赖。
 
 ## 选模块
 
@@ -26,7 +26,7 @@ owner: @kuikly-chat-team
 
 > 已发布的 `1.0.5-*` 构件包含外网公开依赖修复；仓库源码在此之后又去掉了 demo 底部安全区并补充了 Android Markdown parser 去重说明，这些源码修正将在下一次递增版本发布时进入 Maven 产物。
 
-宿主仓库至少包含 `https://mirrors.tencent.com/repository/maven/kuikly-open/` 与 `https://mirrors.tencent.com/nexus/repository/maven-tencent/`：前者提供 ChatUI 与公开 Markdown 产物，后者提供 KBA 专用 kotlinx 产物。底部输入区不需要传 `pagerData.safeAreaInsets.bottom`；默认值 `0f`，键盘跟随由组件内部处理。
+宿主仓库至少包含 `https://mirrors.tencent.com/nexus/repository/maven-tencent/`；这是 `kuikly-open` 上传仓库映射到的外网宿主解析入口，可解析 ChatUI 及其传递依赖。`https://mirrors.tencent.com/repository/maven/kuikly-open/` 是发布上传入口，也可用于核验产物。底部输入区不需要传 `pagerData.safeAreaInsets.bottom`；默认值 `0f`，键盘跟随由组件内部处理。
 
 ## 标准平台
 

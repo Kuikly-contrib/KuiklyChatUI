@@ -23,7 +23,7 @@
 
 版本后缀跟 Kotlin 版本走：标准平台 `1.0.5-2.1.21`，鸿蒙 `1.0.5-2.0.21-KBA-010`。
 
-Compose Chat UI 的 Markdown 渲染使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.1`；鸿蒙对应 `0.4.1-ohos`。Kuikly DSL 会话页使用外网公开的 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`。Compose 组件和 DSL 组件同时接入时，Android 宿主需排除重复的 `org.jetbrains:markdown` parser，示例见 [`docs/api/usage.md`](docs/api/usage.md)。
+宿主只需依赖 ChatUI 模块。Compose Chat UI 内部使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.1`（鸿蒙 `0.4.1-ohos`），Kuikly DSL 会话页内部使用 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`；这些实现依赖会随发布 POM / Gradle module 自动传递，不需要在宿主 `dependencies` 中手写。Compose 组件和 DSL 组件同时接入时，Android 宿主需排除重复的 `org.jetbrains:markdown` parser，示例见 [`docs/api/usage.md`](docs/api/usage.md)。
 
 ## 接入指南
 
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
 
 **鸿蒙平台（HarmonyOS）**
 
-在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.5-2.0.21-KBA-010`，公开 Markdown 依赖由 `markdown:0.4.1-ohos` 提供。`kuikly-open` 提供 ChatUI 与公开 Markdown 产物，`maven-tencent` 提供 KBA 专用 kotlinx 产物。
+在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.5-2.0.21-KBA-010`。`kuikly-open` 是外网上传仓库，并映射到带 `nexus/repository/...` 的宿主解析入口；`maven-tencent` 提供 ChatUI 传递依赖和 KBA 专用 kotlinx 产物。宿主不需要手写 Markdown 组件依赖。
 
 ### 2. 添加依赖
 
