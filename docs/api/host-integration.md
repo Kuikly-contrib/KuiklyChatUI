@@ -24,6 +24,8 @@ owner: @kuikly-chat-team
 
 `kuiklychat-core` 会被 compose / compat 传递出来，一般不必直接写。当前发布脚本发布 `core / compose / compat / ai / testing` 五个 KMP 模块与 `KuiklyChatAndroid`，没有过渡伞模块。
 
+> 已发布的 `1.0.5-*` 构件包含外网公开依赖修复；仓库源码在此之后又去掉了 demo 底部安全区并补充了 Android Markdown parser 去重说明，这些源码修正将在下一次递增版本发布时进入 Maven 产物。
+
 宿主仓库至少包含 `https://mirrors.tencent.com/repository/maven/kuikly-open/` 与 `https://mirrors.tencent.com/nexus/repository/maven-tencent/`：前者提供 ChatUI 与公开 Markdown 产物，后者提供 KBA 专用 kotlinx 产物。底部输入区不需要传 `pagerData.safeAreaInsets.bottom`；默认值 `0f`，键盘跟随由组件内部处理。
 
 ## 标准平台

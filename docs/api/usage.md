@@ -80,6 +80,8 @@ ChatScreen(
 
 `ChatScreen` 的两个重载分别对应无用户解析和 `ChatUserResolutionConfig`；后者要求 `cacheNamespace` 非空。自定义整条消息渲染时传入 `rendererRegistry`，默认行为由 `defaultChatRendererRegistry()` 提供。
 
+`ChatScreenConfig.Default` 的 `composerBottomInsetDp` 为 `0f`；宿主自行处理系统底部安全区时才需要传入额外 inset。
+
 ## 4. 渲染 Kuikly DSL 会话页
 
 父容器必须有确定高度，例如 `flex(1f)`：

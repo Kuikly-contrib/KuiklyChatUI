@@ -149,8 +149,8 @@ public data class ChatScreenConfig(
     /** Max bubble width as a fraction of the list width (aligns with legacy `bubbleMaxWidthRatio`). */
     val bubbleMaxWidthRatio: Float = 0.8f,
     /**
-     * Bottom safe-area inset for the composer only (host passes `pagerData.safeAreaInsets.bottom`).
-     * Does not include keyboard height; keyboard avoidance is handled inside [ChatScreen].
+     * Optional bottom inset for the composer. The default is zero; the demo does not apply a
+     * safe-area inset. Keyboard avoidance is handled inside [ChatScreen].
      */
     val composerBottomInsetDp: Float = 0f,
 ) {

@@ -114,6 +114,8 @@ ChatScreen(controller = controller)
 
 LLM 接入在 `kuiklychat-ai`。`LlmProvider` 负责请求，Compose 页面用 `rememberLlmChatController` 持有会话。`kuiklychat-compat` 已经传递这个模块。
 
+> 当前仓库源码包含 `1.0.5` 发布后对 demo 底部安全区、Android Markdown parser 去重和文档门禁的修正；已发布到 Maven 的 `1.0.5-*` 产物生成于这些修正之前。下一版本将按发布流程递增 patch 后同步这些修正。
+
 ---
 
 ## 引用回复
