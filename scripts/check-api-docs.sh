@@ -32,6 +32,9 @@ if grep -nE 'composerBottomInset(Dp)?[[:space:]]*=[[:space:]]*pagerData\.safeAre
 fi
 
 PUBLIC_BUILD_FILES=(
+  settings.gradle.kts
+  settings.ohos.gradle.kts
+  gradle/publish-maven.gradle
   kuiklychat-compose/build.gradle.kts
   kuiklychat-compose/build.ohos.gradle.kts
   kuiklychat-compat/build.gradle.kts
@@ -39,6 +42,10 @@ PUBLIC_BUILD_FILES=(
 )
 if grep -nE 'internal-2\.|KuiklyMarkdownCompose:.*internal' "${PUBLIC_BUILD_FILES[@]}"; then
   fail "公开模块仍依赖内网 Markdown 版本。" "Compose 使用 markdown:0.4.1 / 0.4.1-ohos；DSL 使用 KuiklyMarkdown:1.0.6-2.1.21 或其 ohos 对应版本。"
+fi
+
+if grep -nF 'https://mirrors.tencent.com/repository/maven/kuikly/' "${PUBLIC_BUILD_FILES[@]}" README.md docs/api/host-integration.md docs/api/usage.md; then
+  fail "公开构建或接入文档仍引用内网 Maven 仓库。" "使用 kuikly-open 与 maven-tencent，并移除 repository/maven/kuikly 地址。"
 fi
 
 if grep -nE '0\.[0-9]+\.[0-9]+-experimental|0\.x experimental|0\.1\.0|1\.0\.x-2\.' "${DOCS[@]}"; then
