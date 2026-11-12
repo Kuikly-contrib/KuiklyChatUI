@@ -39,9 +39,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://mirrors.tencent.com/repository/maven/kuikly-open/")
-        }
-        maven {
             url = uri("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         }
     }
@@ -50,7 +47,7 @@ dependencyResolutionManagement {
 
 **鸿蒙平台（HarmonyOS）**
 
-在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.5-2.0.21-KBA-010`。`kuikly-open` 是外网上传仓库，并映射到带 `nexus/repository/...` 的宿主解析入口；`maven-tencent` 提供 ChatUI 传递依赖和 KBA 专用 kotlinx 产物。宿主不需要手写 Markdown 组件依赖。
+在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.5-2.0.21-KBA-010`。`https://mirrors.tencent.com/nexus/repository/maven-tencent/` 是外网上传仓库 `kuikly-open` 映射后的宿主依赖解析入口，可解析 ChatUI 及其传递依赖；发布上传入口 `https://mirrors.tencent.com/repository/maven/kuikly-open/` 不需要写进宿主 repositories。宿主也不需要手写 Markdown 组件依赖。
 
 ### 2. 添加依赖
 

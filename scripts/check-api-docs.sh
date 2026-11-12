@@ -44,8 +44,20 @@ if grep -nE 'internal-2\.|KuiklyMarkdownCompose:.*internal' "${PUBLIC_BUILD_FILE
   fail "公开模块仍依赖内网 Markdown 版本。" "Compose 使用 markdown:0.4.1 / 0.4.1-ohos；DSL 使用 KuiklyMarkdown:1.0.6-2.1.21 或其 ohos 对应版本。"
 fi
 
-if grep -nF 'https://mirrors.tencent.com/repository/maven/kuikly/' "${PUBLIC_BUILD_FILES[@]}" README.md docs/api/host-integration.md docs/api/usage.md; then
+HOST_REPO_FILES=(
+  settings.gradle.kts
+  settings.ohos.gradle.kts
+  README.md
+  docs/api/host-integration.md
+  docs/api/usage.md
+  docs/api/chat-ui.md
+)
+if grep -nF 'https://mirrors.tencent.com/repository/maven/kuikly/' "${HOST_REPO_FILES[@]}"; then
   fail "公开构建或接入文档仍引用内网 Maven 仓库。" "使用 kuikly-open 与 maven-tencent，并移除 repository/maven/kuikly 地址。"
+fi
+
+if grep -nE 'uri\("https://mirrors\.tencent\.com/repository/maven/kuikly-open/"\)|maven\("https://mirrors\.tencent\.com/repository/maven/kuikly-open/"\)' "${HOST_REPO_FILES[@]}"; then
+  fail "宿主依赖解析仍引用 kuikly-open 上传入口。" "上传入口只用于发布配置；宿主 repositories 使用 nexus/repository/maven-tencent。"
 fi
 
 if grep -nE '0\.[0-9]+\.[0-9]+-experimental|0\.x experimental|0\.1\.0|1\.0\.x-2\.' "${DOCS[@]}"; then
@@ -66,12 +78,12 @@ for doc in README.md docs/api/chat-ui.md docs/api/host-integration.md docs/api/u
   fi
 done
 
-if ! grep -qF 'https://mirrors.tencent.com/repository/maven/kuikly-open/' docs/api/host-integration.md; then
-  fail "接入文档缺少外网 Maven 仓库地址。" "加入 kuikly-open 仓库地址。"
+if ! grep -qF 'https://mirrors.tencent.com/nexus/repository/maven-tencent/' docs/api/host-integration.md; then
+  fail "接入文档缺少 Nexus 宿主解析仓库地址。" "加入 nexus/repository/maven-tencent 仓库地址。"
 fi
 
-if ! grep -qF 'https://mirrors.tencent.com/repository/maven/kuikly-open/' README.md; then
-  fail "README 缺少外网 Maven 仓库地址。" "加入 kuikly-open 仓库地址。"
+if ! grep -qF 'https://mirrors.tencent.com/nexus/repository/maven-tencent/' README.md; then
+  fail "README 缺少 Nexus 宿主解析仓库地址。" "加入 nexus/repository/maven-tencent 仓库地址。"
 fi
 
 if ! grep -qF 'exclude(group = "org.jetbrains", module = "markdown")' docs/api/usage.md; then
