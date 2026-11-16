@@ -104,6 +104,10 @@ public open class DefaultChatComponentFactory : ChatComponentFactory {
                             text("生成中...")
                             color(Color(textColor))
                         }
+                        MessageStatus.STREAMING_PARTIAL -> {
+                            text("内容不完整")
+                            color(Color(errorColor))
+                        }
                         MessageStatus.FAILED, MessageStatus.CANCELLED -> {
                             text("发送失败，点击重试")
                             color(Color(errorColor))

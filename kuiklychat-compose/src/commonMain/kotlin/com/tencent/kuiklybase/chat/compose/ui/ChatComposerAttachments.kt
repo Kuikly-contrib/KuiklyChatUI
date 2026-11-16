@@ -45,6 +45,7 @@ internal fun ChatComposerAttachmentButton(
     isPicking: Boolean,
     theme: ChatTheme,
     onClick: () -> Unit,
+    onClickLabel: String? = null,
     content: (@Composable (Boolean, () -> Unit) -> Unit)? = null,
 ) {
     val click = if (enabled && !isPicking) onClick else ({})
@@ -56,6 +57,7 @@ internal fun ChatComposerAttachmentButton(
         enabled = enabled && !isPicking,
         onClick = click,
         modifier = Modifier.size(48.dp),
+        onClickLabel = onClickLabel,
     ) { pressed ->
         LucideSvgIcon(
             name = CHAT_COMPOSER_PAPERCLIP_ICON,

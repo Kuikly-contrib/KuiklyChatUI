@@ -24,6 +24,10 @@ internal const val CHAT_ICON_PRESSED_ALPHA = 0.32f
 internal const val CHAT_ICON_DISABLED_ALPHA = 0.26f
 internal const val CHAT_FILLED_BUTTON_PRESSED_ALPHA = 0.82f
 
+internal const val CHAT_ACCESSIBILITY_SEND = "send message"
+internal const val CHAT_ACCESSIBILITY_STOP = "stop generating"
+internal const val CHAT_ACCESSIBILITY_ADD_ATTACHMENT = "add attachment"
+
 internal fun composerIconColor(theme: ChatTheme, enabled: Boolean, pressed: Boolean): Color {
     val base = Color(theme.incomingTextColor)
     val alpha = when {
@@ -53,6 +57,7 @@ internal fun ChatPressableIconBox(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClickLabel: String? = null,
     shapeRadius: Dp = 24.dp,
     pressedOverlayColor: Color = Color(0x14000000),
     content: @Composable (pressed: Boolean) -> Unit,
@@ -74,6 +79,7 @@ internal fun ChatPressableIconBox(
                     Modifier.clickable(
                         interactionSource = interactionSource,
                         indication = null,
+                        onClickLabel = onClickLabel,
                         onClick = onClick,
                     )
                 } else {
@@ -93,6 +99,7 @@ internal fun ChatPressableFilledButton(
     theme: ChatTheme,
     baseColor: Long,
     modifier: Modifier = Modifier,
+    onClickLabel: String? = null,
     shapeRadius: Dp = 18.dp,
     content: @Composable () -> Unit,
 ) {
@@ -120,6 +127,7 @@ internal fun ChatPressableFilledButton(
                     Modifier.clickable(
                         interactionSource = interactionSource,
                         indication = null,
+                        onClickLabel = onClickLabel,
                         onClick = onClick,
                     )
                 } else {
@@ -137,6 +145,7 @@ internal fun ChatPressableText(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClickLabel: String? = null,
     pressedAlpha: Float = 0.55f,
     content: @Composable (pressed: Boolean) -> Unit,
 ) {
@@ -157,6 +166,7 @@ internal fun ChatPressableText(
                     Modifier.clickable(
                         interactionSource = interactionSource,
                         indication = null,
+                        onClickLabel = onClickLabel,
                         onClick = onClick,
                     )
                 } else {

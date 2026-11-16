@@ -220,6 +220,7 @@ private fun LoadEarlierSection(
                     enabled = true,
                     onClick = onLoadEarlier,
                     modifier = Modifier.fillMaxWidth(),
+                    onClickLabel = strings.loadEarlier,
                 ) { _ ->
                     Text(
                         text = strings.loadEarlier,

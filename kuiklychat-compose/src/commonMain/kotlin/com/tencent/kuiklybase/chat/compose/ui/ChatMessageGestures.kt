@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.gestures.detectTapGestures
 import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.input.pointer.pointerInput
+import com.tencent.kuikly.compose.ui.semantics.contentDescription
+import com.tencent.kuikly.compose.ui.semantics.semantics
 import com.tencent.kuikly.compose.ui.layout.boundsInRoot
 import com.tencent.kuikly.compose.ui.layout.onGloballyPositioned
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
@@ -49,14 +51,22 @@ internal fun Modifier.chatMessageGestures(
     callbacks: ChatCallbacks,
     onTap: (() -> Unit)?,
     enableLongPress: Boolean = true,
+    accessibilityLabel: String? = null,
 ): Modifier {
     val longPress = enableLongPress && messageLongPressEnabled(callbacks)
-    if (onTap == null && !longPress) {
+    if (onTap == null && !longPress && accessibilityLabel == null) {
         return this
     }
     val trackBounds = longPress && callbacks.onMessageLongPressWithPosition != null
     var bounds by remember(message.id) { mutableStateOf<MessagePressBounds?>(null) }
     return this
+        .then(
+            if (accessibilityLabel != null) {
+                Modifier.semantics { contentDescription = accessibilityLabel }
+            } else {
+                Modifier
+            },
+        )
         .then(
             if (trackBounds) {
                 Modifier.onGloballyPositioned { coordinates ->

@@ -45,6 +45,16 @@ internal fun TextBubbleContent(
     )
     val showInsideTime = config.timeAndStatusPosition == TimeAndStatusPosition.INSIDE_BUBBLE &&
         shouldShowTimeAndStatus(groupStatus, config)
+    val statusLabel = statusLabel(message.status, strings)
+    val bubbleAccessibility = buildString {
+        append(if (isMine) strings.sending else (message.author.name.ifEmpty { "assistant" }))
+        append(": ")
+        append(message.text.ifEmpty { strings.attachmentFallbackName })
+        statusLabel?.let {
+            append(", ")
+            append(it)
+        }
+    }
     val imageOnly = isImageOnlyMessage(message)
     val hasAttachments = message.parts.any { it is MessagePart.Attachment }
     val messageTap = if (!hasAttachments) {
@@ -69,6 +79,7 @@ internal fun TextBubbleContent(
                     message = message,
                     callbacks = callbacks,
                     onTap = messageTap,
+                    accessibilityLabel = bubbleAccessibility,
                 )
             }
         )
@@ -89,6 +100,7 @@ internal fun TextBubbleContent(
                             message = message,
                             callbacks = callbacks,
                             onTap = null,
+                            accessibilityLabel = bubbleAccessibility,
                         )
                     } else {
                         Modifier

@@ -51,12 +51,17 @@ import kotlinx.coroutines.launch
  * Kuikly thread. The parent must give this view a bounded height.
  *
  * [renderMessage] draws a message inside its bubble and returns true to skip the default text body.
+ * Set [showHeader] to false when the host supplies its own navigation bar.
+ * Set [showComposer] to false when the host supplies its own input; the host then owns sending,
+ * stopping, draft clearing and keyboard handling through [ChatController].
  */
 public fun ViewContainer<*, *>.ChatControllerSession(
     controller: ChatController,
     theme: ChatTheme = ChatTheme.Default,
     strings: ChatStrings = ChatStrings.Default,
     showDateSeparators: Boolean = true,
+    showHeader: Boolean = true,
+    showComposer: Boolean = true,
     dateTimeFormatter: ChatDateTimeFormatter = LocalChatDateTimeFormatter.Default,
     dateSeparatorClock: ChatClock = ChatClock.System,
     composerBottomInset: Float = 0f,
@@ -76,6 +81,8 @@ public fun ViewContainer<*, *>.ChatControllerSession(
             this.theme = theme
             this.strings = strings
             this.showDateSeparators = showDateSeparators
+            this.showHeader = showHeader
+            this.showComposer = showComposer
             this.dateTimeFormatter = dateTimeFormatter
             this.dateSeparatorClock = dateSeparatorClock
             this.composerBottomInset = composerBottomInset
@@ -146,7 +153,7 @@ internal class ChatControllerSessionView : ComposeView<ChatControllerSessionAttr
                         transform(Translate(if (ctx.attr.drawerPresented) 0.78f else 0f, 0f))
                         animation(Animation.easeOut(0.24f), ctx.attr.drawerPresented)
                     }
-                    vif({ ctx.attr.messages.isNotEmpty() || ctx.attr.conversationHost != null }) {
+                    vif({ ctx.attr.showHeader && (ctx.attr.messages.isNotEmpty() || ctx.attr.conversationHost != null) }) {
                         ctx.sessionHeader(this)
                     }
                     vif({ ctx.attr.errorText.isNotEmpty() }) {
@@ -154,6 +161,7 @@ internal class ChatControllerSessionView : ComposeView<ChatControllerSessionAttr
                             attr {
                                 backgroundColor(Color(ctx.attr.theme.errorColor))
                                 padding(10f, 16f, 10f, 16f)
+                                accessibility("${ctx.attr.strings.failed}: ${ctx.attr.errorText}")
                             }
                             event {
                                 click {
@@ -195,7 +203,13 @@ internal class ChatControllerSessionView : ComposeView<ChatControllerSessionAttr
                                 attr { alignSelfStretch() }
                                 vif({ ctx.attr.isLoadingEarlier || ctx.attr.hasMoreEarlier }) {
                                     View {
-                                        attr { allCenter(); paddingTop(12f); paddingBottom(8f) }
+                                        attr {
+                                            allCenter(); paddingTop(12f); paddingBottom(8f)
+                                            accessibility(
+                                                if (ctx.attr.isLoadingEarlier) ctx.attr.strings.loading
+                                                else ctx.attr.strings.loadEarlier
+                                            )
+                                        }
                                         event {
                                             click { ctx.attr.controller.dispatch(ChatIntent.LoadEarlier) }
                                         }
@@ -240,20 +254,25 @@ internal class ChatControllerSessionView : ComposeView<ChatControllerSessionAttr
                             }
                         }
                     }
-                    ChatDockComposer(
-                        viewRef = { ctx.composerRef = it },
-                    ) {
-                        theme = ctx.attr.theme
-                        placeholder = ctx.attr.strings.inputPlaceholder
-                        expandedPlaceholder = ctx.attr.strings.inputPlaceholder
-                        safeAreaBottom = ctx.attr.composerBottomInset
-                        attachmentTitle = ctx.attr.strings.attachmentSheetTitle
-                        cameraLabel = ctx.attr.strings.cameraLabel
-                        galleryLabel = ctx.attr.strings.photoLibraryLabel
-                        sending = { ctx.attr.isSending }
-                        onSend = { text, attachments -> ctx.attr.controller.sendMessage(text, attachments) }
-                        onStop = { ctx.attr.controller.dispatch(ChatIntent.StopGeneration) }
-                        onPreviewAttachment = { ctx.openSentImagePreview(it) }
+                    vif({ ctx.attr.showComposer }) {
+                        ChatDockComposer(
+                            viewRef = { ctx.composerRef = it },
+                        ) {
+                            theme = ctx.attr.theme
+                            placeholder = ctx.attr.strings.inputPlaceholder
+                            safeAreaBottom = ctx.attr.composerBottomInset
+                            attachmentTitle = ctx.attr.strings.attachmentSheetTitle
+                            cameraLabel = ctx.attr.strings.cameraLabel
+                            galleryLabel = ctx.attr.strings.photoLibraryLabel
+                            sendLabel = ctx.attr.strings.send
+                            stopLabel = ctx.attr.strings.stop
+                            addAttachmentLabel = ctx.attr.strings.attachmentSheetTitle
+                            sending = { ctx.attr.isSending }
+                            draftText = { ctx.attr.controller.state.draftText }
+                            onSend = { text, attachments -> ctx.attr.controller.sendMessage(text, attachments) }
+                            onStop = { ctx.attr.controller.dispatch(ChatIntent.StopGeneration) }
+                            onPreviewAttachment = { ctx.openSentImagePreview(it) }
+                        }
                     }
                     vif({ ctx.attr.previewImageUri.isNotEmpty() }) {
                         ctx.imagePreviewOverlay(this)
@@ -290,6 +309,7 @@ internal class ChatControllerSessionView : ComposeView<ChatControllerSessionAttr
         attr.hasMoreEarlier = state.hasMoreEarlier
         attr.unreadCount = state.unreadCount
         attr.errorText = state.error?.message.orEmpty()
+        composerRef?.view?.syncDraft(state.draftText)
     }
 
     private fun applyEffect(effect: ChatEffect) {
@@ -306,27 +326,6 @@ internal class ChatControllerSessionView : ComposeView<ChatControllerSessionAttr
         if (!attr.hasMoreEarlier || attr.isLoadingEarlier || attr.isInitialLoading) return
         if (attr.messages.isEmpty()) return
         attr.controller.dispatch(ChatIntent.LoadEarlier)
-    }
-
-    private fun centeredOverlay(container: ViewContainer<*, *>, label: String) {
-        val theme = attr.theme
-        container.View {
-            attr {
-                positionAbsolute()
-                top(0f)
-                left(0f)
-                right(0f)
-                bottom(0f)
-                allCenter()
-            }
-            Text {
-                attr {
-                    text(label)
-                    fontSize(theme.fontSize)
-                    color(Color(theme.placeholderColor))
-                }
-            }
-        }
     }
 
     internal fun dismissComposerKeyboard() {
@@ -346,6 +345,8 @@ internal class ChatControllerSessionAttr : ComposeAttr() {
     var theme: ChatTheme = ChatTheme.Default
     var strings: ChatStrings = ChatStrings.Default
     var showDateSeparators: Boolean = true
+    var showHeader: Boolean = true
+    var showComposer: Boolean = true
     var dateTimeFormatter: ChatDateTimeFormatter = LocalChatDateTimeFormatter.Default
     var dateSeparatorClock: ChatClock = ChatClock.System
     var composerBottomInset: Float = 0f

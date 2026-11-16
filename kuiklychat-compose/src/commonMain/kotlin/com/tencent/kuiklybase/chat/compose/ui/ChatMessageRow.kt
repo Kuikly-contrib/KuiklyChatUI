@@ -129,6 +129,7 @@ internal fun ChatMessageRow(
                                     ?: controller.dispatch(ChatIntent.RetryMessage(message.id))
                             },
                             modifier = Modifier.padding(start = 8.dp),
+                            onClickLabel = strings.retry,
                         ) { _ ->
                             Text(
                                 text = strings.retry,

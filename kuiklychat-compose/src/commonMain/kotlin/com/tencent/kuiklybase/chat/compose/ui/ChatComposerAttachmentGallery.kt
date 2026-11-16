@@ -106,7 +106,10 @@ private fun ComposerAttachmentThumb(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .size(32.dp)
-                .clickable(onClick = onRemove),
+                .clickable(
+                    onClickLabel = "remove attachment",
+                    onClick = onRemove,
+                ),
             contentAlignment = Alignment.Center,
         ) {
             Box(

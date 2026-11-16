@@ -85,6 +85,7 @@ private fun ChatControllerSessionView.bubbleRow(
             marginRight(16f)
             marginBottom(16f)
             marginTop(4f)
+            accessibility(host.messageAccessibility(messageId))
         }
         event {
             click {
@@ -167,6 +168,16 @@ internal fun ChatControllerSessionView.messageContext(
 internal fun ChatControllerSessionView.isMine(messageId: String): Boolean {
     val message = messageContext(messageId)?.first ?: return false
     return message.outgoing || message.author.id == sessionAttr().controller.currentUser.id
+}
+
+internal fun ChatControllerSessionView.messageAccessibility(messageId: String): String {
+    val message = messageContext(messageId)?.first ?: return ""
+    val author = if (isMine(messageId)) sessionAttr().strings.send else message.author.name.ifEmpty { "assistant" }
+    val text = bubbleText(messageId).ifEmpty {
+        imageSources(messageId).firstOrNull().let { if (it != null) sessionAttr().strings.attachmentFallbackName else "" }
+    }
+    val status = statusLabel(message, sessionAttr().strings)
+    return listOf(author, text, status).filter { it.isNotEmpty() }.joinToString(": ")
 }
 
 private fun ChatControllerSessionView.statusText(messageId: String): String {
@@ -292,13 +303,18 @@ private fun ChatControllerSessionView.bubbleText(messageId: String): String {
 
 private fun statusLabel(message: ChatMessage, strings: ChatStrings): String {
     return when (message.status) {
-        MessageStatus.SENDING -> strings.sending
-        MessageStatus.STREAMING -> strings.streaming
         MessageStatus.FAILED -> strings.retry
-        MessageStatus.CANCELLED -> strings.cancelled
-        MessageStatus.SENT -> ""
+        else -> ""
     }
 }
+
+internal fun sharedChatStatusLabels(strings: ChatStrings): List<String> = listOf(
+    strings.sending,
+    strings.streaming,
+    strings.partial,
+    strings.retry,
+    strings.cancelled,
+)
 
 private fun bodyText(message: ChatMessage): String {
     if (message.text.isNotEmpty()) return message.text

@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 /**
  * Floating chat composer for Kuikly DSL pages.
  *
- * The dock expands when focused, grows with the text, lifts with the keyboard, and
+ * The dock grows with measured text height, lifts with the keyboard, and
  * can attach photos through [ChatDockComposerConfig.attachmentPicker] or
  * [ChatDockComposerConfig.onPickAttachments]. The add button opens a modal for
  * camera and gallery. Pass neither and the add button stays hidden.
@@ -37,15 +37,19 @@ import kotlinx.coroutines.launch
 public class ChatDockComposerConfig {
     public var theme: ChatTheme = ChatTheme.Default
     public var placeholder: String = "输入消息"
-    public var expandedPlaceholder: String = "输入消息"
     public var safeAreaBottom: Float = 0f
     public var maxAttachmentCount: Int = 9
+    public var maxTextLength: Int? = null
     public var attachmentSource: LlmAttachmentSource = LlmAttachmentSource.PHOTO_LIBRARY
     public var attachmentPicker: LlmAttachmentPicker? = null
     public var sending: () -> Boolean = { false }
+    public var draftText: () -> String = { "" }
     public var onSend: (text: String, attachments: List<MessagePart.Attachment>) -> Boolean = { _, _ -> false }
     public var onStop: () -> Unit = {}
     public var attachmentTitle: String = "添加附件"
+    public var sendLabel: String = "发送"
+    public var stopLabel: String = "停止"
+    public var addAttachmentLabel: String = "添加附件"
     public var cameraLabel: String = "拍照"
     public var galleryLabel: String = "相册"
     public var onPickAttachments: ((remaining: Int, accept: (List<MessagePart.Attachment>) -> Unit) -> Unit)? = null
@@ -112,11 +116,7 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
         val ctx = this
         return {
             attr {
-                val lines = ctx.attr.lineCount.coerceIn(1, DOCK_MAX_INPUT_LINES)
-                val expanded = ctx.attr.expanded || ctx.attr.previewCount > 0
-                // Absolute children inside the panel do not reserve column space.
-                // Without this height the list draws underneath the dock and text is clipped.
-                height(composerPanelHeight(expanded, lines, ctx.attr.previewCount > 0, ctx.attr.textAboveIcons))
+                flexDirectionColumn()
                 marginLeft(16f)
                 marginRight(16f)
                 marginBottom(
@@ -127,30 +127,9 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
         }
     }
 
-    internal fun syncDraftLayout(text: String): Boolean {
-        val fontSize = attr.config.theme.fontSize.coerceAtLeast(1f)
-        val pageWidth = pagerData.pageViewWidth
-        val besideIcons = (pageWidth - 144f).coerceAtLeast(fontSize * 4f)
-        val fullWidth = (pageWidth - 64f).coerceAtLeast(fontSize * 8f)
-        val aboveIcons = estimateComposerLineCount(
-            text,
-            DOCK_MAX_INPUT_LINES,
-            charsAcross(besideIcons, fontSize),
-        ) > 1
-        val nextLines = if (aboveIcons) {
-            estimateComposerLineCount(text, DOCK_MAX_INPUT_LINES, charsAcross(fullWidth, fontSize))
-        } else {
-            1
-        }
-        val reflow = aboveIcons != attr.textAboveIcons || nextLines != attr.lineCount
-        attr.draftText = text
-        attr.textAboveIcons = aboveIcons
-        attr.lineCount = nextLines
-        return reflow
-    }
-
-    private fun charsAcross(width: Float, fontSize: Float): Int {
-        return (width / (fontSize * 1.15f)).toInt().coerceAtLeast(4)
+    internal fun updateDraft(text: String) {
+        val safeText = attr.config.maxTextLength?.let { text.take(it) } ?: text
+        attr.draftText = safeText
     }
 
     internal fun onFocusChanged(focused: Boolean) {
@@ -160,10 +139,13 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
             closeAttachmentSheet()
         } else {
             settleDockToBottom()
-            if (!attr.attachmentTrayOpen && attr.draftText.isEmpty() && attr.previewCount == 0) {
-                attr.expanded = false
-            }
         }
+    }
+
+    internal fun syncDraft(text: String) {
+        if (attr.draftText == text) return
+        attr.draftText = text
+        textAreaRef?.view?.setText(text)
     }
 
     internal fun onKeyboardChanged(height: Float, visible: Boolean) {
@@ -242,20 +224,16 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
             attr.config.onStop()
             return
         }
-        val text = attr.draftText.trim()
+        val text = attr.config.draftText().trim()
         if (text.isEmpty() && drafts.isEmpty()) return
         val sent = attr.config.onSend(text, drafts.toList())
         if (!sent) return
         blurField()
         textAreaRef?.view?.setText("")
-        attr.draftText = ""
-        attr.lineCount = 1
-        attr.textAboveIcons = false
         drafts.clear()
         attr.previewUris.clear()
         attr.previewCount = 0
         closeAttachmentSheet()
-        attr.expanded = false
     }
 
     internal fun pickAttachment(source: LlmAttachmentSource) {
@@ -291,9 +269,6 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
         attr.previewUris.removeAt(index)
         attr.previewCount = attr.previewUris.size
         if (index < drafts.size) drafts.removeAt(index)
-        if (attr.draftText.isEmpty() && attr.previewCount == 0 && !attr.focused && !attr.attachmentTrayOpen) {
-            attr.expanded = false
-        }
     }
 
     internal fun canAttach(): Boolean = resolvePicker() != null || attr.config.onPickAttachments != null
@@ -307,7 +282,6 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
             attr.previewUris.add(item.previewUri.ifEmpty { item.uri })
         }
         attr.previewCount = attr.previewUris.size
-        if (attr.previewCount > 0) attr.expanded = true
     }
 
     @Suppress("DEPRECATION")
@@ -320,9 +294,6 @@ internal class ChatDockComposerView : ComposeView<ChatDockComposerAttr, ComposeE
 internal class ChatDockComposerAttr : ComposeAttr() {
     var config: ChatDockComposerConfig = ChatDockComposerConfig()
     var draftText by observable("")
-    var lineCount by observable(1)
-    var textAboveIcons by observable(false)
-    var expanded by observable(false)
     var focused by observable(false)
     var keyboardHeight by observable(0f)
     var picking by observable(false)

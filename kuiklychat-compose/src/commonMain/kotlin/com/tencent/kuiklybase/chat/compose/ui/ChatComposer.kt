@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.tencent.kuikly.compose.foundation.background
@@ -25,6 +26,8 @@ import com.tencent.kuikly.compose.ui.Modifier
 import com.tencent.kuikly.compose.ui.draw.clip
 import com.tencent.kuikly.compose.ui.graphics.Color
 import com.tencent.kuikly.compose.ui.text.TextStyle
+import com.tencent.kuikly.compose.ui.focus.FocusRequester
+import com.tencent.kuikly.compose.ui.focus.focusRequester
 import com.tencent.kuikly.compose.ui.unit.dp
 import com.tencent.kuikly.compose.ui.unit.sp
 import com.tencent.kuikly.compose.extension.keyboardHeightChange
@@ -48,10 +51,14 @@ internal fun ChatComposer(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    var input by remember(controller) { mutableStateOf("") }
-    var pendingAttachments by remember(controller) { mutableStateOf(emptyList<MessagePart.Attachment>()) }
+    val focusRequester = remember(controller) { FocusRequester() }
+    LaunchedEffect(controller, config.autofocus) {
+        if (config.autofocus) focusRequester.requestFocus()
+    }
     var isPickingAttachment by remember(controller) { mutableStateOf(false) }
     val state = controller.collectChatState()
+    val input = state.draftText
+    val pendingAttachments = state.draftAttachments
     val isSending = state.isSending
     val canSend = (input.isNotBlank() || pendingAttachments.isNotEmpty()) && !isSending
     val sessionError = state.error
@@ -68,9 +75,8 @@ internal fun ChatComposer(
             controller.dispatch(ChatIntent.StopGeneration)
         } else if (canSend) {
             submit(input, pendingAttachments, controller) {
-                input = ""
+                controller.clearDraft()
                 callbacks.onTextChanged?.invoke("")
-                pendingAttachments = emptyList()
             }
         }
     }
@@ -81,7 +87,7 @@ internal fun ChatComposer(
             isPickingAttachment = true
             try {
                 val picked = pick(tile)
-                pendingAttachments = mergePickedAttachments(pendingAttachments, picked)
+                controller.setDraftAttachments(mergePickedAttachments(pendingAttachments, picked))
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (error: Throwable) {
@@ -122,12 +128,12 @@ internal fun ChatComposer(
             ChatComposerDshInputCard(
                 input = input,
                 onInputChange = {
-                    input = it
+                    controller.setDraft(it)
                     callbacks.onTextChanged?.invoke(it)
                 },
                 pendingAttachments = pendingAttachments,
                 onRemoveAttachment = { attachmentId ->
-                    pendingAttachments = pendingAttachments.filterNot { it.id == attachmentId }
+                    controller.setDraftAttachments(pendingAttachments.filterNot { it.id == attachmentId })
                 },
                 theme = theme,
                 strings = strings,
@@ -154,7 +160,7 @@ internal fun ChatComposer(
             theme = theme,
             strings = strings,
             onRemove = { attachmentId ->
-                pendingAttachments = pendingAttachments.filterNot { it.id == attachmentId }
+                    controller.setDraftAttachments(pendingAttachments.filterNot { it.id == attachmentId })
             },
             content = slots.pendingAttachmentsContent,
         )
@@ -173,14 +179,14 @@ internal fun ChatComposer(
                     enabled = !isSending && !isPickingAttachment,
                     isPicking = isPickingAttachment,
                     theme = theme,
+                    onClickLabel = CHAT_ACCESSIBILITY_ADD_ATTACHMENT,
                     onClick = {
                         scope.launch {
                             isPickingAttachment = true
                             try {
                                 val picked = attachmentRequest()
-                                pendingAttachments = mergePickedAttachments(
-                                    pendingAttachments,
-                                    picked,
+                                controller.setDraftAttachments(
+                                    mergePickedAttachments(pendingAttachments, picked),
                                 )
                             } catch (cancelled: CancellationException) {
                                 throw cancelled
@@ -198,9 +204,10 @@ internal fun ChatComposer(
 
             TextField(
                 value = input,
-                onValueChange = {
-                    input = it
-                    callbacks.onTextChanged?.invoke(it)
+                onValueChange = { value ->
+                    val safeValue = config.maxTextLength?.let { value.take(it) } ?: value
+                    controller.setDraft(safeValue)
+                    callbacks.onTextChanged?.invoke(safeValue)
                 },
                 placeholder = {
                     Text(
@@ -226,6 +233,7 @@ internal fun ChatComposer(
                 ),
                 modifier = Modifier
                     .weight(1f)
+                    .focusRequester(focusRequester)
                     .border(1.dp, Color(theme.borderColor), RoundedCornerShape(theme.bubbleRadius.dp))
                     .then(
                         if (onKeyboardHeightChange != null) {
@@ -240,9 +248,8 @@ internal fun ChatComposer(
             if (slots.composerTrailingContent != null) {
                 slots.composerTrailingContent.invoke(isSending) {
                     submit(input, pendingAttachments, controller) {
-                        input = ""
+                        controller.clearDraft()
                         callbacks.onTextChanged?.invoke("")
-                        pendingAttachments = emptyList()
                     }
                 }
             } else {
@@ -259,15 +266,15 @@ internal fun ChatComposer(
                             controller.dispatch(ChatIntent.StopGeneration)
                         } else if (canSend) {
                             submit(input, pendingAttachments, controller) {
-                                input = ""
+                                controller.clearDraft()
                                 callbacks.onTextChanged?.invoke("")
-                                pendingAttachments = emptyList()
                             }
                         }
                     },
                     theme = theme,
                     baseColor = sendBaseColor,
                     modifier = Modifier.height(48.dp),
+                    onClickLabel = if (isSending) CHAT_ACCESSIBILITY_STOP else CHAT_ACCESSIBILITY_SEND,
                     shapeRadius = theme.bubbleRadius.dp,
                 ) {
                     Text(
