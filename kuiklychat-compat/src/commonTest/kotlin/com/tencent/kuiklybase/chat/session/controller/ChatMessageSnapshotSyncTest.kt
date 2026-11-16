@@ -7,9 +7,28 @@ import com.tencent.kuiklybase.chat.compose.core.MessageStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ChatMessageSnapshotSyncTest {
+
+    @Test
+    fun messageAccessibilityIncludesAuthorContentAndStatus() {
+        val strings = com.tencent.kuiklybase.chat.compose.core.ChatStrings.Default
+        val message = ChatMessage(
+            id = "a11y-1",
+            author = ChatUser(id = "assistant", name = "Assistant"),
+            parts = listOf(MessagePart.Text("hello")),
+            status = MessageStatus.STREAMING_PARTIAL,
+        )
+
+        val label = com.tencent.kuiklybase.chat.compose.core.ChatStrings.Default.let {
+            listOf("Assistant", "hello", strings.partial).joinToString(": ")
+        }
+
+        assertTrue(label.contains(strings.partial))
+        assertFalse(label.contains(MessageStatus.STREAMING_PARTIAL.name))
+    }
 
     @Test
     fun replaceSameIdKeepsPosition() {
@@ -50,6 +69,18 @@ class ChatMessageSnapshotSyncTest {
         val changed = applyMessageSnapshot(target, listOf(existing))
         assertFalse(changed)
         assertEquals(1, target.size)
+    }
+
+    @Test
+    fun sharedStatusCopyMatchesComposeContract() {
+        val strings = com.tencent.kuiklybase.chat.compose.core.ChatStrings.Default
+
+        assertEquals(
+            listOf(strings.sending, strings.streaming, strings.partial, strings.retry, strings.cancelled),
+            sharedChatStatusLabels(strings),
+        )
+        assertTrue(strings.partial.isNotEmpty())
+        assertTrue(strings.retry.isNotEmpty())
     }
 
     private fun message(

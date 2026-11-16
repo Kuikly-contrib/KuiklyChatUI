@@ -25,11 +25,16 @@ public enum class TimeAndStatusPosition {
 public fun formatMessageTime(timestamp: Long, pattern: String = "HH:mm"): String =
     UtcChatDateTimeFormatter.formatMessageTime(timestamp, pattern)
 
-public fun statusLabel(status: MessageStatus, strings: ChatStrings): String? = when (status) {
+public fun statusLabel(status: MessageStatus, strings: ChatStrings): String? = sharedStatusLabel(status, strings).takeIf { it.isNotEmpty() }
+
+/** Shared copy for both UIs; FAILED maps to retry at the action layer. */
+internal fun sharedStatusLabel(status: MessageStatus, strings: ChatStrings): String = when (status) {
     MessageStatus.SENDING -> strings.sending
     MessageStatus.STREAMING -> strings.streaming
+    MessageStatus.STREAMING_PARTIAL -> strings.partial
     MessageStatus.CANCELLED -> strings.cancelled
-    MessageStatus.SENT, MessageStatus.FAILED -> null
+    MessageStatus.FAILED -> strings.retry
+    MessageStatus.SENT -> ""
 }
 
 public fun shouldShowTimeAndStatus(

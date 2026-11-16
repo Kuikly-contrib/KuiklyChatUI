@@ -1,5 +1,6 @@
 package com.tencent.kuiklybase.chat.session.controller
 
+import com.tencent.kuikly.core.reactive.collection.ObservableList
 import com.tencent.kuiklybase.chat.compose.core.ChatMessage
 import com.tencent.kuiklybase.chat.compose.core.ChatState
 
@@ -28,38 +29,41 @@ internal fun applyMessageSnapshot(
     live.liveMessageId = ""
     live.liveText = ""
     if (sameSnapshot(target, next)) return false
+    if (target is ObservableList<ChatMessage>) {
+        val before = target.toList()
+        target.diffUpdate(next) { old, new -> old.id == new.id }
+        return target.toList() != before
+    }
+    applyListSnapshot(target, next)
+    return true
+}
+
+private fun <T> applyListSnapshot(target: MutableList<T>, next: List<T>) {
     val nextIds = HashSet<String>(next.size)
     for (message in next) {
-        nextIds.add(message.id)
+        nextIds.add((message as ChatMessage).id)
     }
-    var changed = false
     var index = target.lastIndex
     while (index >= 0) {
-        if (target[index].id !in nextIds) {
+        if ((target[index] as ChatMessage).id !in nextIds) {
             target.removeAt(index)
-            changed = true
         }
         index--
     }
     var cursor = 0
     for (message in next) {
-        if (cursor < target.size && target[cursor].id == message.id) {
-            if (target[cursor] != message) {
-                target[cursor] = message
-                changed = true
-            }
+        val current = (message as ChatMessage).id
+        if (cursor < target.size && (target[cursor] as ChatMessage).id == current) {
+            target[cursor] = message
             cursor++
         } else {
             target.add(cursor, message)
-            changed = true
             cursor++
         }
     }
     while (target.size > next.size) {
         target.removeAt(target.lastIndex)
-        changed = true
     }
-    return changed
 }
 
 private fun sameSnapshot(target: List<ChatMessage>, next: List<ChatMessage>): Boolean {

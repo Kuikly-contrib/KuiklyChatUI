@@ -95,6 +95,7 @@ class MessageRowLogicTest {
         assertEquals(strings.streaming, statusLabel(MessageStatus.STREAMING, strings))
         assertEquals(strings.cancelled, statusLabel(MessageStatus.CANCELLED, strings))
         assertEquals(null, statusLabel(MessageStatus.SENT, strings))
+        assertEquals(strings.retry, statusLabel(MessageStatus.FAILED, strings))
     }
 
     @Test
