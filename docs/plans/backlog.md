@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-09-23
+last_updated: 2026-11-14
 status: active
 owner: @kuikly-chat-team
 ---
@@ -36,11 +36,9 @@ owner: @kuikly-chat-team
 
 - 旧 Kuikly 会话 UI：`ChatSession`、`bubble/`、`legacy/composer/`、`legacy/ai/`、`indicator/`、`navigation/`、`AiMessageText`
 
-仍在基线里、需要以后拆的存量文件：
+已拆分完成（2026-11-14）：
 
-- [ ] `agui/AgUiSession.kt`
-- [ ] `agui/AgUiSessionTest.kt`
-- [ ] `agui/AgUiEventParserTest.kt`
-- [ ] `model/RichCardPayload.kt`（compat）
-- [ ] `model/ChatPreviewData.kt`（testing）
-- [ ] `compose/agentcard/ToolCallCard.kt`
+- [x] `model/RichCardPayload.kt`（compat）：info/data parser 拆到 `RichCardPayloadInfo.kt`
+- [x] `model/ChatPreviewData.kt`（testing）：`MockChatRepository` 拆到独立文件
+
+当前 baseline 已清空。早前登记的 `agui/AgUiSession*`、`AgUiEventParserTest`、`compose/agentcard/ToolCallCard` 已不在当前源码或 baseline 中，视为过期条目。
