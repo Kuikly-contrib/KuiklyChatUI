@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-11-09
+last_updated: 2026-11-14
 status: active
 owner: @kuikly-chat-team
 ---
@@ -30,7 +30,8 @@ dependencies {
     // implementation("com.tencent.kuiklybase:kuiklychat-testing:1.0.5-2.1.21")
 }
 
-// Compose 与 Kuikly DSL 同时接入时，Android 宿主排除重复的 Markdown parser。
+// 只用一套 UI 时不要加下面的排除。
+// 只有 Compose 与 Kuikly DSL 同时接入时，Android 宿主才排除重复的 Markdown parser。
 // 不要在宿主 dependencies 中手写 markdown / KuiklyMarkdown；它们由 ChatUI 模块传递。
 configurations.configureEach {
     exclude(group = "org.jetbrains", module = "markdown")
@@ -63,7 +64,11 @@ val controller = ChatController(
 )
 ```
 
+结构化日志由宿主注入 `ChatLogger`。SDK 只回传事件名、`message_id` 等标识和异常对象；消息原文与附件 URI 不会进入 attributes，宿主实现不得额外记录敏感内容。
+
 常用操作：`sendText()` / `sendMessage()` 追加消息，`dispatch(ChatIntent.StopGeneration)` 停止生成，`state` / `stateFlow` 观察状态，`effects` 处理滚动、错误与复制。页面销毁时调用 `controller.dispose()` 并取消宿主 `scope`。
+
+发送状态由 `ChatController` 统一持有。发送中再调用 `sendMessage()` 会进入 `state.queuedMessages`；宿主感知到网络不可用时调用 `setConnectionState(ChatConnectionState.DISCONNECTED)`，后续请求继续排队；网络恢复时调用 `setConnectionState(ChatConnectionState.CONNECTED)`，队列按原顺序恢复。可重试的流失败会保留已收文本并标记 `state.partialMessageIds`，失败消息可通过 `dispatch(ChatIntent.RetryMessage(messageId))` 重发。输入框文本和附件也保存在 `state.draftText` / `state.draftAttachments`，切页面或会话时不要在 UI 层另存一份。
 
 ## 3. 渲染 Compose UI
 
@@ -100,7 +105,7 @@ View {
 
 Demo 不向底部输入区传 `pagerData.safeAreaInsets.bottom`；`ChatControllerSession` 与 `ChatScreenConfig` 的默认值都是 `0f`，键盘跟随由组件内部处理。
 
-`renderMessage` 返回 `true` 可跳过默认消息正文；传入 `ChatConversationHost` 后显示会话抽屉。输入框也可单独使用 `ChatDockComposer { ... }`，但通常由 `ChatControllerSession` 统一管理。
+`renderMessage` 返回 `true` 可跳过默认消息正文；传入 `ChatConversationHost` 后显示会话抽屉。输入框也可单独使用 `ChatDockComposer { ... }`，但通常由 `ChatControllerSession` 统一管理。宿主自带顶栏或输入区时分别传 `showHeader = false` / `showComposer = false`；隐藏输入区后由宿主调用 `sendText()` / `dispatch(ChatIntent.StopGeneration)` 并处理草稿与键盘。
 
 ## 5. 富消息与附件
 

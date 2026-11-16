@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-11-09
+last_updated: 2026-11-14
 status: active
 owner: @kuikly-chat-team
 ---
@@ -29,17 +29,21 @@ owner: @kuikly-chat-team
 
 | 级别 | 含义 | 例子 |
 |------|------|------|
-| 将来的 Stable | 宿主可依赖，变更走 major。**当前仍未声明** | 宿主验证后再标：`ChatScreen`、`ChatController`、`ChatMessage`、`ChatControllerSession` |
-| 发布线 1.0.x（当前 1.0.5） | 可调用，文本 dump 不等于 ABI 承诺 | 当前四个产品模块的 public 面，含 Slot、Renderer 注册 |
-| Internal SPI | 跨模块但非 App 契约 | `SseDecoder`、`UserCache.observe`、`toCore` / `persistParts` / `withExtra` |
+| Stable（拟冻结候选） | 当前 1.0.x 可调用；冻结前仍允许小版本修正，冻结后变更走 major | `ChatController` / `ChatMessage` / `MessagePart` / `ChatState` / `ChatTheme` / `ChatStrings`；`ChatScreen`、`ChatControllerSession`、`ChatDockComposer`；`MessageRendererRegistry` |
+| Evolving | 1.0.x 内可增补和调整，调用方应跟版本阅读文档 | attachments / media config、conversation directory、composer config、slots 细分、channel config |
+| Provider / Experimental | 协议与平台扩展面，暂不承诺 1.x 语义稳定 | `LlmProvider`、`LlmTransport`、`SseDecoder`、`LlmChatMessage`；历史封装 `LlmChatController` / `rememberLlmChatController()` |
+| Internal SPI | 跨模块但非 App 契约 | `SseDecoder` 内部路径、`UserCache.observe`、`toCore` / `persistParts` / `withExtra` |
 | internal | 实现细节，禁止冻结 | View/Attr/Event 叶子、布局估算、`AttachmentDraft` |
+
+Stable 候选仍受 `explicitApi()` 和 baseline dump 约束；文本 dump 不等于 binary ABI 承诺。
 
 `:kuiklychat-testing` 的 `ChatPreviewData` / `MockChatRepository` 是 testing 构件上的 public，不进产品 dump。
 
 ## 必须保持 public
 
 - Compose：`ChatScreen`、`ChatController`、`ChatIntent`、`ChatState`、`ChatTheme`、`ChatSlots`、`ChatCallbacks`、`compose.core.ChatMessage` / `MessagePart` / `ChatUser`
-- Kuikly DSL：`ChatControllerSession`（同一 `ChatController` 的会话页；空态标题和建议通过 `ChatSuggestion` 替换；传入 `ChatConversationHost` 后带会话抽屉）、`ChatDockComposer`（键盘跟随、附件、颜色走 `ChatTheme`；加号展开拍照与相册）、`ChatWelcomeState`、`ChatSuggestionBar`、`sessionChatMessage()`（`typealias ChatMessage = compose.core.ChatMessage`）、`ChatMessageHelper`
+- 发送与恢复：`ChatController.sendMessage` / `sendText` / `setConnectionState` / `setDraft` / `setDraftAttachments` / `clearDraft`，以及 `ChatState.queuedMessages` / `connectionState` / `partialMessageIds` / `draftText` / `draftAttachments` 和 `ChatConnectionState`
+- Kuikly DSL：`ChatControllerSession`（同一 `ChatController` 的会话页；`showHeader = false` / `showComposer = false` 可让宿主自带顶栏与输入区；空态标题和建议通过 `ChatSuggestion` 替换；传入 `ChatConversationHost` 后带会话抽屉）、`ChatDockComposer`（键盘跟随、附件、颜色走 `ChatTheme`；加号展开拍照与相册）、`ChatWelcomeState`、`ChatSuggestionBar`、`sessionChatMessage()`（`typealias ChatMessage = compose.core.ChatMessage`）、`ChatMessageHelper`
 - 多段对话：`ChatConversationDirectory`、`ChatConversationStore`、`MemoryChatConversationStore`、`ChatConversationSummary`、`ChatConversationHost`，以及 `ChatController.showConversation` / `regenerateReply`。抽屉、贴底、打点和回答操作条留在会话页内部。
 - 扩展点：Compose `MessageRendererRegistry`、`defaultChatRendererRegistry()`
 

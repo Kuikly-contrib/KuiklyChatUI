@@ -138,7 +138,7 @@ Package: `com.tencent.kuiklybase.chat.session.controller` and `com.tencent.kuikl
 
 ### ChatControllerSession
 
-Renders the AI chat page: header, message list, welcome state, scroll-to-bottom button, dock composer, and image preview. The parent must give it a bounded height (`flex(1f)`).
+Renders the AI chat page: header, message list, welcome state, scroll-to-bottom button, optional dock composer, and image preview. The parent must give it a bounded height (`flex(1f)`).
 
 **Parameters**
 
@@ -148,6 +148,8 @@ Renders the AI chat page: header, message list, welcome state, scroll-to-bottom 
 | `theme` | argument | `ChatTheme` | no | Default `ChatTheme.Default`. |
 | `strings` | argument | `ChatStrings` | no | Default `ChatStrings.Default`. |
 | `showDateSeparators` | argument | `Boolean` | no | Default `true`. |
+| `showHeader` | argument | `Boolean` | no | Default `true`. Set to `false` when the host renders its own navigation bar. |
+| `showComposer` | argument | `Boolean` | no | Default `true`. Set to `false` when the host renders its own input and drives `ChatController` directly. |
 | `dateTimeFormatter` | argument | `ChatDateTimeFormatter` | no | Default `LocalChatDateTimeFormatter.Default`. |
 | `dateSeparatorClock` | argument | `ChatClock` | no | Default `ChatClock.System`. |
 | `composerBottomInset` | argument | `Float` | no | Optional bottom inset for the dock. Default `0f`; the demo does not apply a safe-area inset. |
@@ -191,6 +193,8 @@ Bottom input used inside `ChatControllerSession`. Hosts can also place it themse
 | `attachmentTitle` / `cameraLabel` / `galleryLabel` | config | `String` | no | Labels for the attachment sheet. |
 | `onPickAttachments` | config | `((remaining: Int, accept: (List<MessagePart.Attachment>) -> Unit) -> Unit)?` | no | Host picker. `null` hides the add button unless a picker is set. |
 | `onPreviewAttachment` | config | `(String) -> Unit` | no | Called when a draft attachment is previewed. |
+| `maxTextLength` | config | `Int?` | no | Maximum draft characters; values are safely trimmed. |
+| `autofocus` | config | `Boolean` | no | Requests composer focus on first render (Compose). |
 | `onKeyboardHeightChange` | config | `(Float) -> Unit` | no | Receives keyboard height changes. |
 
 ```kotlin
@@ -295,7 +299,7 @@ The host-facing entries above share `ChatController`. Other public groups are:
 - Conversation storage: `ChatConversationStore`, `MemoryChatConversationStore`, `ChatConversationSummary`, `ChatConversationDirectory`, `ChatConversationHost`, plus `ChatController.showConversation()` / `regenerateReply()`.
 - Kuikly DSL session and channel helpers: `sessionChatMessage()`, `ChatMessageHelper`, `ChatWelcomeStateConfig`, `ChatSuggestionBar()`, `ChatChannelList()`, `ChatChannelHeader()`, `ChatChannelMemberList()`, and the channel config/slot/theme types.
 - Compose extension points: `ChatSlots`, `ChatCallbacks`, `ChatScreenConfig`, `ChatUserResolutionConfig`, `MessageRendererRegistry`, `defaultChatRendererRegistry()`, and media/cache helpers.
-- KuiklyAI: `LlmProvider`, `LlmTransport`, `SseDecoder`, `LlmChatMessage`, `LlmChatController`, and `rememberLlmChatController()`.
+- KuiklyAI provider layer: `LlmProvider`, `LlmTransport`, `SseDecoder`, `LlmChatMessage`. `LlmChatController` / `rememberLlmChatController()` are legacy convenience wrappers; the recommended UI state entry is `ChatController`.
 - Preview / Mock in `:kuiklychat-testing`: `ChatPreviewData` and `MockChatRepository`.
 
 Each entry is declared in the current source and gated by `explicitApi()`; the keep-set policy is documented in [`public-keep-set.md`](public-keep-set.md).

@@ -17,13 +17,13 @@
 | 模型与 `ChatController` | `com.tencent.kuiklybase:kuiklychat-core` | `ChatMessage`、`AgentCard`、发送与流式状态 |
 | Compose Chat UI | `com.tencent.kuiklybase:kuiklychat-compose` | `ChatScreen`。传递 `kuiklychat-core` |
 | Kuikly DSL 会话页 | `com.tencent.kuiklybase:kuiklychat-compat` | `ChatControllerSession`、频道列表、输入区。传递 `core` 和 `ai` |
-| KuiklyAI | `com.tencent.kuiklybase:kuiklychat-ai` | `LlmProvider`、`rememberLlmChatController` |
+| KuiklyAI | `com.tencent.kuiklybase:kuiklychat-ai` | `LlmProvider` provider 能力层；`LlmChatController` 仅历史封装 |
 | Preview / Mock | `com.tencent.kuiklybase:kuiklychat-testing` | 显式依赖，UI 模块不会带上它 |
 | Android 图片与字节缓存 | `com.tencent.kuiklybase:KuiklyChatAndroid` | 见 [`KuiklyChatAndroid/README.md`](KuiklyChatAndroid/README.md) |
 
 版本后缀跟 Kotlin 版本走：标准平台 `1.0.5-2.1.21`，鸿蒙 `1.0.5-2.0.21-KBA-010`。
 
-宿主只需依赖 ChatUI 模块。Compose Chat UI 内部使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.1`（鸿蒙 `0.4.1-ohos`），Kuikly DSL 会话页内部使用 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`；这些实现依赖会随发布 POM / Gradle module 自动传递，不需要在宿主 `dependencies` 中手写。Compose 组件和 DSL 组件同时接入时，Android 宿主需排除重复的 `org.jetbrains:markdown` parser，示例见 [`docs/api/usage.md`](docs/api/usage.md)。
+宿主只需依赖 ChatUI 模块。Compose Chat UI 内部使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.3`（鸿蒙 `0.4.3-ohos`），Kuikly DSL 会话页内部使用 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`；这些实现依赖会随发布 POM / Gradle module 自动传递，不需要在宿主 `dependencies` 中手写。只有 Compose 组件和 DSL 组件同时接入时才加 Android `org.jetbrains:markdown` 排除；只用一套 UI 时不需要。示例见 [`docs/api/usage.md`](docs/api/usage.md)。
 
 ## 接入指南
 
@@ -95,11 +95,11 @@ ChatControllerSession(
     controller = controller,
 )
 
-// Kuikly Compose DSL
+// Kuikly Compose DSL。和 Kuikly DSL 二选一接入；都要时参考上面的 Android Markdown parser 排除。
 ChatScreen(controller = controller)
 ```
 
-`sendText` 在文本为空或正在发送时返回 `false`。页面销毁时调用 `controller.dispose()` 并取消 `scope`。
+`sendText` / `sendMessage` 在空输入时返回 `false`；发送中或 `ChatConnectionState.DISCONNECTED` 时消息进入 `state.queuedMessages`，恢复连接后按序发送。宿主感知网络变化时调用 `controller.setConnectionState(...)`；流式失败会保留已收文本并通过 `state.partialMessageIds` 标记「内容不完整」，可用 `ChatIntent.RetryMessage` 重试。输入草稿保存在 `state.draftText` / `draftAttachments`。页面销毁时调用 `controller.dispose()` 并取消 `scope`。
 
 ---
 
@@ -109,9 +109,9 @@ ChatScreen(controller = controller)
 
 两套 UI 目前都把卡片收成文字：Kuikly DSL 会话页用一行标签，Compose 气泡里显示卡片类型名。自定义渲染时，DSL 传 `ChatControllerSession` 的 `renderMessage`（返回 `true` 就跳过默认正文），Compose 换 `ChatScreen` 的 `rendererRegistry`。
 
-LLM 接入在 `kuiklychat-ai`。`LlmProvider` 负责请求，Compose 页面用 `rememberLlmChatController` 持有会话。`kuiklychat-compat` 已经传递这个模块。
+LLM 接入推荐 `ChatController` + `ChatMessageSender`：这是两套 UI 共用的唯一状态入口，支持队列、断线恢复、partial、草稿和日志 hook。`kuiklychat-ai` 的 `LlmProvider` 只作为 provider 能力层使用（OpenAI 兼容、AG-UI、语音/剪贴板平台服务）；`LlmChatController` 是历史便捷封装，不要与新 UI 混用。
 
-> 当前仓库源码包含 `1.0.5` 发布后对 demo 底部安全区、Android Markdown parser 去重和文档门禁的修正；已发布到 Maven 的 `1.0.5-*` 产物生成于这些修正之前。下一版本将按发布流程递增 patch 后同步这些修正。
+> 当前仓库源码包含 `1.0.5` 发布后对底部输入区实测换行、demo 底部安全区、Android Markdown parser 去重、发送队列、断线恢复、流式部分内容状态和草稿上收 `ChatController` 的修正；已发布到 Maven 的 `1.0.5-*` 产物生成于这些修正之前。下一版本将按发布流程递增 patch 后同步这些修正。
 
 ---
 
