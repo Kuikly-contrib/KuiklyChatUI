@@ -39,6 +39,8 @@ public data class ChatStrings(
     val loadEarlier: String = "加载更早消息",
     val empty: String = "暂无消息",
     val retry: String = "重试",
+    val queued: String = "待发送",
+    val partial: String = "内容不完整",
     val failed: String = "发送失败",
     val sending: String = "发送中",
     val streaming: String = "生成中",

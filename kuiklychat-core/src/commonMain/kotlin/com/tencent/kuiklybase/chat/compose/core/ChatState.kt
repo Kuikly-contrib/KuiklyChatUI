@@ -14,8 +14,38 @@ public data class ChatState(
     val isSending: Boolean = false,
     val error: ChatError? = null,
     val unreadCount: Int = 0,
-    val lastMessageId: String? = null
+    val lastMessageId: String? = null,
+    /** Messages accepted by the controller but waiting for a connected sender. */
+    val queuedMessages: List<ChatMessage> = emptyList(),
+    val connectionState: ChatConnectionState = ChatConnectionState.CONNECTED,
+    /** Assistant replies that received content before a stream stopped or failed. */
+    val partialMessageIds: List<String> = emptyList(),
+    val draftText: String = "",
+    val draftAttachments: List<MessagePart.Attachment> = emptyList(),
 )
+
+public enum class ChatConnectionState {
+    CONNECTED,
+    DISCONNECTED,
+}
+
+/** Severity levels for host-injected structured chat logs. */
+public enum class ChatLogLevel {
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR,
+}
+
+/** Host hook for structured chat telemetry. Implementations must not log message text or attachment URIs. */
+public fun interface ChatLogger {
+    public fun log(
+        level: ChatLogLevel,
+        event: String,
+        attributes: Map<String, String>,
+        throwable: Throwable?,
+    )
+}
 
 public data class ChatError(
     val message: String,
@@ -48,6 +78,10 @@ public sealed interface ChatIntent {
         val hasMoreEarlier: Boolean? = null
     ) : ChatIntent
     public data class SetListNearBottom(val nearBottom: Boolean) : ChatIntent
+    public data class SetConnectionState(val state: ChatConnectionState) : ChatIntent
+    public data class SetDraft(val text: String) : ChatIntent
+    public data class SetDraftAttachments(val attachments: List<MessagePart.Attachment>) : ChatIntent
+    public data object ClearDraft : ChatIntent
 }
 
 /** Events emitted by a host sender while a response is being generated. */

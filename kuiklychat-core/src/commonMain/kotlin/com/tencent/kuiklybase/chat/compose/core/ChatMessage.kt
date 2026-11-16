@@ -55,6 +55,7 @@ public enum class TextFormat {
 public enum class MessageStatus {
     SENDING,
     STREAMING,
+    STREAMING_PARTIAL,
     SENT,
     FAILED,
     CANCELLED

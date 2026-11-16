@@ -16,11 +16,12 @@ import kotlinx.coroutines.launch
 public class ChatController(
     public val currentUser: ChatUser,
     private val scope: CoroutineScope,
-    private val sender: ChatMessageSender? = null,
+    internal val sender: ChatMessageSender? = null,
     internal val historyLoader: ChatHistoryLoader? = null,
     initialMessages: List<ChatMessage> = emptyList(),
-    private val assistantUser: ChatUser = ChatUser("assistant", "Assistant"),
-    private val clock: ChatClock = ChatClock.System
+    internal val assistantUser: ChatUser = ChatUser("assistant", "Assistant"),
+    internal val clock: ChatClock = ChatClock.System,
+    internal val logger: ChatLogger? = null
 ) {
     private val controllerJob = SupervisorJob()
     private val parentCompletionHandle = scope.coroutineContext[Job]?.invokeOnCompletion { controllerJob.cancel() }
@@ -40,16 +41,23 @@ public class ChatController(
     internal var historyJob: Job? = null
     internal var activeAssistantId: String? = null
     internal var pendingUserMessageId: String? = null
+    internal val sendQueue = ArrayDeque<ChatMessage>()
     internal var lastUserPrompt: String? = null
     internal var lastUserSubmission: List<MessagePart>? = null
-    private var isListNearBottom = true
-    private var localId = 0L
     internal var historyEpoch = 0L
-    private var internalRequestActive = false
+    internal var internalRequestActive = false
     private val externalStreamingMessageIds = mutableSetOf<String>()
+    internal val externalStreamingMessageIdSet = externalStreamingMessageIds
     internal var closed = false
+    internal var isListNearBottom = true
+    internal var localId = 0L
     private val effectEmitter = ChatEffectEmitter()
     public val effects: Flow<ChatEffect> = effectEmitter.effects
+
+    internal fun log(level: ChatLogLevel, event: String, attributes: Map<String, String> = emptyMap(), throwable: Throwable? = null) {
+        logger?.log(level, event, attributes, throwable)
+    }
+
     init {
         if (historyLoader != null && initialMessages.isEmpty()) {
             launchHistory { loadInitial(historyEpoch) }
@@ -71,6 +79,10 @@ public class ChatController(
             is ChatIntent.ReplaceMessages -> replaceExternalMessages(intent.messages, intent.hasMoreEarlier)
             is ChatIntent.SetListNearBottom -> setListNearBottom(intent.nearBottom)
             ChatIntent.ClearUnread -> clearUnread()
+            is ChatIntent.SetConnectionState -> setConnectionState(intent.state)
+            is ChatIntent.SetDraft -> setDraft(intent.text)
+            is ChatIntent.SetDraftAttachments -> setDraftAttachments(intent.attachments)
+            ChatIntent.ClearDraft -> clearDraft()
         }
     }
 
@@ -98,7 +110,7 @@ public class ChatController(
     ): Boolean {
         if (closed) return false
         val text = rawText.trim()
-        if ((text.isEmpty() && attachments.isEmpty()) || state.isSending) return false
+        if (text.isEmpty() && attachments.isEmpty()) return false
         if (attachments.isNotEmpty() && !validateOutgoingAttachments(attachments)) return false
 
         val parts = buildList {
@@ -115,21 +127,63 @@ public class ChatController(
         )
         lastUserPrompt = text
         lastUserSubmission = parts
-        pendingUserMessageId = message.id
+        val isQueued = sender != null &&
+            (state.isSending || state.connectionState == ChatConnectionState.DISCONNECTED)
+        if (isQueued) sendQueue.addLast(message)
         _state.value = state.copy(
             messages = state.messages + message,
+            queuedMessages = if (isQueued) state.queuedMessages + message else state.queuedMessages,
             isSending = sender != null,
             error = null,
             lastMessageId = message.id,
+            draftText = "",
+            draftAttachments = emptyList(),
         )
+        if (!isQueued) pendingUserMessageId = message.id
         maybeIncrementUnread()
-        if (sender == null) {
-            updateMessage(message.copy(status = MessageStatus.SENT))
-            emit(ChatEffect.ScrollToBottom)
-        } else {
-            startRequest(message)
+        when {
+            sender == null -> {
+                updateMessage(message.copy(status = MessageStatus.SENT))
+                emit(ChatEffect.ScrollToBottom)
+            }
+            isQueued -> startNextQueuedIfNeeded()
+            else -> startRequest(message)
         }
         return true
+    }
+
+    public fun setConnectionState(next: ChatConnectionState) {
+        if (closed || next == state.connectionState) return
+        _state.value = state.copy(connectionState = next)
+        if (next == ChatConnectionState.CONNECTED) startNextQueuedIfNeeded()
+    }
+
+    public fun setDraft(text: String) {
+        if (closed || state.draftText == text) return
+        _state.value = state.copy(draftText = text)
+    }
+
+    public fun setDraftAttachments(attachments: List<MessagePart.Attachment>) {
+        if (closed || state.draftAttachments == attachments) return
+        _state.value = state.copy(draftAttachments = attachments)
+    }
+
+    public fun clearDraft() {
+        if (closed) return
+        if (state.draftText.isEmpty() && state.draftAttachments.isEmpty()) return
+        _state.value = state.copy(draftText = "", draftAttachments = emptyList())
+    }
+
+    internal fun startNextQueuedIfNeeded() {
+        if (closed || sender == null || internalRequestActive) return
+        if (state.connectionState != ChatConnectionState.CONNECTED) return
+        val next = sendQueue.firstOrNull() ?: return
+        sendQueue.removeFirst()
+        _state.value = state.copy(queuedMessages = state.queuedMessages.filterNot { it.id == next.id })
+        lastUserPrompt = next.text
+        lastUserSubmission = next.parts
+        pendingUserMessageId = next.id
+        startRequest(next)
     }
     public fun stopGeneration() {
         if (closed) return
@@ -138,9 +192,18 @@ public class ChatController(
         requestJob = null
         internalRequestActive = false
         _state.value = state.copy(isSending = false)
+        val partialAssistant = activeAssistantId?.let { assistantId ->
+            state.messages.firstOrNull { it.id == assistantId }
+        }
+        if (partialAssistant != null && partialAssistant.text.isNotEmpty()) {
+            updateMessage(partialAssistant.copy(status = MessageStatus.STREAMING_PARTIAL))
+            _state.value = state.copy(
+                partialMessageIds = (state.partialMessageIds + partialAssistant.id).distinct(),
+            )
+        }
         activeAssistantId?.let { assistantId ->
             state.messages.firstOrNull { it.id == assistantId }?.let {
-                updateMessage(it.copy(status = MessageStatus.CANCELLED))
+                if (it.text.isEmpty()) updateMessage(it.copy(status = MessageStatus.CANCELLED))
             }
         }
         pendingUserMessageId?.let { userId ->
@@ -153,20 +216,35 @@ public class ChatController(
         activeAssistantId = null
         pendingUserMessageId = null
         updateSendingState()
+        startNextQueuedIfNeeded()
     }
     public fun retryMessage(messageId: String) {
         if (state.isSending) return
         val failed = state.messages.firstOrNull { it.id == messageId } ?: return
-        if (failed.status != MessageStatus.FAILED) return
+        if (failed.status != MessageStatus.FAILED && failed.status != MessageStatus.STREAMING_PARTIAL) return
         val retryParts = resolveRetryParts(failed) ?: return
         val retryText = retryParts.filterIsInstance<MessagePart.Text>().joinToString("") { it.value }
         val retryAttachments = retryParts.filterIsInstance<MessagePart.Attachment>()
         _state.value = state.copy(messages = state.messages.filterNot { it.id == messageId }, error = null)
+        sendQueue.removeAll { queued -> queued.author.id == currentUser.id && queued.parts == retryParts }
+        _state.value = state.copy(
+            messages = state.messages.filterNot { message ->
+                message.author.id == currentUser.id &&
+                    message.status == MessageStatus.SENDING &&
+                    message.parts == retryParts &&
+                    message.id != messageId
+            },
+            queuedMessages = state.queuedMessages.filterNot { queued ->
+                queued.author.id == currentUser.id && queued.parts == retryParts
+            },
+        )
         if (failed.author.id != currentUser.id) {
             pendingUserMessageId?.let { userId ->
                 _state.value = state.copy(messages = state.messages.filterNot { it.id == userId })
             }
         }
+        _state.value = state.copy(partialMessageIds = state.partialMessageIds - messageId)
+        _state.value = state.copy(connectionState = ChatConnectionState.CONNECTED)
         sendMessage(retryText, retryAttachments)
     }
     public fun deleteMessage(messageId: String) {
@@ -225,6 +303,7 @@ public class ChatController(
         historyJob = null
         internalRequestActive = false
         externalStreamingMessageIds.clear()
+        sendQueue.clear()
         activeAssistantId = null
         pendingUserMessageId = null
         _state.value = state.copy(isSending = false, isInitialLoading = false, isLoadingEarlier = false)
@@ -238,6 +317,7 @@ public class ChatController(
         cancelHistoryOperation()
         internalRequestActive = false
         externalStreamingMessageIds.clear()
+        sendQueue.clear()
         activeAssistantId = null
         pendingUserMessageId = null
         _state.value = state.copy(
@@ -245,95 +325,8 @@ public class ChatController(
             isSending = false,
             error = null,
             lastMessageId = messages.lastOrNull()?.id,
+            queuedMessages = emptyList(),
         )
-    }
-
-    internal fun startRequest(userMessage: ChatMessage) {
-        val messageSender = sender ?: return
-        val token = ++requestToken
-        activeAssistantId = null
-        internalRequestActive = true
-        val job = controllerScope.launch(start = CoroutineStart.LAZY) {
-            try {
-                messageSender.send(userMessage).collect { event ->
-                    if (token != requestToken) return@collect
-                    when (event) {
-                        is ChatStreamEvent.TextDelta -> applyTextDelta(event)
-                        is ChatStreamEvent.ReplaceMessage -> event.message.let { message ->
-                            if (message.author.id != currentUser.id &&
-                                (message.status == MessageStatus.STREAMING || message.status == MessageStatus.SENDING)
-                            ) activeAssistantId = message.id
-                            updateMessage(message)
-                        }
-                        ChatStreamEvent.Completed -> completeLatestAssistant()
-                        is ChatStreamEvent.Failed -> fail(event.error.message, event.error.code, event.error)
-                    }
-                }
-                if (token == requestToken && state.isSending) completeLatestAssistant()
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (error: Throwable) {
-                if (token == requestToken && !closed) {
-                    fail(error.message ?: "Failed to send message", "send")
-                }
-            } finally {
-                if (requestJob === currentCoroutineContext()[Job]) {
-                    requestJob = null
-                    internalRequestActive = false
-                    updateSendingState()
-                }
-            }
-        }
-        requestJob = job
-        job.start()
-    }
-
-    private fun applyTextDelta(event: ChatStreamEvent.TextDelta) {
-        val assistant = event.messageId?.let { id -> state.messages.firstOrNull { it.id == id } }
-            ?: activeAssistantId?.let { id -> state.messages.firstOrNull { it.id == id } }
-            ?: ChatMessage(
-                id = event.messageId ?: nextLocalId("assistant"),
-                author = assistantUser,
-                parts = emptyList(),
-                status = MessageStatus.STREAMING,
-                createdAt = clock.nowMillis()
-            )
-        activeAssistantId = assistant.id
-        val textFormat =
-            assistant.parts.filterIsInstance<MessagePart.Text>().firstOrNull()?.format
-                ?: event.format
-        val updated = assistant.copy(
-            parts = appendTextDelta(assistant.parts, event.text, textFormat),
-            status = MessageStatus.STREAMING
-        )
-        val isNewAssistant = state.messages.none { it.id == assistant.id }
-        if (isNewAssistant) {
-            _state.value = state.copy(messages = state.messages + updated, lastMessageId = updated.id)
-            maybeIncrementUnread(updated)
-        } else {
-            updateMessage(updated)
-        }
-        emit(ChatEffect.ScrollToBottom)
-    }
-
-    private fun completeLatestAssistant() {
-        activeAssistantId?.let { assistantId ->
-            state.messages.firstOrNull { it.id == assistantId }?.let {
-                updateMessage(it.copy(status = MessageStatus.SENT))
-            }
-        }
-        pendingUserMessageId?.let { userId ->
-            state.messages.firstOrNull { it.id == userId }?.let { userMessage ->
-                if (userMessage.status == MessageStatus.SENDING) {
-                    updateMessage(userMessage.copy(status = MessageStatus.SENT))
-                }
-            }
-        }
-        activeAssistantId = null
-        pendingUserMessageId = null
-        internalRequestActive = false
-        updateSendingState()
-        emit(ChatEffect.ScrollToBottom)
     }
 
     internal fun updateMessage(message: ChatMessage) {
@@ -348,45 +341,10 @@ public class ChatController(
         _state.value = state.copy(messages = messages, lastMessageId = messages.lastOrNull()?.id)
     }
 
-    private fun fail(message: String, code: String, error: ChatError = ChatError(message, code)) {
-        val failedMessage = activeAssistantId?.let { assistantId ->
-            state.messages.firstOrNull { it.id == assistantId }
-        } ?: state.messages.lastOrNull { it.author.id == currentUser.id && it.status == MessageStatus.SENDING }
-        failedMessage?.let { updateMessage(it.copy(status = MessageStatus.FAILED)) }
-        activeAssistantId = null
-        pendingUserMessageId = null
-        internalRequestActive = false
-        _state.value = state.copy(
-            isSending = externalStreamingMessageIds.isNotEmpty(),
-            error = error,
-        )
-        emit(ChatEffect.ShowError(message))
-    }
-
-    private fun updateSendingState() {
-        _state.value = state.copy(
-            isSending = internalRequestActive || externalStreamingMessageIds.isNotEmpty()
-        )
-    }
-
-    private fun maybeIncrementUnread(message: ChatMessage? = null) {
-        if (!isListNearBottom) {
-            if (message != null && !message.countsAsUnread()) return
-            _state.value = state.copy(unreadCount = state.unreadCount + 1)
-        }
-    }
-
     internal fun emit(newEffect: ChatEffect) {
         effectEmitter.emit(newEffect)
     }
 
-    private fun nextLocalId(prefix: String): String {
-        var candidate: String
-        do {
-            candidate = "$prefix-${localId++}"
-        } while (state.messages.any { it.id == candidate })
-        return candidate
-    }
 
     private fun resolveRetryParts(failed: ChatMessage): List<MessagePart>? {
         if (failed.author.id == currentUser.id) return failed.parts
