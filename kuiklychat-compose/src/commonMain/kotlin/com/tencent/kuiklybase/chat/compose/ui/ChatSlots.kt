@@ -143,6 +143,10 @@ public data class ChatScreenConfig(
     val dateSeparatorClock: ChatClock = ChatClock.System,
     val groupingWindowMillis: Long = 5 * 60 * 1000L,
     val maxLines: Int = 5,
+    /** Maximum draft characters; null disables trimming. */
+    val maxTextLength: Int? = null,
+    /** Requests focus when the composer first appears. */
+    val autofocus: Boolean = false,
     val loadEarlierThresholdPx: Int = 120,
     @Deprecated("Lazy items use message keys; this value is unused")
     val estimatedMessageHeightPx: Int = 72,

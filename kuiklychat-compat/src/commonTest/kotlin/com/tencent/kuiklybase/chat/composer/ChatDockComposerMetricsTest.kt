@@ -8,10 +8,15 @@ import kotlin.test.assertTrue
 
 class ChatDockComposerMetricsTest {
     @Test
-    fun lineCountCapsAndWraps() {
-        assertEquals(1, estimateComposerLineCount("", maxLines = 5))
-        assertEquals(5, estimateComposerLineCount("\n\n\n\n\n\n", maxLines = 5))
-        assertEquals(2, estimateComposerLineCount("x".repeat(21), maxLines = 5, charsPerLine = 20))
+    fun inputHeightUsesMeasuredBoundsInsteadOfCharacterCount() {
+        assertEquals(DOCK_INPUT_LINE_HEIGHT, composerInputLineHeight(DOCK_INPUT_LINE_HEIGHT - 8f))
+        assertEquals(28f, composerInputLineHeight(20f))
+        assertEquals(composerInputLineHeight(12f) * DOCK_MAX_INPUT_LINES, composerMaxInputHeight(12f))
+        assertEquals(
+            composerInputLineHeight(16f) * DOCK_MAX_INPUT_LINES,
+            composerMaxInputHeight(16f),
+        )
+        assertTrue(composerMaxInputHeight(24f) > DOCK_ACTION_SIZE)
     }
 
     @Test
@@ -25,37 +30,6 @@ class ChatDockComposerMetricsTest {
         assertEquals(
             268f + DOCK_KEYBOARD_CLEARANCE + DOCK_BOTTOM_GAP,
             composerDockBottom(300f, 80f),
-        )
-    }
-
-    @Test
-    fun panelGrowsForLinesAndAttachments() {
-        assertEquals(DOCK_COLLAPSED_HEIGHT, composerPanelHeight(false, 1, false))
-        val aboveOneLine = composerPanelHeight(false, 1, false, textAboveIcons = true)
-        assertTrue(aboveOneLine > DOCK_COLLAPSED_HEIGHT)
-        assertEquals(
-            aboveOneLine + DOCK_INPUT_LINE_HEIGHT,
-            composerPanelHeight(false, 2, false),
-        )
-        assertEquals(
-            composerPanelHeight(false, 2, false) + DOCK_INPUT_LINE_HEIGHT,
-            composerPanelHeight(false, 3, false),
-        )
-        assertEquals(
-            composerPanelHeight(false, 2, false) + (DOCK_MAX_INPUT_LINES - 2) * DOCK_INPUT_LINE_HEIGHT,
-            composerPanelHeight(false, DOCK_MAX_INPUT_LINES, false),
-        )
-        assertEquals(
-            composerPanelHeight(false, DOCK_MAX_INPUT_LINES, false),
-            composerPanelHeight(false, DOCK_MAX_INPUT_LINES + 4, false),
-        )
-        val expanded = composerPanelHeight(true, 1, false)
-        assertTrue(expanded > DOCK_COLLAPSED_HEIGHT)
-        val withImages = composerPanelHeight(true, 1, true)
-        assertTrue(withImages > DOCK_ATTACHMENT_STRIP_HEIGHT + 15f + DOCK_INPUT_LINE_HEIGHT)
-        assertEquals(
-            withImages + DOCK_INPUT_LINE_HEIGHT,
-            composerPanelHeight(true, 2, true),
         )
     }
 
