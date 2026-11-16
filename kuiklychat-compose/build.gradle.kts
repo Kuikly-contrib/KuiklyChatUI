@@ -33,7 +33,7 @@ kotlin {
                 implementation("com.tencent.kuikly-open:core:${Version.getKuiklyVersion()}")
                 implementation("com.tencent.kuikly-open:core-annotations:${Version.getKuiklyVersion()}")
                 api("com.tencent.kuikly-open:compose:${Version.getKuiklyVersion()}")
-                implementation("com.tencent.kuiklybase:markdown:0.4.1")
+                implementation("com.tencent.kuiklybase:markdown:0.4.3")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2-KBA-003")

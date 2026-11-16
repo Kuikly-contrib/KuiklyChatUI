@@ -28,6 +28,9 @@ public fun resolveTextPartDisplayMode(
     status: MessageStatus,
     config: ChatTextRenderConfig,
 ): TextPartDisplayMode {
+    if (status == MessageStatus.STREAMING_PARTIAL) {
+        return if (format == TextFormat.MARKDOWN) TextPartDisplayMode.MARKDOWN else TextPartDisplayMode.PLAIN
+    }
     if (format == TextFormat.PLAIN) {
         return if (config.showStreamingCursor && status == MessageStatus.STREAMING) {
             TextPartDisplayMode.PLAIN_WITH_CURSOR
