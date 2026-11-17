@@ -4,13 +4,13 @@ status: active
 owner: @kuikly-chat-team
 ---
 
-# 宿主按需接入（1.0.6）
+# 宿主按需接入（1.0.7）
 
-当前发布线是 **1.0.x**，本次版本为 `1.0.6`。宿主按模块坐标接入；public keep-set 是文本基线，不是 binary ABI 承诺。
+当前发布线是 **1.0.x**，本次版本为 `1.0.7`。宿主按模块坐标接入；public keep-set 是文本基线，不是 binary ABI 承诺。
 
-版本坐标：`1.0.6-2.1.21`（标准平台）/ `1.0.6-2.0.21-KBA-010`（鸿蒙）。patch 号依据已发布版本递增，以 `gradle.properties` 的 `MAVEN_VERSION` + Kotlin 版本为准。构件上传到外网 `kuikly-open`，宿主通过 Nexus 映射地址解析。
+版本坐标：`1.0.7-2.1.21`（标准平台）/ `1.0.7-2.0.21-KBA-010`（鸿蒙）。patch 号依据已发布版本递增，以 `gradle.properties` 的 `MAVEN_VERSION` + Kotlin 版本为准。构件上传到外网 `kuikly-open`，宿主通过 Nexus 映射地址解析。
 
-以下 Markdown 坐标是 ChatUI 模块的内部实现依赖，会随 `kuiklychat-compose` / `kuiklychat-compat` 的 POM / Gradle module 自动传递，宿主不要手写：标准平台 `com.tencent.kuiklybase:markdown:0.4.3`，鸿蒙 `0.4.3-ohos`，Kuikly DSL `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`。发布模块不得再携带 `*-internal*` 依赖。
+以下 Markdown 坐标是 ChatUI 模块的内部实现依赖，会随 `kuiklychat-compose` / `kuiklychat-compat` 的 POM / Gradle module 自动传递，宿主不要手写：标准平台 `com.tencent.kuiklybase:markdown:0.4.4`，鸿蒙 `0.4.4-ohos`，Kuikly DSL `com.tencent.kuiklybase:KuiklyMarkdown:1.0.7-2.1.21`。发布模块不得再携带 `*-internal*` 依赖。
 
 ## 选模块
 
@@ -24,7 +24,7 @@ owner: @kuikly-chat-team
 
 `kuiklychat-core` 会被 compose / compat 传递出来，一般不必直接写。当前发布脚本发布 `core / compose / compat / ai / testing` 五个 KMP 模块与 `KuiklyChatAndroid`，没有过渡伞模块。
 
-> `1.0.6-*` 构件包含外网公开依赖、`kuikly-compose-markdown 0.4.3`（鸿蒙 `0.4.3-ohos`）、发送队列、断线恢复、流式 partial、草稿上收 `ChatController`、结构化日志与可访问性基线。
+> `1.0.7-*` 构件包含外网公开依赖、`kuikly-compose-markdown 0.4.4`（鸿蒙 `0.4.4-ohos`）、发送队列、断线恢复、流式 partial、草稿上收 `ChatController`、结构化日志与可访问性基线。
 
 宿主仓库至少包含 `https://mirrors.tencent.com/nexus/repository/maven-tencent/`；这是 `kuikly-open` 上传仓库映射到的外网宿主解析入口，可解析 ChatUI 及其传递依赖。`https://mirrors.tencent.com/repository/maven/kuikly-open/` 是发布上传入口，不应写入宿主 `repositories`。底部输入区不需要传 `pagerData.safeAreaInsets.bottom`；默认值 `0f`，键盘跟随由组件内部处理。
 
@@ -36,24 +36,24 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // 只做 Compose UI
-                implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.6-2.1.21")
+                implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.7-2.1.21")
 
                 // 只要 Kuikly DSL 会话页时改用：
-                // implementation("com.tencent.kuiklybase:kuiklychat-compat:1.0.6-2.1.21")
+                // implementation("com.tencent.kuiklybase:kuiklychat-compat:1.0.7-2.1.21")
 
                 // KuiklyAI / Android 原生能力按需追加：
-                // implementation("com.tencent.kuiklybase:kuiklychat-ai:1.0.6-2.1.21")
-                // implementation("com.tencent.kuiklybase:KuiklyChatAndroid:1.0.6-2.1.21")
+                // implementation("com.tencent.kuiklybase:kuiklychat-ai:1.0.7-2.1.21")
+                // implementation("com.tencent.kuiklybase:KuiklyChatAndroid:1.0.7-2.1.21")
 
                 // Preview / Mock 必须显式写：
-                // implementation("com.tencent.kuiklybase:kuiklychat-testing:1.0.6-2.1.21")
+                // implementation("com.tencent.kuiklybase:kuiklychat-testing:1.0.7-2.1.21")
             }
         }
     }
 }
 ```
 
-鸿蒙把版本换成 `1.0.6-2.0.21-KBA-010`，Maven 仓库与 `README.md` 鸿蒙段相同。
+鸿蒙把版本换成 `1.0.7-2.0.21-KBA-010`，Maven 仓库与 `README.md` 鸿蒙段相同。
 
 本地工程：`implementation(project(":kuiklychat-compose"))` 等同替换即可。
 

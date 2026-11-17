@@ -10,7 +10,7 @@ owner: @kuikly-chat-team
 `scripts/check-public-api.sh` 会阻断新增 public 声明，并在收口后要求同步删除基线行。
 各库模块（含 Ohos `build.ohos.gradle.kts`）默认严格 `explicitApi()`；`scripts/check-layer-deps.sh` 规则 14 阻断 Warning 模式与属性开关。规则 17 阻断伞形 `api()` testing。
 
-**当前发布线是 1.0.x（当前 1.0.6），但 dump 仍是文本基线。** 不要把文本 dump 当成 binary / Native ABI 清单；版本变更与公开面变更仍分别由 `gradle.properties` 和 `scripts/public-api-baseline.txt` 校验。
+**当前发布线是 1.0.x（当前 1.0.7），但 dump 仍是文本基线。** 不要把文本 dump 当成 binary / Native ABI 清单；版本变更与公开面变更仍分别由 `gradle.properties` 和 `scripts/public-api-baseline.txt` 校验。
 
 发布构件：
 

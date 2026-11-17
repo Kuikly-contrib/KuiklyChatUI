@@ -10,7 +10,7 @@ owner: @kuikly-chat-team
 
 ## 1. 添加依赖
 
-标准平台使用 `1.0.6-2.1.21`，鸿蒙使用 `1.0.6-2.0.21-KBA-010`。仓库地址与模块选择见 [host-integration.md](host-integration.md)。
+标准平台使用 `1.0.7-2.1.21`，鸿蒙使用 `1.0.7-2.0.21-KBA-010`。仓库地址与模块选择见 [host-integration.md](host-integration.md)。
 
 ```kotlin
 repositories {
@@ -21,13 +21,13 @@ repositories {
 
 dependencies {
     // Compose UI；kuiklychat-core 会随它传递。
-    implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.6-2.1.21")
+    implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.7-2.1.21")
 
     // Kuikly DSL 会话页时改用或追加：
-    // implementation("com.tencent.kuiklybase:kuiklychat-compat:1.0.6-2.1.21")
+    // implementation("com.tencent.kuiklybase:kuiklychat-compat:1.0.7-2.1.21")
 
     // Preview / Mock 必须显式依赖：
-    // implementation("com.tencent.kuiklybase:kuiklychat-testing:1.0.6-2.1.21")
+    // implementation("com.tencent.kuiklybase:kuiklychat-testing:1.0.7-2.1.21")
 }
 
 // 只用一套 UI 时不要加下面的排除。

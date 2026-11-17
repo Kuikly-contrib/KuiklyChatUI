@@ -15,7 +15,7 @@ owner: @kuikly-chat-team
 | 设计 | `design/` | 中 | 按功能的设计文档（含 Status） |
 | 计划 | `plans/` | 高 | 当前迭代、待办、卫生清理 |
 | 参考 | `reference/` | 低 | API 规范、错误码 |
-| 接入 | `api/host-integration.md`、`api/usage.md` | 中 | 按需模块坐标与 1.0.6 使用示例 |
+| 接入 | `api/host-integration.md`、`api/usage.md` | 中 | 按需模块坐标与 1.0.7 使用示例 |
 | 护栏 | `.tgit-ci.yml` + `scripts/ci-gates.sh` | 中 | 工蜂门禁；`.github/workflows/` 仅书面对照 |
 
 每个文档头部含 `last_updated` / `status` / `owner` 元信息。
@@ -27,7 +27,7 @@ PR 门禁与每周定时任务共用该脚本。改动设计文档时请一并�
 
 Compose DSL Chat UI SDK 当前处于首期开发中，进度与下一阶段任务以以下文档为准：
 
-- 宿主按需接入（1.0.6）：`api/host-integration.md`
+- 宿主按需接入（1.0.7）：`api/host-integration.md`
 - API 使用指南：`api/usage.md`
 - 当前聊天 UI 入口：`api/chat-ui.md`
 - Public keep-set：`api/public-keep-set.md`

@@ -41,7 +41,7 @@ PUBLIC_BUILD_FILES=(
   kuiklychat-compat/build.ohos.gradle.kts
 )
 if grep -nE 'internal-2\.|KuiklyMarkdownCompose:.*internal' "${PUBLIC_BUILD_FILES[@]}"; then
-  fail "公开模块仍依赖内网 Markdown 版本。" "Compose 使用 markdown:0.4.3 / 0.4.3-ohos；DSL 使用 KuiklyMarkdown:1.0.6-2.1.21 或其 ohos 对应版本。"
+  fail "公开模块仍依赖内网 Markdown 版本。" "Compose 使用 markdown:0.4.4 / 0.4.4-ohos；DSL 使用 KuiklyMarkdown 公开坐标 或其 ohos 对应版本。"
 fi
 
 HOST_REPO_FILES=(
