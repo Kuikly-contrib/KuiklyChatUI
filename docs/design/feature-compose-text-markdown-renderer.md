@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-06
+last_updated: 2026-11-17
 status: implemented
 owner: @kuikly-chat-team
 ---
@@ -169,7 +169,7 @@ major 版本交付，并保留旧 `StreamingMarkdownView` forwarding wrapper。
 - `feature-compose-message-row.md`、`feature-compose-bubble-grouping-shape.md`（✅）。
 - Compose 文本渲染见本文；旧 `AiMessageText` DSL 组件已删除。
 - `feature-compose-theme-and-slots.md`（统一文本 slot 与 Markdown token）。
-- `com.tencent.kuiklybase:markdown:0.4.1`（公开 `Markdown` Composable + `MarkdownColors` / `MarkdownTypography`）；鸿蒙使用 `0.4.1-ohos`。
+- `com.tencent.kuiklybase:markdown:0.4.3`（公开 `Markdown` Composable + `MarkdownColors` / `MarkdownTypography`）；鸿蒙使用 `0.4.3-ohos`。
 
 ---
 > 参考：`FlyerChatTextMessage`、`FlyerChatTextStreamMessage`；KuiklyUI

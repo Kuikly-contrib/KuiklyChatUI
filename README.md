@@ -2,7 +2,7 @@
 
 基于 [KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) 跨端框架构建的聊天 UI 组件库，支持 Android、iOS、鸿蒙、JS / macOS。
 
-> 当前版本是 `1.0.5`。宿主按下面的模块依赖；接入和使用示例见 [`docs/api/usage.md`](docs/api/usage.md)，参数说明见 [`docs/api/chat-ui.md`](docs/api/chat-ui.md)。
+> 当前版本是 `1.0.6`。宿主按下面的模块依赖；接入和使用示例见 [`docs/api/usage.md`](docs/api/usage.md)，参数说明见 [`docs/api/chat-ui.md`](docs/api/chat-ui.md)。
 
 <div align="center">
   <img src="assets/chat.png" alt="聊天界面" width="220">
@@ -21,7 +21,7 @@
 | Preview / Mock | `com.tencent.kuiklybase:kuiklychat-testing` | 显式依赖，UI 模块不会带上它 |
 | Android 图片与字节缓存 | `com.tencent.kuiklybase:KuiklyChatAndroid` | 见 [`KuiklyChatAndroid/README.md`](KuiklyChatAndroid/README.md) |
 
-版本后缀跟 Kotlin 版本走：标准平台 `1.0.5-2.1.21`，鸿蒙 `1.0.5-2.0.21-KBA-010`。
+版本后缀跟 Kotlin 版本走：标准平台 `1.0.6-2.1.21`，鸿蒙 `1.0.6-2.0.21-KBA-010`。
 
 宿主只需依赖 ChatUI 模块。Compose Chat UI 内部使用外网公开的 `com.tencent.kuiklybase:markdown:0.4.3`（鸿蒙 `0.4.3-ohos`），Kuikly DSL 会话页内部使用 `com.tencent.kuiklybase:KuiklyMarkdown:1.0.6-2.1.21`；这些实现依赖会随发布 POM / Gradle module 自动传递，不需要在宿主 `dependencies` 中手写。只有 Compose 组件和 DSL 组件同时接入时才加 Android `org.jetbrains:markdown` 排除；只用一套 UI 时不需要。示例见 [`docs/api/usage.md`](docs/api/usage.md)。
 
@@ -47,7 +47,7 @@ dependencyResolutionManagement {
 
 **鸿蒙平台（HarmonyOS）**
 
-在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.5-2.0.21-KBA-010`。`https://mirrors.tencent.com/nexus/repository/maven-tencent/` 是外网上传仓库 `kuikly-open` 映射后的宿主依赖解析入口，可解析 ChatUI 及其传递依赖；发布上传入口 `https://mirrors.tencent.com/repository/maven/kuikly-open/` 不需要写进宿主 repositories。宿主也不需要手写 Markdown 组件依赖。
+在 `settings.ohos.gradle.kts` 中使用同一组仓库；版本换成 `1.0.6-2.0.21-KBA-010`。`https://mirrors.tencent.com/nexus/repository/maven-tencent/` 是外网上传仓库 `kuikly-open` 映射后的宿主依赖解析入口，可解析 ChatUI 及其传递依赖；发布上传入口 `https://mirrors.tencent.com/repository/maven/kuikly-open/` 不需要写进宿主 repositories。宿主也不需要手写 Markdown 组件依赖。
 
 ### 2. 添加依赖
 
@@ -58,7 +58,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.5-2.1.21")
+                implementation("com.tencent.kuiklybase:kuiklychat-compose:1.0.6-2.1.21")
                 // 只要 Kuikly DSL 会话页时改用 kuiklychat-compat
                 // Preview / Mock：kuiklychat-testing
             }
@@ -69,7 +69,7 @@ kotlin {
 
 **鸿蒙平台（HarmonyOS）**
 
-把版本换成 `1.0.5-2.0.21-KBA-010`。
+把版本换成 `1.0.6-2.0.21-KBA-010`。
 
 本地工程把坐标换成 `implementation(project(":kuiklychat-compose"))` 即可。
 
@@ -111,7 +111,7 @@ ChatScreen(controller = controller)
 
 LLM 接入推荐 `ChatController` + `ChatMessageSender`：这是两套 UI 共用的唯一状态入口，支持队列、断线恢复、partial、草稿和日志 hook。`kuiklychat-ai` 的 `LlmProvider` 只作为 provider 能力层使用（OpenAI 兼容、AG-UI、语音/剪贴板平台服务）；`LlmChatController` 是历史便捷封装，不要与新 UI 混用。
 
-> 当前仓库源码包含 `1.0.5` 发布后对底部输入区实测换行、demo 底部安全区、Android Markdown parser 去重、发送队列、断线恢复、流式部分内容状态和草稿上收 `ChatController` 的修正；已发布到 Maven 的 `1.0.5-*` 产物生成于这些修正之前。下一版本将按发布流程递增 patch 后同步这些修正。
+> `1.0.6-*` 已包含底部输入区实测换行、demo 底部安全区、Android Markdown parser 去重、发送队列、断线恢复、流式部分内容状态、草稿上收 `ChatController`、结构化日志、可访问性基线，以及外网公开的 Compose Markdown `0.4.3` / 鸿蒙 `0.4.3-ohos` 依赖。
 
 ---
 

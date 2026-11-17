@@ -1,14 +1,14 @@
 ---
-last_updated: 2026-11-09
+last_updated: 2026-11-17
 status: active
 owner: @kuikly-chat-team
 ---
 
 # KuiklyChat UI — API Reference
 
-> Assumptions: this is a Kotlin library, not an HTTP service. There is no base URL, bearer token, or REST route in the source. The sections below are public entry points taken from the current source. Base version `1.0.5` comes from `gradle.properties` (`MAVEN_VERSION`); it is a release line, not a binary ABI guarantee.
+> Assumptions: this is a Kotlin library, not an HTTP service. There is no base URL, bearer token, or REST route in the source. The sections below are public entry points taken from the current source. Base version `1.0.6` comes from `gradle.properties` (`MAVEN_VERSION`); it is a release line, not a binary ABI guarantee.
 >
-> Coordinates: `com.tencent.kuiklybase:kuiklychat-compose:1.0.5-2.1.21` and `com.tencent.kuiklybase:kuiklychat-compat:1.0.5-2.1.21`. HarmonyOS uses `1.0.5-2.0.21-KBA-010`. Artifacts are uploaded to `kuikly-open` and resolved by hosts from `https://mirrors.tencent.com/nexus/repository/maven-tencent/`.
+> Coordinates: `com.tencent.kuiklybase:kuiklychat-compose:1.0.6-2.1.21` and `com.tencent.kuiklybase:kuiklychat-compat:1.0.6-2.1.21`. HarmonyOS uses `1.0.6-2.0.21-KBA-010`. Artifacts are uploaded to `kuikly-open` and resolved by hosts from `https://mirrors.tencent.com/nexus/repository/maven-tencent/`.
 
 ## Table of Contents
 

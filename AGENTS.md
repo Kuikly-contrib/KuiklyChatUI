@@ -3,7 +3,7 @@
 ## 项目简介
 KuiklyChat 是一套基于 Kuikly（Kotlin Multiplatform）的跨端 Chat UI 组件库，内置 AG-UI 协议接入，可被 Android / iOS / 鸿蒙 / H5 / 小程序等宿主复用。
 
-当前发布线是 **1.0.x**，当前版本是 `1.0.5`；public dump 仍是文本基线，不是 binary ABI 承诺。宿主按需依赖发布模块；接入说明：`docs/api/host-integration.md`，使用指南：`docs/api/usage.md`。
+当前发布线是 **1.0.x**，当前版本是 `1.0.6`；public dump 仍是文本基线，不是 binary ABI 承诺。宿主按需依赖发布模块；接入说明：`docs/api/host-integration.md`，使用指南：`docs/api/usage.md`。
 
 ## 快速导航
 | 你想做什么 | 去哪里看 |
